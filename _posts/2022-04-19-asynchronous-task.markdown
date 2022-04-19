@@ -178,3 +178,6 @@ interface TaskRunner extends Runnable {
 - 创建任务
 - 绑定节点
 - 启动任务
+
+## 参考
+- [IntraMart Accel Platform 异步规范](https://document.intra-mart.jp/library/iap/public/im_asynchronous/im_asynchronous_specification/texts/overview/index.html)
