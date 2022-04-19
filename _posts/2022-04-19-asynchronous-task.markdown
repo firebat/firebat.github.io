@@ -50,7 +50,7 @@ categories: 调度
 - 创建时间最早
 
 ### 单并行队列
-每个app拥有一个并行队列(`parallel_task_queue`)和多个串型队列(自定义),
+每个app拥有一个并行队列(`parallel_task_queue`)和多个串型队列(自定义)
 ```sql
 select
     t.message_id,
@@ -103,10 +103,10 @@ order by q.priority desc, t.receive_time, t.id limit 1;
 ```java
 interface Task {
     setParameter(Map)
-	taskAccepted(TaskEvent)
-	taskStarted(TaskEvent)
-	taskCompleted(TaskEvent)
-	taskRejected(TaskEvent)
+    taskAccepted(TaskEvent)
+    taskStarted(TaskEvent)
+    taskCompleted(TaskEvent)
+    taskRejected(TaskEvent)
 }
 ```
 
@@ -119,16 +119,16 @@ interface Task {
 ```java
 interface TaskManager {
     setParallelizedTaskQueueActive(active)
-	addParallelizedTask(taskClassName, parameter)
-	releaseRunningParallelizedTask(messageId, reentry, stop)
-	removeParallelizedTask(messageId)
+    addParallelizedTask(taskClassName, parameter)
+    releaseRunningParallelizedTask(messageId, reentry, stop)
+    removeParallelizedTask(messageId)
 
-	addSerializedTaskQueue(queueId, active)
-	removeSerializedTaskQueue(queueId)
-	setSerializedTaskQueueActive(active)
-	addSerializedTask(queueId, taskClassName, parameter, stopOnError)
-	releaseRunningSerializedTask(messageId, reentry, stop)
-	removeSerializedTask(messageId)
+    addSerializedTaskQueue(queueId, active)
+    removeSerializedTaskQueue(queueId)
+    setSerializedTaskQueueActive(active)
+    addSerializedTask(queueId, taskClassName, parameter, stopOnError)
+    releaseRunningSerializedTask(messageId, reentry, stop)
+    removeSerializedTask(messageId)
 }
 ```
 
@@ -137,20 +137,20 @@ interface TaskManager {
 ```java
 interface TaskReceiver {
 
-	decideRunTask()
+    decideRunTask()
 
-	acceptProcessingParallelizedTask(messageId, acceptedTime)
-	startProcessingParallelizedTask(messageId, startTime)
-	reentryParallelizedTask(messageId)
-	finishParallelizedTask(messageId)
+    acceptProcessingParallelizedTask(messageId, acceptedTime)
+    startProcessingParallelizedTask(messageId, startTime)
+    reentryParallelizedTask(messageId)
+    finishParallelizedTask(messageId)
 
-	acceptProcessingSerializedTask(messageId, acceptedTime)
-	startProcessingSerializedTask(messageId, startTime)
-	reentrySerializedTask(messageId)
-	finishSerializedTask(messageId)
-	reentrySerializedTask(messageId)
+    acceptProcessingSerializedTask(messageId, acceptedTime)
+    startProcessingSerializedTask(messageId, startTime)
+    reentrySerializedTask(messageId)
+    finishSerializedTask(messageId)
+    reentrySerializedTask(messageId)
 
-	attachNodeToTask(messageId, node)
+    attachNodeToTask(messageId, node)
 }
 ```
 
@@ -159,14 +159,14 @@ interface TaskReceiver {
 ```java
 interface TaskRunner extends Runnable {
 
-	startRunner()
-	stopRunner()
+    startRunner()
+    stopRunner()
 
-	isRunning()
+    isRunning()
 
-	releaseTask(messageId)
+    releaseTask(messageId)
 	
-	release()
+    release()
 }
 ```
 
