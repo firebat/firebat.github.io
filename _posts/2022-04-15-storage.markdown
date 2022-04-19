@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  "存储杂谈"
+title:  "存储的发展"
 date:   2022-04-15 03:21:11 -0400
-categories: storage
+categories: 存储
 ---
 ## 文件系统
 ### Professor Eggert's Dumb File System (~1974)
