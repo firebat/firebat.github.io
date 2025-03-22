@@ -1,0 +1,499 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>RTOS实现原理 | firebat</title>
+<link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/tags/>Tags</a></li><li><a href=/index.xml>Subscribe</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>RTOS实现原理</span></h1><h2 class=date>2023/12/04</h2></div><main><h1 id=目的>目的</h1><p>为什么会有这篇文章？
+首先是好奇。月亮为什么会有盈缺？苹果为什么会落下？烧开水的壶盖为什么会跳动？无线电为什么会传播？正是因为好奇，人类才从洞穴走向了宇宙深空。好奇心是人类的基本特征，是追求进步、推动创新的源动力。记得有一道经典的面试题：浏览器输入URL后会车发生了什么？同样，在我们生活之中有各种类似的问题，当用手机扫描共享单车完成支付后，锁是怎么打开的？当把燃气充值卡后插入表中，发生了什么？</p><p>其次是有用。计算机归根结底是一门应用学科，当我们在准备掌握一门新技术时，总会想到一个问题：有什么用。掌握编程语言让我们知道如何编写逻辑，掌握数据结构有助于更好地组织逻辑，其中最重要且复杂的要数操作系统。每一位有想法的计算机专业学生，都把写一个编译器或操作系统作为自己的终极目标或专业能力试金石。比如Linus在1997年的硕士毕业论文，题目就是《Linux: A Portable Operating System》。但当我们真正深入操作系统时不免会遇到重重困难：要么是书厚、代码多、门槛高；又或是时代久远，各种硬件环境、工具链资料缺失，难以复现；又或者是从xv6或30天系列入手，学完后遇到另一个问题“有什么用”。而学习RTOS就很好的避开了上述问题，不仅代码量少上手容易，迅速理解操作系统的工作原理；又能紧跟时代，获取到最新的硬件和技术资料；而且还能和实际生活应用联系起来。比如北京在20年治理雾霾过程中的空气质量监测，疫情期间公共场合的人体温度红外识别；记得B站上看过一个纪录片，福岛核事故后续，几位退休人员组成的民间团体，拿着自制的辐射检测仪深入街道、学校、树林检测环境的危害程度，来标记安全的活动区域，令人印象深刻。</p><h1 id=发展历程>发展历程</h1><p>我们将从计算机发展史开始，快速理解各种词汇的含义，并进一步认识微控制器和RTOS在现代技术领域中的定位。</p><ul><li>1969年12月，CTC计算机终端公司是一家使用TTL制造8位处理器生产电传打印机的公司，位于德克萨斯州，由NASA前工程师Gus Roche和Phil Ray在1968年创立。在开发Datapoint 2200时，为了减少处理器尺寸和发热量，咨询Intel能否采用单芯片的方案。德州仪器的销售人员听说此事后，也争取到了这份订单。</li><li>1971年6月，德州仪器率先公布TMX1795，第一款8位处理器，但由于空间浪费并未被采纳；而Intel的芯片直到年底才就绪，同样未被采纳；CTC采用开关电源解决了发热问题，并继续使用TTL制造处理器。</li><li>1971年11月，Intel发布第一款4位单芯片处理器4004，又称MCS-4，主频108~740KHz，内部由四个集成电路（IC）组成，由Federico Faggin、Stan Mazor和Ted Hoff三位工程师设计，提供给日本公司Busicom用来生产电子计算器。通过让出6万美元的研发费用，Intel拥有了4004的所有权。</li><li>1972年4月，Intel发布了8位处理器8008，又称MCS-8，频率0.5/0.8MHz，14位地址支持16KB内存、支持中断处理。由于当初CTC放弃该芯片时没有支付足够的研发费用，双方达成协议，Intel获得了芯片所有权以及CTC开发的指令集，并在两年后将其商业化，该指令集成为x86指令的基础。</li><li>1974年3月，Motorola推出MC6800，以PDP-11的处理器为结构模板，时钟可达1~2MHz，16位地址可直接访问64KB内存。6月，惠普开发出基于6800的系统原型机；直到11月，M6800微机系统才投产。Motorola采用和8080同样的售价，高达360美元。由于工厂搬迁、裁员危机、以及公司对研发低成本处理器的消极态度，8月，研发人员Chuck Peddle和其他五名工程师离开后，加入了宾夕法尼亚州的MOS科技，该公司主要为德州仪器和雅达利做外包。</li><li>1974年4月，Intel发布8080处理器，做为8008的扩展和增强，时钟频率达到2MHz，由于指令集的原因，实际处理速度不如6800，最初主要用于控制交通信号灯，但很快被用来生产计算机，并成为有史以来最成功的处理器之一。1975年1月，MITS采用8080生产出Altair 8800，成为世界上第一台微型计算机，拥有256字节RAM。在哈佛读书的Bill Gates和Paul Allen为其设计了BASIC编辑器。</li><li>1974年12月，仙童（Fairchild）推出第一款单片机F8，包含一个8位CPU、64B RAM（其实是两片3850/3851)。</li><li>1975年9月，MOS科技推出了6502，主频和6800一致，但拥有一条指令流水线，性能更好，售价仅25美元。同时为了帮助电子工程师制作电脑和设备，Peddle还研发了KIM-1开发板，拥有1KB内存。由于6502的出色表现，MOS科技被Commodore收购。由于价格低廉，性能出色，该处理器被广泛应用于家庭电脑、游戏机之中。</li><li>1976年3月，Steve Wozniak和Steve Jos利用6502搭建出了Apple I的主板，并在4月1日成立Apple公司。</li><li>1976年7月，Federico Faggin离开Intel成立了Zilog公司并发布Z80处理器，达到2.5MHz，与8080指令兼容。</li><li>1976年9月，Intel推出8位单片机MCS-48系列，内部包含1KB ROM、64B RAM，用于制造电视遥控、键盘等。</li><li>1977年10月，通用仪器（GI）公布了PIC1650单片机，包含512B ROM、32B RAM，用于扩展CP1600（GI和霍尼韦尔联合开发的16位处理器）的IO功能，后拆分成为Microchip公司。</li><li>1978年6月，Intel推出第一款16位处理器 8086，主频4.43MHz，24位地址总线寻址范围达到1MB。</li><li>1978年12月，Hermann Hauser和Chris Curry在英格兰剑桥创办了Camberidge Processor Unit Ltd.主营电子设备设计和制造业务。在1979年3月发明「Acorn System 1」，使用6502处理器，并将公司改名为Acorn。</li><li>1979年6月，Intel推出8088，主频达到5~10MHz，并成功被IBM采用，作为个人电脑的处理器。</li><li>1980年，Intel推出MCS-51单片机，内含4KB ROM，128B RAM，最初被用作IBM PC的键盘控制器。</li><li>1981年12月，Acorn推出BBC Micro计算机，成为欧洲第一台畅销的个人计算机。并在之后开始设计一种类似高级6502架构的处理器。</li><li>1982年，Intel推出16位单片机MCS-96系列，主频达到12MHz、8K ROM以及232B RAM，支持8级中断。</li><li>1985年4月，Acorn公司团队研发出采用精简指令集的新处理器Acorn RISC Machine，又称ARM1，采用32位精简指令集，26位地址总线可寻址64M空间，但主频只有6MHz。</li><li>1985年10月，Intel推出32位处理器80386，主频达到12.5-40MHz，32位地址总线可以寻址4G内存。</li><li>1990年11月，为了更好地发展ARM，Acorn公司的12名员工接受了苹果和VLSI的投资，成立合资公司ARM，同时更改了产品策略：只负责设计，不再负责生产制造和出售，以降低研发成本和风险。</li><li>1993年，ARM发布ARM6内核，作为ARM2和ARM3的改进版，授权给Cirrus Logic和德州仪器。同年苹果推出了的掌上电脑Newton，使用了ARM6的芯片。</li><li>1997年，Nokia6110发布，基于ARM7TDMI内核处理器。</li><li>2004年，ARM发布Cortex-M3内核，在ARM11后，放弃了ARMx的命名方式，并采用A、R、M系列，分别对应高性能、高实时性和微控制器场合。</li><li>2007年，第一款iPhone发布，搭载Samsung生产的S5L8900，基于ARM11内核。</li><li>2010年3月，任天堂在E3 2010发布了3DS，采用ARM11 MP双核和ARM9处理器。</li><li>2017年3月，任天堂发布了Switch掌机，采用Nvidia Tegra X1处理器，基于Cortex-A57、Cortex-A53核心。</li><li>2020年11月，苹果发布第一款基于ARM架构的自研处理器Apple M1，采用ARMv8-A指令集架构。</li><li>2021年11月，富士通基于A64FX处理器打造的超级计算机“富岳”蝉联超算第一，采用ARMv8.2-A架构</li></ul><p>早期单片机多用于外设接口控制器，服务于处理器系统， 随着芯片工艺不断改进，集成度和运算能力不断提升，微控制器也获得广泛的应用和发展。目前，比较常见的单片机有</p><table><thead><tr><th>类型</th><th>简介</th><th>厂商举例</th></tr></thead><tbody><tr><td>51系列</td><td>1980年由Intel研发的8位微型计算机系统，采用CISC指令集、冯诺依曼结构。因90年代致力于研制和生产微机CPU，将MCS-51核心技术授权给其他半导体公司。由于其结构合理、技术成熟，得到广泛的应用，成为一代经典。</td><td>Atmel的AT89、Philips的80C51、宏晶的STC</td></tr><tr><td>MSP430</td><td>1993年由德州仪器推出的16位混合信号处理器，采用RISC指令集、冯诺依曼结构。由于具有低电压、低功耗等特点，以及良好的抗干扰和可靠性，被广泛应用在智能家居、汽车电子、医疗器械、工业自动化等领域。</td><td>TI</td></tr><tr><td>PIC系列</td><td>1993年由微芯科技推出的8位外设接口控制器，最早由通用仪器（GI）在1985年设计，采用RISC指令集、哈佛结构。由于采用双总线结构，运行速度快。后续也有16位、32位系列。</td><td>Microchip</td></tr><tr><td>AVR</td><td>1997年由Atmel公司挪威设计中心的Alf-Egil和Vegard研发的8位单片机，采用RISC指令集、哈佛结构，性价比高。2016年，被Microchip收购。Arduino采用的就是Atmega系列</td><td>Atmel</td></tr><tr><td>ARM系列</td><td>1990年成立于英格兰剑桥，由ARM公司（Advanced RISC Machine）研发的32位单片机、同时支持16位Thumb指令，ARM11之后采用全新的ARMv7架构，产品线更名为Cortex系列，ARMv8增加了AArch64架构，支持64位处理。由于采用专注设计、授权制造的策略，成为市场主流。</td><td>ST、Microchip、NXP兆易的GD32</td></tr></tbody></table><p>时至今日，51系列的由于技术架构原因性能上全面落后于后出现的RISC指令集，但由于价格便宜，依然活跃在各类产品中。曾经有段时间因为STM32芯片缺货涨价，导致大量公司将产品换成了国产的GD32，如大疆的无人机。任意一款处理器，只要在特定领域满足性能指标后，价格、功耗就成为最重要的因素，参照6502的故事。</p><h1 id=硬件基础>硬件基础</h1><p>这里我们以ARM为例做进一步详解。
+<img src=./images/arm-series.png alt>
+ARM代表了一种芯片标准，体现了芯片的架构设计，而具体涉及到存储器容量，片上外设，IO引脚数等实现，则是由不同的芯片厂商进行设计的，比如当前最主流的STM32芯片，它是由ARM公司提供内核，意法半导体公司（ST）基于此内核进行设计的。
+<img src=./images/cortex-m.png alt></p><ul><li>M0、M0+、M1采用ARMv6架构</li><li>Cortex-M3开始采用ARMv7架构，内部数据总线、寄存器、存储器均为32位，如STM32F1系列。</li><li>Cortex-M4在M3基础上增加了DSP指令，强化了浮点运算，以适应数字信号处理，如STM32F4系列。</li></ul><h2 id=总线结构>总线结构</h2><p>芯片内核与外设之间通过各种总线连接，基于AHB（Advanced High performance Bus 高级高性能总线）和APB（Advanced Peripheral Bus 高级外设总线）。内核总线包括</p><ul><li>ICode 指令总线，编译后的程序下载存放在Flash中，通过该总线取出执行。</li><li>DCode 数据总线，代码中的变量存放在SRAM中，通过该总线进行访问。</li><li>System 系统总线，用于寄存器的读写。</li><li>DMA 总线，用于外设之间的数据传输，如寄存器、SRAM、Flash等。</li><li>APB 外设总线，AHB通过总线桥与两个APB进行同步连接。GPIO、串口、I2C、SPI等设备都挂载这两条总线上。如何编程去设置、驱动这些外设，是学习的重点。
+<img src=./images/bus-arch.jpg alt></li></ul><h2 id=内存结构>内存结构</h2><p>Cortex-M系列不带MMU（内存管理单元），所有的寄存器、存储空间和设备端口均通过绝对地址访问。32位对应的4G空间被划分成固定的几个区域，该布局规范由ARM公司统一设计，厂商不能更改。主要包括Code、SRAM、片上外设、FMC、核外设区。其中需要特别注意的：</p><ul><li>RAM 地址从<code>0x2000 0000</code>开始，用于运行时堆栈，即SP值</li><li>Flash 地址从<code>0x0800 0000</code>开始，用于存放程序代码，即PC值
+<img src=./images/mem-map.jpg alt></li></ul><h2 id=启动过程>启动过程</h2><p>参考《The Definitive Guide To ARM Cortex M3》3.7 RESET SEQUENCE章节。STM32支持三种启动模式，可通过设置BOOT管脚进行选择。当选用Flash启动时，0x0800 0000 将映射到 0x0000 0000，即二者等效。
+<img src=./images/reset.jpg alt>
+芯片上电后，将从<code>0x0000 0000</code>读取第1个字作为栈顶地址（SP），从<code>0x0000 0004</code>读取第2个字作为第一条指令地址（PC）。
+<img src=./images/reset-sequence.jpg alt>
+栈增长方向由上到下（先压栈后访问），所以SP初始值应该是栈顶上的第一个地址，比如将<code>0x2000 7C00</code>到<code>0x2000 7FFF</code>的空间作为栈，SP初始值应该设为<code>0x2000 8000</code>。
+<img src=./images/stack-init.jpg alt></p><h2 id=gpio结构>GPIO结构</h2><p>STM32数据引脚一律采用通用输入输出IO接口，全称General Purpose Input Ouput，通过编程设置，使每个引脚既可以作为输入、也可以作为输出端口使用。如F103ZET6拥有A到G共7组端口，每组16个IO口，共112个引脚可用。
+<img src=./images/gpio.jpg alt></p><p>通过设置相应的寄存器，选择是否启用、输入输出模式，以达到节能、端口复用的目的。参考上图，GPIO支持8种配置模式：</p><ul><li><code>GPIO_Mode_AIN</code> 模拟输入，用于采集模拟量（电压值）</li><li><code>GPIO_Mode_IN_FLOATING</code> 浮空输入，输入完全由外部控制，适用于数据通信（如串口接收RX）</li><li><code>GPIO_Mode_IPD</code> 下拉输入，内部接下拉电阻，若外部无信号，默认为低电平</li><li><code>GPIO_Mode_IPU</code> 上拉输入，内部接上拉电阻，若外部无信号，默认为高电平</li><li><code>GPIO_Mode_Out_OD</code> 开漏输出，相当于三极管的集电极，要得到高电平需要上拉电阻，适用于外部电流驱动</li><li><code>GPIO_Mode_Out_PP</code> 推挽输出，可输出高、低电平、连接外设</li><li><code>GPIO_Mode_AF_OD</code> 复用开漏输出，与开漏输出类似，数据来自片上外设（如I2C的SCL、SDA</li><li><code>GPIO_Mode_AF_PP</code> 复用推挽输出，与推挽输出类似，数据来自片上外设（如串口发送TX）</li></ul><p>每个端口对应7个寄存器</p><ul><li>两个配置寄存器 <code>GPIOx_CRL</code>, <code>GPIOx_CRH</code> 选择引脚功能，设置输入输出模式</li><li>两个数据寄存器 <code>GPIOx_IDR</code>, <code>GPIOx_ODR</code> 保存输出输出电平</li><li>两个位控制寄存器 <code>GPIOx_BSRR</code>, <code>GPIOx_BRR</code> 设置引脚为1或0</li><li>锁定寄存器 <code>GPIOx_LCKR</code> 锁定配置，不允许修改</li></ul><h1 id=开发基础>开发基础</h1><p>在理解了启动过程和GPIO模式之后，这里使用STM32F103C8T6核心板（也称BluePill）为例，描述程序的执行过程。BOOT0选择跳线置0，选择从Flash启动。
+<img src=./images/stm32f103.png alt></p><p>板上有两个LED，右侧为电源指示灯，左侧对应PC13端口，根据电路图定义可知</p><ul><li>上电后VCC高电平，电源灯亮起</li><li>当PC13为0时，LED2导通，指示灯亮起；交替设置为1或0，就能控制LED2闪烁
+<img src=./images/led-circuit.jpg alt></li></ul><h2 id=基本原理>基本原理</h2><p>具体代码可参考 <a href=https://github.com/firebat/stm32-tutorial/tree/master/1_blink>https://github.com/firebat/stm32-tutorial/tree/master/1_blink</a></p><p>由于STM32F103x8系列仅有64K的Flash和20K的SRAM，所以栈顶指针最大不能超过<code>0x20005000</code>，这里以4K为例。通过__asm__语法内嵌汇编来设置初始化SP、PC取值。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#75715e>// STM32F103C8T6 only has a 20k SRAM, so MSP must be less than 0x20005000.
+</span></span></span><span style=display:flex><span><span style=color:#75715e>// For example, stack size = 0x20001000-0x20000000 = 0x1000 = 4K, that&#39;s enough.
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#a6e22e>__asm__</span>(<span style=color:#e6db74>&#34;.word 0x20001000&#34;</span>);
+</span></span><span style=display:flex><span><span style=color:#a6e22e>__asm__</span>(<span style=color:#e6db74>&#34;.word main&#34;</span>);
+</span></span></code></pre></div><p>通过查找《STM32F1技术手册(RM0008)》找到对应的控制寄存器地址，GPIOC相关寄存器范围在 <code>0x4001 1000 ~ 0x4001 13FF</code></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#75715e>/*
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  STM32F10x Reference manual (RM0008)
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  -----------------------------------
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  3.3 Memory map
+</span></span></span><span style=display:flex><span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e>            Table 3. Register boundary addresses
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +---------------------------+-------------------------+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  |     Boundary address      |         Peripheral      |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +---------------------------+-------------------------+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  |           .....           |              .....      |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +---------------------------+-------------------------+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  | 0x4002 1000 - 0x4002 13FF | Reset and clock control |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +---------------------------+-------------------------+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  |           .....           |            .....        |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +---------------------------+-------------------------+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  | 0x4001 1000 - 0x4001 13FF | GPIO Port C             |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +---------------------------+-------------------------+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  |           .....           |            .....        |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +---------------------------+-------------------------+
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#define GPIOC_CRH    (*((volatile unsigned long*)(0x40011000 + 0x4)))
+</span></span></span><span style=display:flex><span><span style=color:#75715e>#define GPIOC_BSRR   (*((volatile unsigned long*)(0x40011000 + 0x10)))
+</span></span></span><span style=display:flex><span><span style=color:#75715e>#define RCC_APB2ENR  (*((volatile unsigned long*)(0x40021000 + 0x18)))
+</span></span></span></code></pre></div><p>首先，设置<code>RCC_APB2ENR</code>启用外设时钟，使<code>IOPCEN</code>位为1，启用C端口。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span>  <span style=color:#75715e>// -------------------------------------
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#75715e>// Enable GPIO_C
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#75715e>/*
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    GPIO(General Purpose I/O) must be ENABLED before use, else it will be disabled for
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    a lower power cost, which is controlled by RCC_APB2ENR(APB2 peripheral clock enable register).
+</span></span></span><span style=display:flex><span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    STM32F10x Reference manual (RM0008)
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    -----------------------------------
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    7.3.7 APB2 peripheral clock enable register (RCC_APB2ENR)
+</span></span></span><span style=display:flex><span><span style=color:#75715e>          Address: 0x18
+</span></span></span><span style=display:flex><span><span style=color:#75715e>          Reset value: 0x0000 0000
+</span></span></span><span style=display:flex><span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      31    30    29    28    27    26    25    24    23    22    21    20    19    18    17    16
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    +-----------------------------------------------------------+-----+-----+-----+-----------------+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    |                                                           |TIM11|TIM10| TIM9|                 |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    |                           Reserved                        | EN  | EN  |  EN |     Reserved    |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    |                                                           |-----+-----+-----|                 |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    |                                                           | rw  | rw  | rw  |                 |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    +-----------------------------------------------------------+-----+-----+-----+-----+-----+-----+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      15    14    13    12    11    10     9     8     7     6     5     4     3     2     1     0
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    | ADC3|USART| TIM8| SPI1| TIM1| ADC2| ADC1| IOPG| IOPF| IOPE| IOPD| IOPC| IOPB| IOPA|     | AFIO|
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    |  EN |  EN |  EN |  EN |  EN |  EN |  EN |  EN |  EN |  EN |  EN |  EN |  EN |  EN | Res.|  EN |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----|     |-----+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |     |  rw |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+ 
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  */</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// - IOPCEN = 1
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  RCC_APB2ENR <span style=color:#f92672>=</span> (<span style=color:#ae81ff>1</span> <span style=color:#f92672>&lt;&lt;</span> <span style=color:#ae81ff>4</span>);
+</span></span></code></pre></div><p>设置<code>GPIOx_CRH</code>高位配置寄存器（偏址<code>0x04</code>），配置推挽输出模式，直接给LED供电。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#75715e>// -------------------------------------
+</span></span></span><span style=display:flex><span><span style=color:#75715e>// Configure PC_13
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#75715e>/*
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  Each of the general-purpose I/O ports has two 32-bit configuration registers (GPIOx_CRL,
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  GPIOx_CRH), two 32-bit data registers (GPIOx_IDR, GPIOx_ODR), a 32-bit set/reset
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  register (GPIOx_BSRR), a 16-bit reset register (GPIOx_BRR) and a 32-bit locking register
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  (GPIOx_LCKR).
+</span></span></span><span style=display:flex><span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  STM32F10x Reference manual (RM0008)
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  -----------------------------------
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  9.2.2 Port configuration register high (GPIOx_CRH) (x=A..G)
+</span></span></span><span style=display:flex><span><span style=color:#75715e>        Address offset: 0x04
+</span></span></span><span style=display:flex><span><span style=color:#75715e>        Reset value: 0x4444 4444
+</span></span></span><span style=display:flex><span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    31    30    29    28    27    26    25    24    23    22    21    20    19    18    17    16
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  | CNF15[1:0]|MODE15[1:0]| CNF14[1:0]|MODE14[1:0]| CNF13[1:0]|MODE13[1:0]| CNF12[1:0]|MODE12[1:0]|
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----|
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+ 
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    15    14    13    12    11    10     9     8     7     6     5     4     3     2     1     0
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  | CNF11[1:0]|MODE11[1:0]| CNF10[1:0]|MODE10[1:0]| CNF9[1:0] | MODE9[1:0]| CNF8[1:0] | MODE8[1:0]|
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |  rw |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+ 
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// - CNF13[1:0] = 00 (General purpose output push-pull)
+</span></span></span><span style=display:flex><span><span style=color:#75715e>// - MODE[1:0]  = 01
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>GPIOC_CRH <span style=color:#f92672>=</span> <span style=color:#ae81ff>0x44144444</span>;
+</span></span></code></pre></div><p>通过<code>BSRR</code>端口位设置/清除寄存器（偏址<code>0x10</code>）的<code>BR13/BS13</code>位，使PC13输出高低电位。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span>  <span style=color:#75715e>// Light on/off
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#75715e>/*
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    STM32F10x Reference manual (RM0008)
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    -----------------------------------
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    9.2.5 Port bit set/reset register (GPIOx_BSRR) (x=A..G)
+</span></span></span><span style=display:flex><span><span style=color:#75715e>          Address offset: 0x10
+</span></span></span><span style=display:flex><span><span style=color:#75715e>          Reset value: 0x0000 0000
+</span></span></span><span style=display:flex><span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      31    30    29    28    27    26    25    24    23    22    21    20    19    18    17    16
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    | BR15| BR14| BR13| BR12| BR11| BR10| BR9 | BR8 | BR7 | BR6 | BR5 | BR4 | BR3 | BR2 | BR1 | BR0 |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----|
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+ 
+</span></span></span><span style=display:flex><span><span style=color:#75715e>      15    14    13    12    11    10     9     8     7     6     5     4     3     2     1     0
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    | BS15| BS14| BS13| BS12| BS11| BS10| BS9 | BS8 | BS7 | BS6 | BS5 | BS4 | BS3 | BS2 | BS1 | BS0 |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |  w  |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>    +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+ 
+</span></span></span><span style=display:flex><span><span style=color:#75715e>   */</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// - ON : BR13 = 1
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#75715e>// - OFF: BS13 = 1
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>  <span style=color:#66d9ef>while</span>(<span style=color:#ae81ff>1</span>) {
+</span></span><span style=display:flex><span>    GPIOC_BSRR <span style=color:#f92672>=</span> (<span style=color:#ae81ff>1</span> <span style=color:#f92672>&lt;&lt;</span> <span style=color:#ae81ff>29</span>);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span>(i<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span>; i<span style=color:#f92672>&lt;</span><span style=color:#ae81ff>500000</span>; i<span style=color:#f92672>++</span>);
+</span></span><span style=display:flex><span>    GPIOC_BSRR <span style=color:#f92672>=</span> (<span style=color:#ae81ff>1</span> <span style=color:#f92672>&lt;&lt;</span> <span style=color:#ae81ff>13</span>);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span>(i<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span>; i<span style=color:#f92672>&lt;</span><span style=color:#ae81ff>500000</span>; i<span style=color:#f92672>++</span>);
+</span></span><span style=display:flex><span>  }
+</span></span></code></pre></div><p>使用<code>arm-none-eabi-gcc</code>编译以上代码，生成<code>main.bin</code>。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Makefile data-lang=Makefile><span style=display:flex><span>PREFIX <span style=color:#f92672>:=</span> arm-none-eabi-
+</span></span><span style=display:flex><span><span style=color:#a6e22e>.PHONY</span><span style=color:#f92672>:</span> all clean
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>all</span><span style=color:#f92672>:</span> main.bin
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>main.o</span><span style=color:#f92672>:</span> main.c
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>$(</span>PREFIX<span style=color:#66d9ef>)</span>gcc -mcpu<span style=color:#f92672>=</span>cortex-m3 -mthumb -nostartfiles -c main.c -o main.o
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>main.elf</span><span style=color:#f92672>:</span> main.o simple.ld
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>$(</span>PREFIX<span style=color:#66d9ef>)</span>ld -T simple.ld -o main.elf main.o
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>main.bin</span><span style=color:#f92672>:</span> main.elf
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>$(</span>PREFIX<span style=color:#66d9ef>)</span>objcopy -j .text -O binary main.elf main.bin
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>clean</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>	rm -f *.o *.elf *.bin
+</span></span></code></pre></div><p>链接文件内容如下，即将代码段放到<code>0x0</code>的起始位置。</p><pre tabindex=0><code class=language-ld data-lang=ld>SECTIONS {
+    . = 0x0;
+    .text : {
+        *(.text)
+    }
+}
+</code></pre><h2 id=下载烧录>下载烧录</h2><p>代码下载有多种仿真器可选，如德国SEGGER公司的JLink，ST意法半导体的STLink，以及开源的DAPLink（带SWD和串口，推荐）。这里选用STLink为例，核心板支持4针的SWD协议（Serial Wire Debugging 串口调试接口），按照定义连接对应的端口即可：VCC、GND、SWDCLK、SWDIO。
+<img src=./images/stlink-port.jpg alt>{width=60%}
+<img src=./images/stlink-demo.jpg alt>{width=60%}
+使用STLinkUtility等工具，将main.bin下载到Flash中，由于没有引用任何外部代码库，文件只有108字节。其中</p><ul><li>0-3字节<code>2000 1000</code>定义了栈顶SP取值。由于代码中仅1个变量，该值可以更小</li><li>4-7字节<code>0000 0009</code>定义了第一条指令PC取值，即两条<code>__asm__</code>代码后面的<code>main</code>
+<img src=./images/stm32-utility.jpg alt>
+下载完成后，按下核心板的Reset按键，就可以看到PC13在不停的闪烁。
+<img src=./images/blinking-small.gif alt></li></ul><h2 id=开发工具>开发工具</h2><p>常见的开发工具有多种选择</p><p>Keil MDK 编译器armcc效率高、生成代码更小、仿真模拟器优秀；收费，还很贵。
+STM32CubeIDE 意法半导体基于Eclipse开发，使用gcc编译，支持配置生成代码和调试，免费。
+VSCode 根据自身需要，选取合适的编译器(armcc、gcc)和构建工具(cmake、scons)。</p><h2 id=开发库>开发库</h2><p>CMSIS Common Microcontroller Software Interface Standard是ARM公司制定的一个标准，提供了与芯片生产商无关的硬件抽象层。主要包含一些寄存器地址、数据结构定义、编译器相关的启动配置。
+HAL Hardware Abstraction Layer 是ST公司为STM32的MCU最新推出的抽象层嵌入式软件，为更方便的实现跨STM32产品的最大可移植性。</p><p>这些开发库大大降低了开发难度，代码简洁易读且方便移植。如果使用HAL编写上面LED闪烁代码，看起来会是这样</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&#34;stm32f1xx_hal_conf.h&#34;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// HAL_Delay 依赖系统时钟，需提前初始化，并在SysTick中断中调用HAL_IncTick
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>while</span>(<span style=color:#ae81ff>1</span>)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>HAL_GPIO_WritePin</span>(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>HAL_Delay</span>(<span style=color:#ae81ff>500</span>);
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>HAL_GPIO_WritePin</span>(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>HAL_Delay</span>(<span style=color:#ae81ff>500</span>);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 或 
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>while</span>(<span style=color:#ae81ff>1</span>)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>HAL_GPIO_TogglePin</span>(GPIOC, GPIO_PIN_13);
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>HAL_Delay</span>(<span style=color:#ae81ff>500</span>);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=文件结构>文件结构</h2><p>首先我们看一下编译后的文件结构
+<img src=./images/elf_load_run_view.png alt></p><ul><li>ELF文件，代码编译后，首先会生成ELF文件，包含大量的调试信息，如文件头、段描述等，实际运行并不需要</li><li>BIN文件，截取ELF文件中的代码、数据，作为可执行文件下载到Flash中</li><li>运行阶段，系统启动时，首先将Flash中的.data段复制到SRAM中，初始化相应的堆栈和.bss段，之后再跳转到用户的main函数执行。</li></ul><p>最终用于下载到Flash中的文件结构如下。
+<img src=./images/bin_view.png alt>
+这里，可以计算得出，生成文件执行的最小资源需求</p><ul><li><code>Flash</code> = <code>Code（代码）</code> + <code>RO-data（常量）</code> + <code>RW-data（已初始化可读写）</code></li><li><code>RAM</code> = <code>RW-data（已初始化可读写）</code> + <code>ZI-data（未初始化可读写）</code></li></ul><h2 id=启动分析>启动分析</h2><p>编译阶段，通过链接脚本和启动文件，生成了可运行的BIN文件。在CMSIS对应的编译器目录可以找到下启动文件<code>startup_stm32f10x_md.s</code>，其中定义了.isr_vector段，开头部分包括两个值</p><ul><li><code>_estack</code> 栈顶地址，参考ld文件中定义</li><li><code>Reset_Handler</code>入口函数</li></ul><pre tabindex=0><code class=language-ld data-lang=ld>    .section    .isr_vector,&#34;a&#34;,%progbits
+    .type   g_pfnVectors, %object
+    .size   g_pfnVectors, .-g_pfnVectors
+
+g_pfnVectors:
+    .word   _estack
+    .word   Reset_Handler
+    .word   NMI_Handler
+    .word   HardFault_Handler
+</code></pre><p>链接脚本参考样本工程中的 <a href=https://github.com/STMicroelectronics/STM32CubeF1/blob/v1.8.5/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/linker/STM32F103XB_FLASH.ld>STM32F103XB_FLASH.ld</a> （拥有128K Flash、20K SRAM）。通过<code>SECTIONS</code>定义</p><ul><li>将<code>isr_vector</code>向量表放到FLASH区；启动时<code>_estack</code>恰好处在<code>0x0000 0000</code>地址</li><li>将<code>.data</code>数据段到RAM区；但启动前通过AT将其放到FLASH区，启动时需从FLASH加载到RAM</li></ul><pre tabindex=0><code class=language-ld data-lang=ld>/* Entry Point */
+ENTRY(Reset_Handler)
+
+/* Highest address of the user mode stack */
+_estack = 0x20004FFF;    /* end of RAM */
+
+/* Generate a link error if heap and stack don&#39;t fit into RAM */
+_Min_Heap_Size = 0x200;      /* required amount of heap  */
+_Min_Stack_Size = 0x400; /* required amount of stack */
+
+/* Specify the memory areas */
+MEMORY
+{
+  FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 128K
+  RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 20K
+}
+
+/* Define output sections */
+SECTIONS
+{
+  /* The startup code goes first into FLASH */
+  .isr_vector :
+  {
+    . = ALIGN(4);
+    KEEP(*(.isr_vector)) /* Startup code */
+    . = ALIGN(4);
+  } &gt;FLASH
+  ...
+    /* used by the startup to initialize data */
+  _sidata = LOADADDR(.data);
+
+  /* Initialized data sections goes into RAM, load LMA copy after code */
+  .data : 
+  {
+    . = ALIGN(4);
+    _sdata = .;        /* create a global symbol at data start */
+    *(.data)           /* .data sections */
+    *(.data*)          /* .data* sections */
+
+    . = ALIGN(4);
+    _edata = .;        /* define a global symbol at data end */
+  } &gt;RAM AT&gt; FLASH
+</code></pre><p>下面看一下复位阶段的处理逻辑，主要功能：</p><ul><li>将数据段从FLASH加载到RAM，将<code>LMA（Load Memory Address）</code>转变为<code>VMA（Virtual Memory Address）</code></li><li>将未初始化数据置0</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nasm data-lang=nasm><span style=display:flex><span>    <span style=color:#a6e22e>.section</span>    .text.Reset_Handler
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>.weak</span>   Reset_Handler
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>.type</span>   Reset_Handler, <span style=color:#f92672>%</span>function
+</span></span><span style=display:flex><span>Reset_Handler:  
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>将数据段从</span><span style=color:#a6e22e>Flash复制到SRAM</span> <span style=color:#f92672>*/</span>  
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>movs</span>  r1, <span style=color:#960050;background-color:#1e0010>#</span><span style=color:#ae81ff>0</span>                    <span style=color:#75715e>; 将r1置0, 数据偏移量</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>b</span> LoopCopyDataInit
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>CopyDataInit:                    <span style=color:#75715e>; 循环读取sidata + r1 的数据送到_sdata + r1</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ldr</span> r3, <span style=color:#960050;background-color:#1e0010>=</span>_sidata
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ldr</span> r3, [r3, r1]
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>str</span> r3, [r0, r1]
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>adds</span>    r1, r1, <span style=color:#960050;background-color:#1e0010>#</span><span style=color:#ae81ff>4</span>           <span style=color:#75715e>; r1 = r1 + 4</span>
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>LoopCopyDataInit:
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ldr</span> r0, <span style=color:#960050;background-color:#1e0010>=</span>_sdata
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ldr</span> r3, <span style=color:#960050;background-color:#1e0010>=</span>_edata
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>adds</span>    r2, r0, r1
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>cmp</span> r2, r3
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>bcc</span> CopyDataInit             <span style=color:#75715e>; 若sdata + r1 &lt; edata 继续拷贝</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ldr</span> r2, <span style=color:#960050;background-color:#1e0010>=</span>_sbss               <span style=color:#75715e>; r2 = _sbss</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>b</span>   LoopFillZerobss
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>将</span><span style=color:#a6e22e>sbss与ebss之间清零</span> <span style=color:#f92672>*/</span>  
+</span></span><span style=display:flex><span>FillZerobss:
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>movs</span>    r3, <span style=color:#960050;background-color:#1e0010>#</span><span style=color:#ae81ff>0</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>str</span> r3, [r2], <span style=color:#960050;background-color:#1e0010>#</span><span style=color:#ae81ff>4</span>             <span style=color:#75715e>; 将r2位置的数据清零, 且r2 = r2 + 4</span>
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>LoopFillZerobss:
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ldr</span> r3, <span style=color:#960050;background-color:#1e0010>=</span> _ebss
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>cmp</span> r2, r3
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>bcc</span> FillZerobss              <span style=color:#75715e>; 若 r2 &lt; ebss 继续清零</span>
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>调用系统初始化，设置系统时钟，位于</span><span style=color:#a6e22e>CMSIS的system_stm32f10x.c中</span><span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>bl</span>  SystemInit    
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>进入用户函数*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>bl</span>  main
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>bx</span>  lr
+</span></span></code></pre></div><p>通过上述启动过程，设置栈区、中断向量表、初始化数据区和变量，通过标准库中的<code>SystemInit</code>函数初始化系统时钟（位于<code>CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.c</code>），之后进入用户代码main函数。</p><h1 id=rtos>RTOS</h1><p>实时操作系统最大的特点是“实时性”，不追求任务完成的效率，而追求任务必须在规定时间内得到响应。常见比较知名的实时操作系统有:</p><ul><li>QNX 1982年发布，最早用于Intel 8088，后被黑莓收购，在汽车电子行业应用广泛。</li><li>VxWorks 1987年发布，主要面向航天和军工，如月球、火星探测，战斗机和导弹系统。</li><li>uC/OS 1992年发布，应用广泛，代码质量极高，开源、商业化收费，可用于飞行器控制。 Apache 2.0许可</li><li>RTEMS 1995年开源，最早用于导弹系统，后被欧洲航天局用于航天，不逊于VxWorks。GPL许可</li><li>FreeRTOS 2003年发布，开源，2018年被亚马逊收购，商业化版本为OpenRTOS。MIT许可</li><li>RT-Thread 2006年发布，开源，免费，国产精品，已用于航空航天。Apache 2.0许可</li><li>NuttX 2007年发布，开源，免费，遵循POSIX，2019年由小米推动进入Apache。Apache 2.0许可</li></ul><p>此外还有uCLinux、ThreadX、MbedOS、LiteOS等不一一列举。</p><h2 id=寄存器>寄存器</h2><p>聊操作系统，就无法避开寄存器。CM3含有16个32位寄存器：R0～R15寄存器</p><ul><li><code>R0～R7</code> 通用寄存器，可以由16位的Thumb指令访问</li><li><code>R8～R12</code> 通用寄存器，可以由32位的Thumb-2指令访问</li><li><code>R13</code> 堆栈指针寄存器，对应两个堆栈：MSP用于内核、异常处理和特权访问的代码，PSP用于常规用户代码</li><li><code>R14或LR</code> 连接寄存器，存储程序返回地址，子程序结束时，避免一次堆栈访问</li><li><code>R15或PC</code> 程序计数器</li></ul><p><img src=./images/register.jpg alt></p><p>以及若干特殊功能寄存器
+<img src=./images/xpsr.jpg alt></p><ul><li><p><code>xPSR</code>程序状态寄存器组，32位分为三个部分
+<img src=./images/psrs.jpg alt></p><ul><li><code>APSR</code>应用程序状态寄存器，<code>N</code>负，<code>Z</code>零，<code>C</code>进位/借位，<code>V</code>溢出，<code>Q</code>DSP指令是否溢出</li><li><code>EPSR</code>执行状态寄存器，<code>T</code>Thumb指令，<code>ICI/IT</code>用于多重传输指令的中止和继续</li><li><code>IPSR</code>中断号寄存器</li></ul></li><li><p><code>PRIMASK</code> 有1位，置1时，屏蔽除NMI和 HardFault 外所有中断，默认为0</p></li><li><p><code>FAULTMASK</code> 有1位，置1时，屏蔽除NMI外所有中断，默认为0</p></li><li><p><code>BASEPRI</code> 最多9位，屏蔽所有低于寄存器数值优先级的中断（值越大、优先级越低），默认为0表示关闭</p></li><li><p><code>CONTROL</code> 控制寄存器，设置操作模式和特权级别</p></li></ul><p>CM3处理器支持两种操作模式和两种访问级别</p><ul><li><code>Thread</code> 线程模式，执行普通代码程序</li><li><code>Handler</code> 处理器模式，执行中断异常处理程序</li><li><code>Privileged</code> 特权级，代码可以访问任意寄存器</li><li><code>Unprivileged</code> 用户级，除APSR外，禁止访问其他系统控制寄存器和特殊寄存器，否则产生HardFault异常</li></ul><p>系统Reset后，处理器运行在<code>Thread/Privileged</code>模式；一般来说OS运行在<code>Thread/Privileged</code>、Task运行在<code>Thread/Unprivileged</code>，中断运行在<code>Handler</code>；一旦进入Task模式，必须通过异常中断才能回到OS模式。</p><table><thead><tr><th>寄存器</th><th>作用</th></tr></thead><tbody><tr><td><code>CONTROL[1]</code></td><td>0=选择MSP；1=选择PSP；Handler模式只允许使用MSP；默认0</td></tr><tr><td><code>CONTROL[0]</code></td><td>0=特权级别的线程模式；1=用户级别的线程模式；Handler模式永远是特权级别；默认0</td></tr></tbody></table><h2 id=中断异常>中断异常</h2><p>Cortex-M3内核支持256个中断，其中包含了16个内核中断（异常）和240个外部中断，并且具有256级的可编程中断设置。
+<img src=./images/interrupt.jpg alt>
+其中<code>SysTick</code>是一个24位的系统节拍定时器，具有自动重载和溢出中断功能，可以由这个定时器获得一定的时间间隔。如果在SysTick位置放置一个函数，定时检查任务状态并进行上下文切换（将寄存器状态写入当前任务的控制块中，找到下一个可执行的任务并恢复寄存器状态），针对任务进行轮番执行，就可以实现分时调度的效果。
+<img src=./images/systick.jpg alt>
+<code>PendSV</code>是一个可挂起的系统服务，配置为最低优先级，它会在其他异常执行完毕后再执行，而且任何异常都可以中断它。用户代码可直接请求一个PendSV，让出CPU进行任务切换。或者某个IRQ正在活动并且被SysTick抢占，这时悬起一个 PendSV异常，等SysTick、ISR执行完毕后缓期执行上下文切换。这样可以避免中断对上下文切换的干扰。
+<img src=./images/pendsv.jpg alt>
+<code>SysTick</code>和<code>PendSV</code>是所有RTOS实现的核心。发生异常中断时，处理器会</p><p>自动入栈，硬件将PC、xPSR、R0、R1、R2、R3、R12、LR这8个寄存器的数据入栈
+取向量，从向量表<code>isr_vector</code>获取对应的中断服务程序入口
+更新堆栈指针SP（取决于中断时在用哪个SP）、更新IPSR、更新PC、更新LR为特殊的<code>EXC_RETURN</code>
+中断返回时，通过把<code>EXC_RETURN</code>送往PC实现，并间接更新CONTROL寄存器；出栈并清理中断寄存器
+<img src=./images/exec_return.jpg alt></p><h2 id=任务调度>任务调度</h2><p>这里我们以RT-Thread Nano为例，理解任务调度过程。项目见 <a href=https://github.com/RT-Thread/rtthread-nano>https://github.com/RT-Thread/rtthread-nano</a></p><h3 id=任务初始化>任务初始化</h3><p>任务在初始化时 通过<code>rt_hw_stack_init</code>初始化堆栈信息，见<code>libcpu/arm/cortex-m3/cpuport.c</code></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#66d9ef>struct</span> exception_stack_frame
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint32_t</span> r0;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint32_t</span> r1;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint32_t</span> r2;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint32_t</span> r3;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint32_t</span> r12;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint32_t</span> lr;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint32_t</span> pc;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint32_t</span> psr;
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>struct</span> stack_frame
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/* r4 ~ r11 register */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint32_t</span> r4;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint32_t</span> r5;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint32_t</span> r6;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint32_t</span> r7;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint32_t</span> r8;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint32_t</span> r9;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint32_t</span> r10;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint32_t</span> r11;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>struct</span> exception_stack_frame exception_stack_frame;
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>rt_uint8_t</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>rt_hw_stack_init</span>(<span style=color:#66d9ef>void</span>       <span style=color:#f92672>*</span>tentry,
+</span></span><span style=display:flex><span>                             <span style=color:#66d9ef>void</span>       <span style=color:#f92672>*</span>parameter,
+</span></span><span style=display:flex><span>                             <span style=color:#66d9ef>rt_uint8_t</span> <span style=color:#f92672>*</span>stack_addr,
+</span></span><span style=display:flex><span>                             <span style=color:#66d9ef>void</span>       <span style=color:#f92672>*</span>texit)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>struct</span> stack_frame <span style=color:#f92672>*</span>stack_frame;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>rt_uint8_t</span>         <span style=color:#f92672>*</span>stk;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>unsigned</span> <span style=color:#66d9ef>long</span>       i;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 栈顶指针按8字节对齐（为后续64位兼容）并向下移动一个stack_frame的偏移
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    stk  <span style=color:#f92672>=</span> stack_addr <span style=color:#f92672>+</span> <span style=color:#66d9ef>sizeof</span>(<span style=color:#66d9ef>rt_uint32_t</span>);
+</span></span><span style=display:flex><span>    stk  <span style=color:#f92672>=</span> (<span style=color:#66d9ef>rt_uint8_t</span> <span style=color:#f92672>*</span>)<span style=color:#a6e22e>RT_ALIGN_DOWN</span>((<span style=color:#66d9ef>rt_uint32_t</span>)stk, <span style=color:#ae81ff>8</span>);
+</span></span><span style=display:flex><span>    stk <span style=color:#f92672>-=</span> <span style=color:#66d9ef>sizeof</span>(<span style=color:#66d9ef>struct</span> stack_frame);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    stack_frame <span style=color:#f92672>=</span> (<span style=color:#66d9ef>struct</span> stack_frame <span style=color:#f92672>*</span>)stk;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 将栈帧全部设置为0xdeadbeef魔数，最早IBM RS/6000用来标记已分配未初始化的内存 */
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>for</span> (i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> <span style=color:#66d9ef>sizeof</span>(<span style=color:#66d9ef>struct</span> stack_frame) <span style=color:#f92672>/</span> <span style=color:#66d9ef>sizeof</span>(<span style=color:#66d9ef>rt_uint32_t</span>); i <span style=color:#f92672>++</span>)
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>        ((<span style=color:#66d9ef>rt_uint32_t</span> <span style=color:#f92672>*</span>)stack_frame)[i] <span style=color:#f92672>=</span> <span style=color:#ae81ff>0xdeadbeef</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 初始化异常时 自动保存的上下文数据
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    stack_frame<span style=color:#f92672>-&gt;</span>exception_stack_frame.r0  <span style=color:#f92672>=</span> (<span style=color:#66d9ef>unsigned</span> <span style=color:#66d9ef>long</span>)parameter; <span style=color:#75715e>/* r0 : argument */</span>
+</span></span><span style=display:flex><span>    stack_frame<span style=color:#f92672>-&gt;</span>exception_stack_frame.r1  <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;                        <span style=color:#75715e>/* r1 */</span>
+</span></span><span style=display:flex><span>    stack_frame<span style=color:#f92672>-&gt;</span>exception_stack_frame.r2  <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;                        <span style=color:#75715e>/* r2 */</span>
+</span></span><span style=display:flex><span>    stack_frame<span style=color:#f92672>-&gt;</span>exception_stack_frame.r3  <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;                        <span style=color:#75715e>/* r3 */</span>
+</span></span><span style=display:flex><span>    stack_frame<span style=color:#f92672>-&gt;</span>exception_stack_frame.r12 <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;                        <span style=color:#75715e>/* r12 */</span>
+</span></span><span style=display:flex><span>    stack_frame<span style=color:#f92672>-&gt;</span>exception_stack_frame.lr  <span style=color:#f92672>=</span> (<span style=color:#66d9ef>unsigned</span> <span style=color:#66d9ef>long</span>)texit;     <span style=color:#75715e>/* lr */</span>
+</span></span><span style=display:flex><span>    stack_frame<span style=color:#f92672>-&gt;</span>exception_stack_frame.pc  <span style=color:#f92672>=</span> (<span style=color:#66d9ef>unsigned</span> <span style=color:#66d9ef>long</span>)tentry;    <span style=color:#75715e>/* entry point, pc */</span>
+</span></span><span style=display:flex><span>    stack_frame<span style=color:#f92672>-&gt;</span>exception_stack_frame.psr <span style=color:#f92672>=</span> <span style=color:#ae81ff>0x01000000L</span>;              <span style=color:#75715e>/* PSR */</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/* return task&#39;s current stack address */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> stk;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p><img src=./images/stack.png alt></p><h3 id=优先级队列>优先级队列</h3><p>之后通过<code>rt_thread_start</code>和<code>rt_schedule_insert_thread</code>方法，根据任务的优先级将其放到优先级任务队列<code>rt_thread_priority_table</code>，数字小优先级越高。运行时通过ffs算法快速定位到最高优先级任务队列，并选取第一个任务执行。见<code>scheduler.c</code></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#66d9ef>rt_list_t</span> rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
+</span></span></code></pre></div><p><img src=./images/task_list.png alt></p><h3 id=启动调度器>启动调度器</h3><p>使用<code>rt_system_scheduler_start</code>启动调度时 ，将最高优先级的任务赋给<code>to_thread</code>，并切换上下文</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#66d9ef>void</span> <span style=color:#a6e22e>rt_system_scheduler_start</span>(<span style=color:#66d9ef>void</span>)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    ...
+</span></span><span style=display:flex><span>    highest_ready_priority <span style=color:#f92672>=</span> <span style=color:#a6e22e>__rt_ffs</span>(rt_thread_ready_priority_group) <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    to_thread <span style=color:#f92672>=</span> <span style=color:#a6e22e>rt_list_entry</span>(rt_thread_priority_table[highest_ready_priority].next,
+</span></span><span style=display:flex><span>                              <span style=color:#66d9ef>struct</span> rt_thread,
+</span></span><span style=display:flex><span>                              tlist);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    rt_current_thread <span style=color:#f92672>=</span> to_thread;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/* switch to new thread */</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>rt_hw_context_switch_to</span>((<span style=color:#66d9ef>rt_uint32_t</span>)<span style=color:#f92672>&amp;</span>to_thread<span style=color:#f92672>-&gt;</span>sp);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p><code>rt_hw_context_switch_to</code>用于启动第一次切换，见<code>libcpu/arm/coretx-m3/context_gcc.S</code></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nasm data-lang=nasm><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>/*</span>
+</span></span><span style=display:flex><span> <span style=color:#960050;background-color:#1e0010>*</span> <span style=color:#a6e22e>void</span> rt_hw_context_switch_to(rt_uint32 to)<span style=color:#75715e>;</span>
+</span></span><span style=display:flex><span> <span style=color:#960050;background-color:#1e0010>*</span> <span style=color:#a6e22e>R0</span> <span style=color:#f92672>--&gt;</span> to
+</span></span><span style=display:flex><span> <span style=color:#960050;background-color:#1e0010>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>.global</span> rt_hw_context_switch_to
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>.type</span> rt_hw_context_switch_to, <span style=color:#f92672>%</span>function
+</span></span><span style=display:flex><span>rt_hw_context_switch_to:
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>将</span><span style=color:#a6e22e>R0的值</span><span style=color:#960050;background-color:#1e0010>，即</span>to_thread<span style=color:#f92672>-&gt;</span>sp<span style=color:#960050;background-color:#1e0010>的地址保存到变量</span>rt_interrupt_to_thread <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     R1, <span style=color:#960050;background-color:#1e0010>=</span>rt_interrupt_to_thread
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>STR</span>     R0, [R1]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>设置</span> <span style=color:#a6e22e>rt_interrupt_from_thread</span><span style=color:#960050;background-color:#1e0010>=</span><span style=color:#ae81ff>0</span><span style=color:#960050;background-color:#1e0010>，表示不需要保存</span> from <span style=color:#960050;background-color:#1e0010>的上下文</span> <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     R1, <span style=color:#960050;background-color:#1e0010>=</span>rt_interrupt_from_thread
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>MOV</span>     R0, <span style=color:#960050;background-color:#1e0010>#</span><span style=color:#ae81ff>0</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>STR</span>     R0, [R1]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>设置标记</span> <span style=color:#a6e22e>rt_thread_switch_interrupt_flag</span>  <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     R1, <span style=color:#960050;background-color:#1e0010>=</span>rt_thread_switch_interrupt_flag
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>MOV</span>     R0, <span style=color:#960050;background-color:#1e0010>#</span><span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>STR</span>     R0, [R1]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>设置</span> <span style=color:#a6e22e>PendSV</span> <span style=color:#960050;background-color:#1e0010>优先级为最低</span> <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     R0, <span style=color:#960050;background-color:#1e0010>=</span>SHPR3
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     R1, <span style=color:#960050;background-color:#1e0010>=</span>PENDSV_PRI_LOWEST
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR.W</span>   R2, [R0,<span style=color:#960050;background-color:#1e0010>#</span><span style=color:#ae81ff>0</span>]             <span style=color:#f92672>/*</span> read <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ORR</span>     R1, R1, R2              <span style=color:#f92672>/*</span> modify <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>STR</span>     R1, [R0]                <span style=color:#f92672>/*</span> write<span style=color:#f92672>-</span>back <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>触发</span> <span style=color:#a6e22e>PendSV</span> <span style=color:#960050;background-color:#1e0010>异常</span> (<span style=color:#960050;background-color:#1e0010>将执行</span> PendSV <span style=color:#960050;background-color:#1e0010>异常处理</span>) <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     R0, <span style=color:#960050;background-color:#1e0010>=</span>ICSR 
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     R1, <span style=color:#960050;background-color:#1e0010>=</span>PENDSVSET_BIT
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>STR</span>     R1, [R0]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#66d9ef>rest</span>ore MSP <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     r0, <span style=color:#960050;background-color:#1e0010>=</span>SCB_VTOR
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     r0, [r0]
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     r0, [r0]
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>NOP</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>MSR</span>     msp, r0
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>开启全局中断和全局异常，之后将进入</span><span style=color:#a6e22e>PendSV异常处理</span> <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>CPSIE</span>   F
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>CPSIE</span>   I
+</span></span></code></pre></div><p><code>PendSV_Handler</code>负责具体的任务切换动作</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nasm data-lang=nasm><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#a6e22e>R0</span> <span style=color:#f92672>--&gt;</span> switch from thread stack
+</span></span><span style=display:flex><span> <span style=color:#960050;background-color:#1e0010>*</span> <span style=color:#a6e22e>R1</span> <span style=color:#f92672>--&gt;</span> switch to thread stack
+</span></span><span style=display:flex><span> <span style=color:#960050;background-color:#1e0010>*</span> <span style=color:#a6e22e>psr</span>, pc, LR, R12, R3, R2, R1, R0 are pushed into [from] stack
+</span></span><span style=display:flex><span> <span style=color:#960050;background-color:#1e0010>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>.global</span> PendSV_Handler
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>.type</span> PendSV_Handler, <span style=color:#f92672>%</span>function
+</span></span><span style=display:flex><span>PendSV_Handler:
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>关闭全局中断</span> <span style=color:#960050;background-color:#1e0010>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>MRS</span>     R2, PRIMASK
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>CPSID</span>   I
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>检查标记</span> <span style=color:#a6e22e>rt_thread_switch_interrupt_flag</span><span style=color:#960050;background-color:#1e0010>，为</span><span style=color:#ae81ff>0</span><span style=color:#960050;background-color:#1e0010>表示已处理</span> <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     R0, <span style=color:#960050;background-color:#1e0010>=</span>rt_thread_switch_interrupt_flag
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     R1, [R0]
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>CBZ</span>     R1, pendsv_exit         <span style=color:#f92672>/*</span> pendsv aLReady handled <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>清零标记</span> <span style=color:#a6e22e>rt_thread_switch_interrupt_flag</span><span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>MOV</span>     R1, <span style=color:#960050;background-color:#1e0010>#</span><span style=color:#ae81ff>0</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>STR</span>     R1, [R0]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>检查</span><span style=color:#a6e22e>rt_interrupt_from_thread</span> <span style=color:#960050;background-color:#1e0010>是否有前序任务</span> <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     R0, <span style=color:#960050;background-color:#1e0010>=</span>rt_interrupt_from_thread
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     R1, [R0]
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>CBZ</span>     R1, switch_to_thread    <span style=color:#f92672>/*</span> skip register save at the first time <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>若有前序任务,</span> <span style=color:#960050;background-color:#1e0010>保存</span><span style=color:#a6e22e>R4</span><span style=color:#f92672>-</span>R11的值<span style=color:#960050;background-color:#1e0010>，并更新</span>SP <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>MRS</span>     R1, PSP                 <span style=color:#f92672>/*</span> get from thread stack pointer <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>STMFD</span>   R1<span style=color:#960050;background-color:#1e0010>!</span>, <span style=color:#960050;background-color:#1e0010>{</span>R4 <span style=color:#f92672>-</span> R11<span style=color:#960050;background-color:#1e0010>}</span>         <span style=color:#f92672>/*</span> push R4 <span style=color:#f92672>-</span> R11 register <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     R0, [R0]
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>STR</span>     R1, [R0]                <span style=color:#f92672>/*</span> update from thread stack pointer <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>switch_to_thread:
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     R1, <span style=color:#960050;background-color:#1e0010>=</span>rt_interrupt_to_thread
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     R1, [R1]
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDR</span>     R1, [R1]                <span style=color:#f92672>/*</span> load thread stack pointer <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>LDMFD</span>   R1<span style=color:#960050;background-color:#1e0010>!</span>, <span style=color:#960050;background-color:#1e0010>{</span>R4 <span style=color:#f92672>-</span> R11<span style=color:#960050;background-color:#1e0010>}</span>         <span style=color:#f92672>/*</span> pop R4 <span style=color:#f92672>-</span> R11 register <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>MSR</span>     PSP, R1                 <span style=color:#f92672>/*</span> update stack pointer <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>pendsv_exit:
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>恢复全局中断</span> <span style=color:#960050;background-color:#1e0010>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>MSR</span>     PRIMASK, R2
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#960050;background-color:#1e0010>/*</span> <span style=color:#960050;background-color:#1e0010>标记</span><span style=color:#a6e22e>LR</span><span style=color:#960050;background-color:#1e0010>，返回后使用</span> PSP <span style=color:#f92672>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ORR</span>     LR, LR, <span style=color:#960050;background-color:#1e0010>#</span><span style=color:#ae81ff>0x04</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>BX</span>      LR
+</span></span></code></pre></div><p><img src=./images/pendsv_from_to.png alt>
+之后系统便进入<code>to_thread</code>执行。</p><h3 id=时间片轮转>时间片轮转</h3><p><code>board.c</code>中定义了<code>SysTick_Handler</code>，系统运行过程中，将不断减少当前任务的<code>remaining_tick</code>，当变成0时，重制时间片并通过<code>rt_thread_yield</code>让出处理器。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#66d9ef>void</span> <span style=color:#a6e22e>SysTick_Handler</span>(<span style=color:#66d9ef>void</span>)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/* enter interrupt */</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>rt_interrupt_enter</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>rt_tick_increase</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/* leave interrupt */</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>rt_interrupt_leave</span>();
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>void</span> <span style=color:#a6e22e>rt_tick_increase</span>(<span style=color:#66d9ef>void</span>)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    ...
+</span></span><span style=display:flex><span>    <span style=color:#f92672>--</span> <span style=color:#66d9ef>thread</span><span style=color:#f92672>-&gt;</span>remaining_tick;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (<span style=color:#66d9ef>thread</span><span style=color:#f92672>-&gt;</span>remaining_tick <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>)
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>        <span style=color:#75715e>/* change to initialized tick */</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>thread</span><span style=color:#f92672>-&gt;</span>remaining_tick <span style=color:#f92672>=</span> <span style=color:#66d9ef>thread</span><span style=color:#f92672>-&gt;</span>init_tick;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e>/* yield */</span>
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>rt_thread_yield</span>();
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p><code>rt_thread_yield</code>在将任务放回队尾后，调用<code>rt_schedule</code>进行一次任务切换；此时任务切换时，会将<code>rt_current_thread</code>赋值给<code>from_thread</code>，进入<code>PendSV_Handler</code>时触发上下文保存。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#66d9ef>void</span> <span style=color:#a6e22e>rt_schedule</span>(<span style=color:#66d9ef>void</span>)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    ...
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/* get switch to thread */</span>
+</span></span><span style=display:flex><span>    to_thread <span style=color:#f92672>=</span> <span style=color:#a6e22e>rt_list_entry</span>(rt_thread_priority_table[highest_ready_priority].next,
+</span></span><span style=display:flex><span>                              <span style=color:#66d9ef>struct</span> rt_thread,
+</span></span><span style=display:flex><span>                              tlist);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/* if the destination thread is not the same as current thread */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (to_thread <span style=color:#f92672>!=</span> rt_current_thread)
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>        rt_current_priority <span style=color:#f92672>=</span> (<span style=color:#66d9ef>rt_uint8_t</span>)highest_ready_priority;
+</span></span><span style=display:flex><span>        from_thread         <span style=color:#f92672>=</span> rt_current_thread;
+</span></span><span style=display:flex><span>        rt_current_thread   <span style=color:#f92672>=</span> to_thread;
+</span></span><span style=display:flex><span>        ...
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>rt_hw_context_switch</span>((<span style=color:#66d9ef>rt_ubase_t</span>)<span style=color:#f92672>&amp;</span>from_thread<span style=color:#f92672>-&gt;</span>sp,
+</span></span><span style=display:flex><span>                             (<span style=color:#66d9ef>rt_ubase_t</span>)<span style=color:#f92672>&amp;</span>to_thread<span style=color:#f92672>-&gt;</span>sp);
+</span></span><span style=display:flex><span>    ...
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h1 id=小结>小结</h1><p>通过上述分析，我们已经理解了一个RTOS实现的基本思路</p><ul><li>任务初始化，定义任务的函数入口、堆栈空间、优先级、时间片大小</li><li>启用任务调度，将任务挂载到调度队列上，触发一个PendSV异常，从main切换到目标任务代码</li><li>通过系统时钟，不断减少当前任务的时间片，消耗殚尽时，让出处理器，并通过PendSV进入下一个高优任务。</li></ul><h1 id=思考题>思考题</h1><p>如何管理任务的堆栈空间</p><h1 id=扩展阅读>扩展阅读</h1><ul><li>《<a href=https://awesome-programming-books.github.io/computer-system/%E7%BC%96%E7%A0%81%EF%BC%9A%E9%9A%90%E5%8C%BF%E5%9C%A8%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%BD%AF%E7%A1%AC%E4%BB%B6%E8%83%8C%E5%90%8E%E7%9A%84%E8%AF%AD%E8%A8%80.pdf>编码</a>》Charles Petzold 理解时钟、算术单元、程序计数器、寄存器实现原理</li><li>《<a href=https://github.com/yuanyiyixi/book/blob/master/C-book/linkers%20and%20loaders-%E4%B8%AD%E6%96%87%E7%89%88.pdf>Linker & Loader</a>》Morgan Kaufmann 理解程序编译、链接过程，文件结构、执行过程</li><li>《<a href=http://wen00072.github.io/blog/2014/12/14/study-on-the-linker-script-0-table-of-contents/>GNU ld手册</a>》理解链接文件结构，并进一步掌握语法及文件编写</li><li>《<a href=https://www.waveshare.net/w/upload/1/1f/Cortex_M3_Definitive_Guide(CN).pdf>Cortex-M3权威指南</a>》理解芯片内部结构、特性及工作原理，掌握汇编指令，<strong>必读</strong></li><li>《<a href=https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-arm-based-32-bit-mcus-stmicroelectronics.pdf>STM32技术参考手册(RM0008)</a>》针对STM32F10x系列芯片内部功能、寄存器完整定义</li><li>《<a href=https://d1.amobbs.com/bbs_upload782111/files_49/ourdev_707767G6M1YM.pdf>嵌入式硬件设计</a>》Catsoulis, John 理解硬件系统以及外围设备的设计方法，<strong>力荐</strong></li><li>《<a href=https://book.douban.com/subject/20389564/>嵌入式实时操作系统μC/OS-III</a>》Jean J.Labrosse 理解成熟的嵌入式系统的实现原理，<strong>力荐</strong></li></ul></main><footer><hr>© <a href=https://github.com/firebat>firebat</a> 2020 &ndash; 2025</footer></body></html>
