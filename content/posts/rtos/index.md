@@ -275,7 +275,7 @@ clean:
 	rm -f *.o *.elf *.bin
 ```
 链接文件内容如下，即将代码段放到`0x0`的起始位置。
-```ld
+```linker-script
 SECTIONS {
     . = 0x0;
     .text : {
@@ -344,7 +344,7 @@ while(1)
 
 - `_estack` 栈顶地址，参考ld文件中定义
 - `Reset_Handler`入口函数
-```ld
+```linker-script
     .section    .isr_vector,"a",%progbits
     .type   g_pfnVectors, %object
     .size   g_pfnVectors, .-g_pfnVectors
@@ -358,7 +358,7 @@ g_pfnVectors:
 链接脚本参考样本工程中的 [STM32F103XB_FLASH.ld](https://github.com/STMicroelectronics/STM32CubeF1/blob/v1.8.5/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/linker/STM32F103XB_FLASH.ld) （拥有128K Flash、20K SRAM）。通过`SECTIONS`定义
 - 将`isr_vector`向量表放到FLASH区；启动时`_estack`恰好处在`0x0000 0000`地址
 - 将`.data`数据段到RAM区；但启动前通过AT将其放到FLASH区，启动时需从FLASH加载到RAM
-```ld
+```linker-script
 /* Entry Point */
 ENTRY(Reset_Handler)
 
@@ -406,7 +406,7 @@ SECTIONS
 
 - 将数据段从FLASH加载到RAM，将`LMA（Load Memory Address）`转变为`VMA（Virtual Memory Address）`
 - 将未初始化数据置0
-```nasm
+```armasm
     .section    .text.Reset_Handler
     .weak   Reset_Handler
     .type   Reset_Handler, %function
@@ -606,7 +606,7 @@ void rt_system_scheduler_start(void)
 }
 ```
 `rt_hw_context_switch_to`用于启动第一次切换，见`libcpu/arm/coretx-m3/context_gcc.S`
-```nasm
+```armasm
 /*
  * void rt_hw_context_switch_to(rt_uint32 to);
  * R0 --> to
@@ -652,7 +652,7 @@ rt_hw_context_switch_to:
     CPSIE   I
 ```
 `PendSV_Handler`负责具体的任务切换动作
-```nasm
+```armasm
 /* R0 --> switch from thread stack
  * R1 --> switch to thread stack
  * psr, pc, LR, R12, R3, R2, R1, R0 are pushed into [from] stack
