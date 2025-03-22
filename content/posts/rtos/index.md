@@ -285,9 +285,9 @@ SECTIONS {
 ```
 ## 下载烧录
 代码下载有多种仿真器可选，如德国SEGGER公司的JLink，ST意法半导体的STLink，以及开源的DAPLink（带SWD和串口，推荐）。这里选用STLink为例，核心板支持4针的SWD协议（Serial Wire Debugging 串口调试接口），按照定义连接对应的端口即可：VCC、GND、SWDCLK、SWDIO。
-![](./images/stlink-port.jpg){width=60%}
-![](./images/stlink-demo.jpg){width=60%}
-使用STLinkUtility等工具，将main.bin下载到Flash中，由于没有引用任何外部代码库，文件只有108字节。其中
+![](./images/stlink-port.jpg)
+![](./images/stlink-demo.jpg)
+使用STLinkUtility等工具，将`main.bin`下载到Flash中，由于没有引用任何外部代码库，文件只有108字节。其中
 - 0-3字节`2000 1000`定义了栈顶SP取值。由于代码中仅1个变量，该值可以更小
 - 4-7字节`0000 0009`定义了第一条指令PC取值，即两条`__asm__`代码后面的`main`
 ![](./images/stm32-utility.jpg)
