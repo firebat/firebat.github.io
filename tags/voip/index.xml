@@ -8,7 +8,7 @@ P2P技术的发展，产生了各种网络共享下载的应用，如Napster、G
 &lt;p>作为互联网从业的研发人员，我们有必要了解一下，这一切是怎么发生的，其内部是如何实现的。&lt;/p>
 &lt;h1 id="网络">网络&lt;/h1>
 &lt;p>因为互联网的快速发展，联网设备数量远超设计者的最初设想，整个IPv4的地址范围不够用，因此引入了NAT技术。NAT（Net Address Translate）网络地址转换，简单来说就是在路由层记录私有网络和公有网络的IP映射关系，并进行IP数据包的修改，实现了公网IP复用的技术。
-&lt;img src="./images/NAT_Concept-en.svg" alt="NAT">{width=90%}&lt;/p>
+&lt;img src="./images/NAT_Concept-en.svg" alt="NAT">&lt;/p>
 &lt;p>根据路由器对私网IP端口到公网IP端口的映射方式，RFC3489中将NAT分为四种类型&lt;/p>
 &lt;ul>
 &lt;li>Full Cone NAT（全锥型），同一内部IP端口发出的请求，被映射到相同的外部IP端口；任何外部主机通过向映射的地址发送报文，实现与内部主机通信。&lt;/li>
