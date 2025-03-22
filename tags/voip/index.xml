@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Voip on firebat</title><link>https://firebat.github.io/tags/voip/</link><description>Recent content in Voip on firebat</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 28 Feb 2025 04:04:38 -0400</lastBuildDate><atom:link href="https://firebat.github.io/tags/voip/index.xml" rel="self" type="application/rss+xml"/><item><title>浅析Voip原理</title><link>https://firebat.github.io/posts/voip/</link><pubDate>Fri, 28 Feb 2025 04:04:38 -0400</pubDate><guid>https://firebat.github.io/posts/voip/</guid><description>&lt;p>&lt;img src="./images/webrtc-comprehensive.png" alt="WebRTC">
+P2P技术的发展，产生了各种网络共享下载的应用，如Napster、Gnutella；音视频编码算法的进步、硬件性能的提升以及移动互联网的发展，在我们身边诞生出形形色色的网络应用，如网络电话、网络会议、网络直播等，同时也带来了各种商业上的成功。&lt;/p>
+&lt;ul>
+&lt;li>Skype 2003年诞生的一款即时通信应用软件，可通过互联网进行语音和视频通话，2011年微软85亿美元收购。&lt;/li>
+&lt;li>FaceTime 2010年苹果公司的一种视频通话应用软件，采用多种开放协议，ACC与H.264的音视频编码。&lt;/li>
+&lt;li>WebRTC 2011年Google发起的开源实时通讯解决方案，支持浏览器集成。&lt;/li>
+&lt;/ul>
+&lt;p>作为互联网从业的研发人员，我们有必要了解一下，这一切是怎么发生的，其内部是如何实现的。&lt;/p>
+&lt;h1 id="网络">网络&lt;/h1>
+&lt;p>因为互联网的快速发展，联网设备数量远超设计者的最初设想，整个IPv4的地址范围不够用，因此引入了NAT技术。NAT（Net Address Translate）网络地址转换，简单来说就是在路由层记录私有网络和公有网络的IP映射关系，并进行IP数据包的修改，实现了公网IP复用的技术。
+&lt;img src="./images/NAT_Concept-en.svg" alt="NAT">{width=90%}&lt;/p>
+&lt;p>根据路由器对私网IP端口到公网IP端口的映射方式，RFC3489中将NAT分为四种类型&lt;/p>
+&lt;ul>
+&lt;li>Full Cone NAT（全锥型），同一内部IP端口发出的请求，被映射到相同的外部IP端口；任何外部主机通过向映射的地址发送报文，实现与内部主机通信。&lt;/li>
+&lt;li>Restricted Cone NAT（受限锥型），发出同上；当且仅当内部主机之前向公网主机发送过报文，公网主机才能与其通信。&lt;/li>
+&lt;li>Port Restricted Cone NAT（端口受限锥型）发出同上；限制条件包括端口。&lt;/li>
+&lt;li>Symmetric NAT（对称型）所有内部IP端口向特定目的IP端口发出的请求，都被映射成同一个IP和端口。只有接收到数据的公网主机才能反向与内部主机通信。
+&lt;img src="./images/nat-type.png" alt="NAT类型">&lt;/li>
+&lt;/ul>
+&lt;h1 id="类型检测">类型检测&lt;/h1>
+&lt;p>要检测当前主机所在的NAT类型，需要在云端部署一个服务，包含两个IP和端口
+&lt;img src="./images/detect-no-nat.jpg" alt="无NAT">&lt;/p>
+&lt;ul>
+&lt;li>客户端向服务器发送请求，服务器将观察到的地址响应给客户端&lt;/li>
+&lt;li>如果响应中的地址与发送地址一致，说明客户端在公网，没有NAT。
+&lt;img src="./images/detect-cone-sym.jpg" alt="对称性">&lt;/li>
+&lt;li>客户端向服务端第二个IP地址再发送一个请求&lt;/li>
+&lt;li>如果两次响应中的公网地址不一致，说明是对称型
+&lt;img src="./images/detect-cone-full.jpg" alt="全锥型">&lt;/li>
+&lt;li>客户端向服务器第一个IP地址发送请求，服务端用另一个IP地址返回&lt;/li>
+&lt;li>如果可以收到，说明是全锥型
+&lt;img src="./images/detect-cone-restricted.jpg" alt="受限锥型">&lt;/li>
+&lt;li>客户端向服务器再发送一个请求，服务器用同一IP的第二个端口响应&lt;/li>
+&lt;li>如果可以收到，说明是受限锥型；否则为端口受限锥型。&lt;/li>
+&lt;/ul>
+&lt;h1 id="nat穿透">NAT穿透&lt;/h1>
+&lt;p>NAT技术解决了IPv4不够用的问题，同时也导致TCP/IP通信困难，外部主机无法主动与内部主机通信，所有服务不得不采用C/S架构，导致高额的带宽成本。为了节约网络带宽成本，将客户端也作为资源提供方减少对服务的访问，因此产生了P2P技术。即Peer-to-Peer，点对点技术，其中最关键的技术之一，就是NAT设备穿透，俗称打洞。&lt;/p>
+&lt;h2 id="反向链接">反向链接&lt;/h2>
+&lt;p>通信双方只有一个节点位于NAT中
+&lt;img src="./images/nat-reversal-connection.jpg" alt="">&lt;/p>
+&lt;ul>
+&lt;li>A请求B时，可以直接发起&lt;/li>
+&lt;li>B请求A时，通过S转发给A一个连接请求，A再发起请求&lt;/li>
+&lt;/ul>
+&lt;h2 id="简单场景">简单场景&lt;/h2>
+&lt;p>双方位于同一个NAT设备之后
+&lt;img src="./images/hole-punch-simple.jpg" alt="">&lt;/p>
+&lt;ul>
+&lt;li>A与B分别与S建立连接，S记录下双方的内网信息，以及自己观察到的公网信息；&lt;/li>
+&lt;li>A向S发起连接B的请求；S分别向双方发送对方的公网和内网地址；&lt;/li>
+&lt;li>A和B收到信息后，同时向对方发起连接；推荐优先使用内网地址，直接通过交换机通信，速度快。也可以使用公网地址，需要网关支持Hairpin技术。&lt;/li>
+&lt;/ul>
+&lt;h2 id="普遍场景">普遍场景&lt;/h2>
+&lt;p>双方位于不同的NAT设备之后
+&lt;img src="./images/hole-punch-normal.jpg" alt="">&lt;/p>
+&lt;ul>
+&lt;li>A与B分别与S建立连接，S记录下双方的内网信息，以及自己观察到的公网信息；&lt;/li>
+&lt;li>A向S发起连接B的请求；S分别向双方发送对方的公网和内网地址；&lt;/li>
+&lt;li>A和B的同时使用对方的公网地址发送数据包&lt;/li>
+&lt;/ul>
+&lt;h3 id="双方为锥型">双方为锥型&lt;/h3>
+&lt;p>&lt;img src="./images/punch-cone.png" alt="">&lt;/p>
+&lt;ul>
+&lt;li>A向B发送打洞包建立映射&lt;/li>
+&lt;li>B向A发送打洞包建立映射&lt;/li>
+&lt;li>打洞成功&lt;/li>
+&lt;/ul>
+&lt;h3 id="对称型和普通锥形全锥型受限锥型">对称型和普通锥形（全锥型、受限锥型）&lt;/h3>
+&lt;p>&lt;img src="./images/punch-normal.png" alt="">&lt;/p>
+&lt;ul>
+&lt;li>A使用PA2向B发送打洞包，建立映射&lt;/li>
+&lt;li>B使用PB1向PA1发送打洞包，建立映射&lt;/li>
+&lt;li>B通过PB1收到A的打洞包，根据对方的NAT类型，后续使用PA2与A连接&lt;/li>
+&lt;li>打洞成功&lt;/li>
+&lt;/ul>
+&lt;h3 id="对称型和端口受限型">对称型和端口受限型&lt;/h3>
+&lt;ul>
+&lt;li>流程同上&lt;/li>
+&lt;li>由于端口受限，B无法在PB1上接收PA2发来的打洞包&lt;/li>
+&lt;li>打洞失败&lt;/li>
+&lt;/ul>
+&lt;h3 id="双方都是对称型">双方都是对称型&lt;/h3>
+&lt;ul>
+&lt;li>场景更严格，原理同上，无法打洞&lt;/li>
+&lt;/ul>
+&lt;p>判断网络是否能够打通，有一种简单的计算方法&lt;/p></description></item></channel></rss>

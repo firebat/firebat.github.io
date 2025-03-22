@@ -1,0 +1,207 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>浅析Voip原理 | firebat</title>
+<link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/tags/>Tags</a></li><li><a href=/index.xml>Subscribe</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>浅析Voip原理</span></h1><h2 class=date>2025/02/28</h2></div><main><p><img src=./images/webrtc-comprehensive.png alt=WebRTC>
+P2P技术的发展，产生了各种网络共享下载的应用，如Napster、Gnutella；音视频编码算法的进步、硬件性能的提升以及移动互联网的发展，在我们身边诞生出形形色色的网络应用，如网络电话、网络会议、网络直播等，同时也带来了各种商业上的成功。</p><ul><li>Skype 2003年诞生的一款即时通信应用软件，可通过互联网进行语音和视频通话，2011年微软85亿美元收购。</li><li>FaceTime 2010年苹果公司的一种视频通话应用软件，采用多种开放协议，ACC与H.264的音视频编码。</li><li>WebRTC 2011年Google发起的开源实时通讯解决方案，支持浏览器集成。</li></ul><p>作为互联网从业的研发人员，我们有必要了解一下，这一切是怎么发生的，其内部是如何实现的。</p><h1 id=网络>网络</h1><p>因为互联网的快速发展，联网设备数量远超设计者的最初设想，整个IPv4的地址范围不够用，因此引入了NAT技术。NAT（Net Address Translate）网络地址转换，简单来说就是在路由层记录私有网络和公有网络的IP映射关系，并进行IP数据包的修改，实现了公网IP复用的技术。
+<img src=./images/NAT_Concept-en.svg alt=NAT>{width=90%}</p><p>根据路由器对私网IP端口到公网IP端口的映射方式，RFC3489中将NAT分为四种类型</p><ul><li>Full Cone NAT（全锥型），同一内部IP端口发出的请求，被映射到相同的外部IP端口；任何外部主机通过向映射的地址发送报文，实现与内部主机通信。</li><li>Restricted Cone NAT（受限锥型），发出同上；当且仅当内部主机之前向公网主机发送过报文，公网主机才能与其通信。</li><li>Port Restricted Cone NAT（端口受限锥型）发出同上；限制条件包括端口。</li><li>Symmetric NAT（对称型）所有内部IP端口向特定目的IP端口发出的请求，都被映射成同一个IP和端口。只有接收到数据的公网主机才能反向与内部主机通信。
+<img src=./images/nat-type.png alt=NAT类型></li></ul><h1 id=类型检测>类型检测</h1><p>要检测当前主机所在的NAT类型，需要在云端部署一个服务，包含两个IP和端口
+<img src=./images/detect-no-nat.jpg alt=无NAT></p><ul><li>客户端向服务器发送请求，服务器将观察到的地址响应给客户端</li><li>如果响应中的地址与发送地址一致，说明客户端在公网，没有NAT。
+<img src=./images/detect-cone-sym.jpg alt=对称性></li><li>客户端向服务端第二个IP地址再发送一个请求</li><li>如果两次响应中的公网地址不一致，说明是对称型
+<img src=./images/detect-cone-full.jpg alt=全锥型></li><li>客户端向服务器第一个IP地址发送请求，服务端用另一个IP地址返回</li><li>如果可以收到，说明是全锥型
+<img src=./images/detect-cone-restricted.jpg alt=受限锥型></li><li>客户端向服务器再发送一个请求，服务器用同一IP的第二个端口响应</li><li>如果可以收到，说明是受限锥型；否则为端口受限锥型。</li></ul><h1 id=nat穿透>NAT穿透</h1><p>NAT技术解决了IPv4不够用的问题，同时也导致TCP/IP通信困难，外部主机无法主动与内部主机通信，所有服务不得不采用C/S架构，导致高额的带宽成本。为了节约网络带宽成本，将客户端也作为资源提供方减少对服务的访问，因此产生了P2P技术。即Peer-to-Peer，点对点技术，其中最关键的技术之一，就是NAT设备穿透，俗称打洞。</p><h2 id=反向链接>反向链接</h2><p>通信双方只有一个节点位于NAT中
+<img src=./images/nat-reversal-connection.jpg alt></p><ul><li>A请求B时，可以直接发起</li><li>B请求A时，通过S转发给A一个连接请求，A再发起请求</li></ul><h2 id=简单场景>简单场景</h2><p>双方位于同一个NAT设备之后
+<img src=./images/hole-punch-simple.jpg alt></p><ul><li>A与B分别与S建立连接，S记录下双方的内网信息，以及自己观察到的公网信息；</li><li>A向S发起连接B的请求；S分别向双方发送对方的公网和内网地址；</li><li>A和B收到信息后，同时向对方发起连接；推荐优先使用内网地址，直接通过交换机通信，速度快。也可以使用公网地址，需要网关支持Hairpin技术。</li></ul><h2 id=普遍场景>普遍场景</h2><p>双方位于不同的NAT设备之后
+<img src=./images/hole-punch-normal.jpg alt></p><ul><li>A与B分别与S建立连接，S记录下双方的内网信息，以及自己观察到的公网信息；</li><li>A向S发起连接B的请求；S分别向双方发送对方的公网和内网地址；</li><li>A和B的同时使用对方的公网地址发送数据包</li></ul><h3 id=双方为锥型>双方为锥型</h3><p><img src=./images/punch-cone.png alt></p><ul><li>A向B发送打洞包建立映射</li><li>B向A发送打洞包建立映射</li><li>打洞成功</li></ul><h3 id=对称型和普通锥形全锥型受限锥型>对称型和普通锥形（全锥型、受限锥型）</h3><p><img src=./images/punch-normal.png alt></p><ul><li>A使用PA2向B发送打洞包，建立映射</li><li>B使用PB1向PA1发送打洞包，建立映射</li><li>B通过PB1收到A的打洞包，根据对方的NAT类型，后续使用PA2与A连接</li><li>打洞成功</li></ul><h3 id=对称型和端口受限型>对称型和端口受限型</h3><ul><li>流程同上</li><li>由于端口受限，B无法在PB1上接收PA2发来的打洞包</li><li>打洞失败</li></ul><h3 id=双方都是对称型>双方都是对称型</h3><ul><li>场景更严格，原理同上，无法打洞</li></ul><p>判断网络是否能够打通，有一种简单的计算方法</p><pre tabindex=0><code>1. Full Cone
+2. Restricted Cone
+3. Port Restricted Cone
+4. Symmetric
+
+若两端的NAT类型序号之和&lt;=6，可以穿透；否则不可穿透。
+</code></pre><h2 id=典型场景>典型场景</h2><p>双方位于多层NAT设备之后，上层设备由网络提供商（ISP）提供，下层是家用路由器。
+<img src=./images/hole-punch-classic.jpg alt>
+这里，只有服务器S和NAT C拥有真正的公网地址，而NAT A和B的公网地址实际为ISP设定的“伪公网”地址。由于S无法观察到这些“伪公网”地址，所以A和B无法通过NAT A直接与NAT B连接，即使通过特殊手段可以拿到也不建议使用，因为极易造成地址域重复冲突。A和B只能通过NAT C进行打洞转发。</p><h1 id=stun服务>STUN服务</h1><p>RFC3489 - Simple Traversal of UDP Through NAT 或 RFC5389 - Session Traversal Utilities for NAT
+上述NAT穿透的S就是STUN服务，它允许客户端发现与公网之间的NAT类型，以及NAT给其分配的公网地址和端口，默认端口为3478。
+<img src=./images/stun-server.jpg alt></p><pre tabindex=0><code>$ stunclient stun1.l.google.com
+Binding test: success
+Local address: 10.4.39.11:59092
+Mapped address: 139.177.225.224:59092
+</code></pre><h1 id=turn服务>TURN服务</h1><p>RFC5766 - Traversal Using Relays around NAT：STUN的中继扩展
+通过STUN服务，A和B可以发现对方，但因为NAT类型或防火墙的原因不一定能够连接成功，这时就需要引入TURN服务。在云端假设一台中继服务，它负责双方数据的转发。当他们进入到同一个房间之后，TURN就会对房间里的所有人进行转发。
+<img src=./images/turn.jpeg alt=Turn></p><ul><li>反射地址 Server-Reflexive Transport Address，即NAT分配的公网地址</li><li>中继地址 Relayed Transport Address，即TURN服务为客户端分配的代理地址</li></ul><h2 id=分配事务>分配事务</h2><ul><li>客户端向中继服务发送一个Allocate请求，服务器为客户端分配一个公网的中继地址。</li><li>客户端定时向服务发送Refresh请求，用于保活。</li></ul><pre tabindex=0><code>  TURN                                 TURN           Peer          Peer
+  client                               server          A             B
+    |-- Allocate request ---------------&gt;|             |             |
+    |                                    |             |             |
+    |&lt;--------------- Allocate failure --|             |             |
+    |                 (401 Unauthorized) |             |             |
+    |                                    |             |             |
+    |-- Allocate request ---------------&gt;|             |             |
+    |                                    |             |             |
+    |&lt;---------- Allocate success resp --|             |             |
+    |            (192.0.2.15:50000)      |             |             |
+    //                                   //            //            //
+    |                                    |             |             |
+    |-- Refresh request ----------------&gt;|             |             |
+    |                                    |             |             |
+    |&lt;----------- Refresh success resp --|             |             |
+    |                                    |             |             |
+</code></pre><h2 id=发送数据>发送数据</h2><p>开启中继地址后，客户端首先完成鉴权，检查是否有发送权限，之后就可以发送数据了。
+客户端使用Send信令发送数据到服务端，服务端接收解包后，将内容数据转发给对端。Send数据包包含</p><ul><li>XOR-PEER-ADDRESS 对端地址（对方的公网地址）</li><li>DATA 内容数据
+为了避免攻击，使用Send/Data发送数据前需要完成许可验证，否则数据包将被丢弃</li></ul><pre tabindex=0><code>  TURN                                 TURN           Peer          Peer
+  client                               server          A             B
+    |                                    |             |             |
+    |-- CreatePermission req (Peer A) --&gt;|             |             |
+    |&lt;-- CreatePermission success resp --|             |             |
+    |                                    |             |             |
+    |--- Send ind (Peer A)--------------&gt;|             |             |
+    |                                    |=== data ===&gt;|             |
+    |                                    |             |             |
+    |                                    |&lt;== data ====|             |
+    |&lt;-------------- Data ind (Peer A) --|             |             |
+    |                                    |             |             |
+    |                                    |             |             |
+    |--- Send ind (Peer B)--------------&gt;|             |             |
+    |                                    | dropped     |             |
+    |                                    |             |             |
+    |                                    |&lt;== data ==================|
+    |                            dropped |             |             |
+    |                                    |             |             |
+</code></pre><p>当传输数据量非常大时（比如流媒体）每个数据包都包含30多个字节头对带宽影响很大。这是可以通过ChannelBind命令创建一个Channel，之后使用一个仅包含Channel Id的4字节头部。信道号可用范围为0x4000-0x7FFF，一共可以有16838个。</p><pre tabindex=0><code>  TURN                                 TURN           Peer          Peer
+  client                               server          A             B
+    |                                    |             |             |
+    |-- ChannelBind req ----------------&gt;|             |             |
+    | (Peer A to 0x4001)                 |             |             |
+    |                                    |             |             |
+    |&lt;---------- ChannelBind succ resp --|             |             |
+    |                                    |             |             |
+    |-- [0x4001] data ------------------&gt;|             |             |
+    |                                    |=== data ===&gt;|             |
+    |                                    |             |             |
+    |                                    |&lt;== data ====|             |
+    |&lt;------------------ [0x4001] data --|             |             |
+    |                                    |             |             |
+    |--- Send ind (Peer A)--------------&gt;|             |             |
+    |                                    |=== data ===&gt;|             |
+    |                                    |             |             |
+    |                                    |&lt;== data ====|             |
+    |&lt;------------------ [0x4001] data --|             |             |
+    |                                    |             |             |
+</code></pre><h1 id=ice框架>ICE框架</h1><p>Interactive Connectivity Establishment 互动式连接建立，它不是一种协议，而是一个框架，整合了STUN和TURN，使各种穿透技术实现统一。通过收集所有通路，将所有的连接可能性都罗列出来，根据优先级算法排序后找到一条最优路径。</p><ul><li>通过STUN绑定，客户端拿到它的地址信息</li><li>通过TURN服务Allocate一个中继地址，用于接收数据</li><li>发起方通过信令主机将自己的媒体、网络等基本信息使用SDP（会话描述协议）发送给被调用方</li><li>被调用方接收到连接请求后回应一个Answer请求，完成数据交换</li><li>通过ICE框架，首先尝试P2P连接，一个端口或者某个网卡不通时，选其他的。如果都通，选择性能最好的。</li><li>如果P2P不通则使用TURN中转，并且支持多节点选择，若上海的节点不通，就用东京的节点。
+<img src=./images/ice.jpg alt>
+ICE Candidate定义一个可用地址，包括协议、IP、端口和类型，双方各取一个Candidate形成通路。类型有</li><li>主机候选者 Host Candidate 本地主机的IP和端口</li><li>反射候选者 Reflexive Candidate 通过向STUN服务请求NAT映射之后的公网IP地址和端口（非伪公网）</li><li>中继候选者 Relay Candidate 通过向TURN服务发送Allocate请求，分配的中继IP地址和端口</li></ul><h1 id=sdp描述>SDP描述</h1><p>Session Description Protocol 会话描述协议，不是传输协议，只是一种格式定义；用于通信双方交换信息，包括会话描述、时间信息、多媒体信息等，如：</p><pre tabindex=0><code>v=0                                                        // 版本
+o=jdoe 2890844526 2890842807 IN IP4 203.0.113.141          // Owner标识
+s=                                                         // 会话名
+c=IN IP4 192.0.2.3                                         // 连接信息
+t=0 0                                                      // 信息信息
+a=ice-options:ice2                                         // 附加属性
+a=ice-pacing:50
+a=ice-pwd:asd88fgpdd777uzjYhagZg
+a=ice-ufrag:8hhY
+m=audio 45664 RTP/AVP 0                                    // 多媒体信息
+b=RS:0                                                     // 带宽信息
+b=RR:0
+a=rtpmap:0 PCMU/8000                                       // 编码方式
+a=candidate:1 1 UDP 2130706431 203.0.113.141 8998 typ host
+a=candidate:2 1 UDP 1694498815 192.0.2.3 45664 typ srflx raddr
+203.0.113.141 rport 8998
+</code></pre><p>其中最后两条提供了Candidate的候选通路</p><ul><li>第一个是UDP类型，类型是host</li><li>第二个是UDP类型，类型是穿越NAT的映射地址
+这里面没有relay类型的地址，说明不需要中继传输。可能在同一个局域网中，或者穿越NAT使用P2P连通。</li></ul><h1 id=sip信令>SIP信令</h1><p>RFC2543 Session Initiation Protocol 会话初始协议，是一个应用层协议，用于建立、更改和终止多媒体会话，是通信的基础。</p><ul><li>用户代理 UA, User Agent 即SIP终端，包含客户端（UAC，User Agent Client）和服务端（UAS，User Agent Server）两种类型。</li><li>注册服务器（Registrar Server）接收用户注册，注册内容存放在位置服务器，供后续查询。</li><li>位置服务器（Location Server）为代理服务器和重定向服务器提供UA信息。</li><li>代理服务器 Proxy Server 用于传递主角方（Caller）发送的会话请求到被叫方（Callee）</li><li>重定向服务器 Redirect Server 用于指示客户端连接新的地址，新地址可能是被叫方的UA地址，也可以是另一个代理服务地址。
+<img src=./images/sip-server.jpg alt></li></ul><h2 id=注册>注册</h2><pre tabindex=0><code>    Bob                        SIP Server
+     |                               |
+     |          REGISTER F1          |
+     |------------------------------&gt;|
+     |      401 Unauthorized F2      |
+     |&lt;------------------------------|
+     |          REGISTER F3          |
+     |------------------------------&gt;|
+     |            200 OK F4          |
+     |&lt;------------------------------|
+</code></pre><pre tabindex=0><code>REGISTER sips:ss2.biloxi.example.com SIP/2.0
+Via: SIP/2.0/TLS client.biloxi.example.com:5061;branch=z9hG4bKnashds7
+Max-Forwards: 70
+From: Bob &lt;sips:bob@biloxi.example.com&gt;;tag=a73kszlfl
+To: Bob &lt;sips:bob@biloxi.example.com&gt;
+Call-ID: 1j9FpLxk3uxtm8tn@biloxi.example.com
+CSeq: 1 REGISTER
+Contact: &lt;sips:bob@client.biloxi.example.com&gt;
+Content-Length: 0
+</code></pre><ul><li>Via 由服务器生成，用于记录请求路径，可以使响应找到回路</li><li>Max-Forwards 消息最大转发次数，每转发一次减1，为0时响应483（Too Many Hops response）</li><li>From 请求发送方标识</li><li>To 请求接收方标识，因为这里是注册请求，所以与From一致</li><li>Call-ID 标识一个特定的会话或注册消息，随机生成，全球唯一</li><li>Cseq 请求序列号，区分同一会话中的不同请求</li><li>Contact 用户代理UA的通信地址</li></ul><h2 id=呼叫>呼叫</h2><p>以最基本的会话流程为例</p><pre tabindex=0><code> Alice                 Proxy                 Bob
+    |   F1 INVITE        |                    |    // Alice向代理发起会话请求
+    |-------------------&gt;|      F2 INVITE     |    // Proxy查找到Bob的地址并转发呼叫
+    |   F3 100 Trying    |-------------------&gt;|    // Proxy向Alice响应，避免重复呼叫
+    |&lt;-------------------|   F4 180 Ringing   |    // Bob响铃响应
+    |   F5 180 Ringing   |&lt;-------------------|
+    |&lt;-------------------|                    |
+    |                    |    F6 200 OK       |    // Bob接起电话
+    |    F7 200 OK       |&lt;-------------------|
+    |&lt;-------------------|                    |
+    |                 F8  ACK                 |    // Alice回应OK，会话建立
+    |----------------------------------------&gt;|
+    |      Both Way RTP Media Established     |    // 双方开始数据传输
+    |&lt;=======================================&gt;|
+    |                 F9  BYE                 |    // Alice方挂断会话
+    |----------------------------------------&gt;|
+    |               F10 200 OK                |    // Bob收到并响应，会话结束
+    |&lt;----------------------------------------|
+</code></pre><pre tabindex=0><code>F1 INVITE Alice -&gt; Proxy
+
+INVITE sip:bob@biloxi.example.com SIP/2.0
+Via: SIP/2.0/UDP client.atlanta.example.com:5060;branch=z9hG4bK74bf9
+Max-Forwards: 70
+From: Alice &lt;sip:alice@atlanta.example.com&gt;;tag=9fxced76sl
+To: Bob &lt;sip:bob@biloxi.example.com&gt;
+Call-ID: 2xTb9vxSit55XU7p8@atlanta.example.com
+CSeq: 1 INVITE
+Contact: &lt;sip:alice@client.atlanta.example.com&gt;
+Content-Type: application/sdp
+Content-Length: 151
+
+v=0
+o=alice 2890844526 2890844526 IN IP4 client.atlanta.example.com
+s=-
+c=IN IP4 192.0.2.101
+t=0 0
+m=audio 49172 RTP/AVP 0
+a=rtpmap:0 PCMU/8000
+</code></pre><pre tabindex=0><code>F4 180 Ringing Bob -&gt; Proxy
+
+SIP/2.0 180 Ringing
+Via: SIP/2.0/UDP ss2.biloxi.example.com:5060;branch=z9hG4bK2d4790.1;received=192.0.2.222
+Via: SIP/2.0/UDP client.atlanta.example.com:5060;branch=z9hG4bK74bf9;received=192.0.2.101
+From: Alice &lt;sip:alice@atlanta.example.com&gt;;tag=9fxced76sl
+To: Bob &lt;sip:bob@biloxi.example.com&gt;;tag=314159
+Call-ID: 2xTb9vxSit55XU7p8@atlanta.example.com
+CSeq: 1 INVITE
+Contact: &lt;sip:bob@client.biloxi.example.com&gt;
+Content-Length: 0
+</code></pre><p>信令通过两个Via找到回路</p><pre tabindex=0><code>F6 200 OK Bob -&gt; Proxy
+
+SIP/2.0 200 OK
+Via: SIP/2.0/UDP ss2.biloxi.example.com:5060;branch=z9hG4bK2d4790.1;received=192.0.2.222
+Via: SIP/2.0/UDP client.atlanta.example.com:5060;branch=z9hG4bK74bf9;received=192.0.2.101
+From: Alice &lt;sip:alice@atlanta.example.com&gt;;tag=9fxced76sl
+To: Bob &lt;sip:bob@biloxi.example.com&gt;;tag=314159
+Call-ID: 2xTb9vxSit55XU7p8@atlanta.example.com
+CSeq: 1 INVITE
+Contact: &lt;sip:bob@client.biloxi.example.com&gt;
+Content-Type: application/sdp
+Content-Length: 147
+
+v=0
+o=bob 2890844527 2890844527 IN IP4 client.biloxi.example.com
+s=-
+c=IN IP4 192.0.2.201
+t=0 0
+m=audio 3456 RTP/AVP 0
+a=rtpmap:0 PCMU/8000
+</code></pre><p>同一个Call-ID会话中的第二个请求，序号CSeq增加</p><pre tabindex=0><code>F9 BYE Alice -&gt; Bob
+
+BYE sip:bob@client.chicago.example.com SIP/2.0
+Via: SIP/2.0/UDP client.atlanta.example.com:5060;branch=z9hG4bK74bo4
+Max-Forwards: 70
+From: Alice &lt;sip:alice@atlanta.example.com&gt;;tag=9fxced76sl
+To: Bob &lt;sip:bob@biloxi.example.com&gt;;tag=314159
+Call-ID: 2xTb9vxSit55XU7p8@atlanta.example.com
+CSeq: 2 BYE
+Content-Length: 0
+</code></pre><h1 id=pbx>PBX</h1><p>通过上述的P2P打洞技术，实现了客户端之间的数据包传输；通过SIP指令和SDP，实现了会话的管理。实际场景中，将这些技术统一构建为IP PBX服务（Private Branch Exchange）即网络电话交换机。IP PBX不仅可以通过网络连接企业内部电话，还可以通过PSTN（Public Switched Telephone Network）公共交换电话网连接传统电话。
+<img src=./images/voip.webp alt>
+<a href=https://freeswitch.org.cn/>FreeSwitch</a> 是一个开源、免费、跨平台、支持多协议的电话软交换平台，最初由Asterisk项目的的开发者Anthony Minessal创建。</p><ul><li>采用模块化设计，允许用户根据需要，定制化解决方案</li><li>支持灵活的脚本定制，如Lua、Javascript、Python，方便与各种系统集成</li><li>支持多种协议，可以与各种开源的PBX系统集成，如sipXecs、Call Weaver、Asterisk等
+使其成为构建语音、视频和消息应用的理想选择，广泛应用于电话系统、呼叫中心、会议系统等。由于采用高性能的C语言开发，许多ISP和运营商把它作为关键软交换设备处理成千万上万路的并发通话，广泛应用于金融、电力、石油、煤炭等领域的呼叫中心、企业通信以及应急指挥调度平台等。在移动互联、物联网、大数据、云计算盛行的时代，许多创业者也把它用于通信领域的云平台。</li></ul><h1 id=参考>参考</h1><ul><li><a href=https://pdos.csail.mit.edu/papers/p2pnat.pdf>Peer-to-Peer Communication Across Network Address Translators</a></li><li><a href=https://datatracker.ietf.org/doc/html/rfc2543>https://datatracker.ietf.org/doc/html/rfc2543</a> SIP: Session Initiation Protocol</li><li><a href=https://datatracker.ietf.org/doc/html/rfc3261>https://datatracker.ietf.org/doc/html/rfc3261</a> SIP: Session Initiation Protocol</li><li><a href=https://datatracker.ietf.org/doc/html/rfc3489>https://datatracker.ietf.org/doc/html/rfc3489</a> STUN - Simple Traversal of UDP</li><li><a href=https://datatracker.ietf.org/doc/html/rfc3665>https://datatracker.ietf.org/doc/html/rfc3665</a> SIP Basic Call Flow Examples</li><li><a href=https://datatracker.ietf.org/doc/html/rfc5766>https://datatracker.ietf.org/doc/html/rfc5766</a> Traversal Using Relays around NAT (TURN)</li><li><a href=https://datatracker.ietf.org/doc/html/rfc5780>https://datatracker.ietf.org/doc/html/rfc5780</a> NAT Behavior Discovery Using STUN</li><li><a href=https://datatracker.ietf.org/doc/html/rfc5389>https://datatracker.ietf.org/doc/html/rfc5389</a> Session Traversal Utilities for NAT (STUN)</li><li><a href=https://datatracker.ietf.org/doc/html/rfc8445>https://datatracker.ietf.org/doc/html/rfc8445</a> Interactive Connectivity Establishment (ICE)</li><li><a href=https://datatracker.ietf.org/doc/html/rfc8489>https://datatracker.ietf.org/doc/html/rfc8489</a> Session Traversal Utilities for NAT (STUN)</li><li><a href=https://www.gnu.org/software/bayonne/>https://www.gnu.org/software/bayonne/</a> GNU telephony server</li><li><a href=https://www.gnu.org/software/sipwitch/>https://www.gnu.org/software/sipwitch/</a> GNU VoIP server</li><li><a href=https://github.com/yatevoip/yate>https://github.com/yatevoip/yate</a> Yate - Yet Another Telephony Engine</li></ul></main><footer><hr>© <a href=https://github.com/firebat>firebat</a> 2020 &ndash; 2025</footer></body></html>
