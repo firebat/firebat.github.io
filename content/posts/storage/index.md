@@ -26,30 +26,16 @@ Dr.Eggert在本科期间为了“改进UNIX”，创建了他的第一个文件�
 - 引入inode管理文件索引(index node)
 - 树形结构
 
-### Berkeley Software Distribution (BSD)
-- 1977 1BSD ex
-- 1978 2BSD vi, csh, berknet  
-- 1979 3BSD VAX虚拟内存
-- 1980 4BSD job, TCP/IP
-- 1981 4.1a rcp, rsh..
-![img](./images/billjoy.jpg)
-Bill Joy - BSD, Sun co-founder, vi, csh, tcp/ip, NFS
-
 ### Berkeley Fast File System (~1980 4.1b)
 ![img](./images/bffs.png)
 - 增加一个块位图，标记数据块是否空闲
 
-![img](./images/EricAllmanAndMarshallKirkMcKusick.jpg)
-Eric Allman & Marshall Kirk McKusick and their last son, Tyson
-
 ## Network File System
-Network File System (NFS) is a distributed file system protocol originally developed by Sun Microsystems in 1984, allowing a user on a client computer to access files over a computer network much like local storage is accessed. NFS, like many other protocols, builds on the Open Network Computing Remote Procedure Call (ONC RPC) system. The NFS is an open standard defined in Request for Comments (RFC), allowing anyone to implement the protocol.
-
+网络文件系统, 一种使用于分散式文件系统的协定，由Sun公司开发，于1984年向外公布。允许远程主机通过网络挂载文件系统，并像它们是本地挂载的文件系统一样与它们进行交互。
 ![img](./images/NAS.gif)
 
 ### MooseFS
-MooseFS is a fault tolerant, network distributed file system. It spreads data over several physical servers which are visible to the user as one resource. For standard file operations MooseFS acts as other Unix-alike file systems
-
+具有容错性的网络分布式文件系统。它把数据分散存放在多个物理服务器上，而呈现给用户的则是一个统一的资源。
 - Master server - a single machine managing the whole filesystem, storing metadata for every file.
 - Chunk servers -  any number of commodity servers storing files data and synchronizing it among themselves.
 - Client -  any number of machines using `mfsmount` process to communicate with the managing server and with chunkservers.
@@ -60,15 +46,13 @@ MooseFS is a fault tolerant, network distributed file system. It spreads data ov
 
 ## 分布式系统
 ### CAP
-- Consistence 一致性, all nodes see the same data at the same time
-- Availability 可用性, Reads and writes always succeed
-- Partition Tolerance 分区容错性, the system continues to operate despite arbitrary message loss or failure of part of the system
+- Consistence 一致性, 所有节点在同一时刻数据相同
+- Availability 可用性, 读写总是成功
+- Partition Tolerance 分区容错性, 部分节点丢失或无效时，系统仍然可用
   
 ### NWR
-`
-W > N / 2
-W + R > N
-`
+- `W > N / 2` 
+- `W + R > N`
 
 - N 副本数
 - W 一次成功的写操作必须完成的写副本数
@@ -86,22 +70,22 @@ W + R > N
 
 ## 对象存储
 ### LSM-Tree
-![](./images/lsm.png)
 最初源于BigTable论文，可参考开源LevelDB引擎
+![](./images/lsm.png)
 - 内存表采用红黑树，数据写满时，冻结后写入L0层SSTable(Sorted String Table)
 - 每一层满时，依次合并下沉
 - 磁盘顺序写，性能极好
 
 ### Bitcask
+源自Riak, 一个使用Erlang实现的KV存储引擎
 - LSM简化版，仅追加写，无压缩合并
 - 更新时，通过对比时间戳，更新key索引指向新记录
 ![img](./images/bitcask.jpg)
 
 ### Merkle Tree
-- 父节点的Hash值由子节点计算生成，可快速发现集群中的故障节点。
+多叉树，父节点的Hash值由子节点计算生成，可快速发现集群中的故障节点。
 ![img](./images/Hash_Tree.svg.png)
-
-Merkle tree也用于比特币计算
+也用于比特币计算
 ![](./images/en-blockchain-overview.svg)
 
 ### BeansDB (2009)
@@ -296,8 +280,8 @@ Facebook的海量图片存储系统
 
 **HayStack**
 ![img](./images/haystack.jpg)
-`http ://<cdn>/<Cache>/<machine id>/<logical volume, photo>`
 
+- URL结构 `http://<cdn>/<Cache>/<machine id>/<logical volume, photo>`
 - CDN 用 logical volume, photo 查缓存, 命中则返回，否则走Cache机
 - Cache  同上, 否则走Store机
 - Machine 同上, 否则返回错误
@@ -331,6 +315,7 @@ Facebook的海量图片存储系统
 
 ### Needle索引
 ![img](./images/needle_index.png)
+
 两级映射 `needle.key => (needle.alternate key => meta)`
 
 ### 开源实现
