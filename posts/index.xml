@@ -120,4 +120,98 @@ P2P技术的发展，产生了各种网络共享下载的应用，如Napster、G
 &lt;li>2020年11月，苹果发布第一款基于ARM架构的自研处理器Apple M1，采用ARMv8-A指令集架构。&lt;/li>
 &lt;li>2021年11月，富士通基于A64FX处理器打造的超级计算机“富岳”蝉联超算第一，采用ARMv8.2-A架构&lt;/li>
 &lt;/ul>
-&lt;p>早期单片机多用于外设接口控制器，服务于处理器系统， 随着芯片工艺不断改进，集成度和运算能力不断提升，微控制器也获得广泛的应用和发展。目前，比较常见的单片机有&lt;/p></description></item></channel></rss>
+&lt;p>早期单片机多用于外设接口控制器，服务于处理器系统， 随着芯片工艺不断改进，集成度和运算能力不断提升，微控制器也获得广泛的应用和发展。目前，比较常见的单片机有&lt;/p></description></item><item><title>异步任务队列</title><link>https://firebat.github.io/posts/async-task/</link><pubDate>Tue, 19 Apr 2022 00:00:00 -0800</pubDate><guid>https://firebat.github.io/posts/async-task/</guid><description>&lt;p>在我们介绍更复杂的调度管理问题之前，先了解一种基本的异步任务执行方案。&lt;/p>
+&lt;h2 id="场景">场景&lt;/h2>
+&lt;p>业务系统构建过程中，为了实现逻辑复用，面临大量的计算组装问题。如:&lt;/p>
+&lt;ul>
+&lt;li>数仓、复杂计算任务执行调度&lt;/li>
+&lt;li>风控、营销类的策略管理&lt;/li>
+&lt;li>数据核查规则管理&lt;/li>
+&lt;li>多仿真验证&lt;/li>
+&lt;/ul>
+&lt;p>这些场景在执行时，按调用方式可以分为:&lt;/p>
+&lt;ul>
+&lt;li>同步组装，可以支持事务，包括节点、上下游、输入输出、常量变量定义等（择日细讲）&lt;/li>
+&lt;li>异步组装，适用支持复杂流程管理，包括任务队列、优先级、回调事件等&lt;/li>
+&lt;/ul>
+&lt;h2 id="结构定义">结构定义&lt;/h2>
+&lt;p>通过app区分，使服务可以为多个应用使用&lt;/p>
+&lt;h3 id="任务队列">任务队列&lt;/h3>
+&lt;ul>
+&lt;li>app 应用标识&lt;/li>
+&lt;li>queueId 队列标识&lt;/li>
+&lt;li>queueType 队列类型, 并行=parallel, 串行=serial&lt;/li>
+&lt;li>priority 优先级, 最小=0&lt;/li>
+&lt;li>status 队列状态, 非激活=inactive, 激活中=active&lt;/li>
+&lt;/ul>
+&lt;h3 id="任务消息">任务消息&lt;/h3>
+&lt;ul>
+&lt;li>app 应用标识&lt;/li>
+&lt;li>queueId 所属队列&lt;/li>
+&lt;li>messageId 消息标识&lt;/li>
+&lt;li>status 任务状态, 待执行=wait, 处理中=processing, 处理完成=completed&lt;/li>
+&lt;li>taskClassName 任务类名&lt;/li>
+&lt;li>parameter 任务参数&lt;/li>
+&lt;li>stopQueueOnError 执行出错时，是否停止队列&lt;/li>
+&lt;li>sendTime 客户发起时间&lt;/li>
+&lt;li>receiveTime 服务接收时间&lt;/li>
+&lt;li>acceptTime 分派时间&lt;/li>
+&lt;li>startTime 开始执行时间&lt;/li>
+&lt;li>nodeId 执行节点&lt;/li>
+&lt;/ul>
+&lt;h2 id="调度目标">调度目标&lt;/h2>
+&lt;p>找到最优先需要执行的任务&lt;/p>
+&lt;ul>
+&lt;li>队列状态=激活中&lt;/li>
+&lt;li>任务状态=待执行&lt;/li>
+&lt;li>若为串型队列，只允许其中一个任务执行&lt;/li>
+&lt;li>队列优先级最高&lt;/li>
+&lt;li>创建时间最早&lt;/li>
+&lt;/ul>
+&lt;h3 id="单并行队列">单并行队列&lt;/h3>
+&lt;p>每个app拥有一个并行队列(&lt;code>parallel_task_queue&lt;/code>)和多个串型队列(自定义)&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sql" data-lang="sql">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">select&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> t.message_id,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> t.queue_id
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">from&lt;/span> task_info t
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">join&lt;/span> queue_info q &lt;span style="color:#66d9ef">on&lt;/span> q.queue_id &lt;span style="color:#f92672">=&lt;/span> t.queue_id &lt;span style="color:#66d9ef">and&lt;/span> q.status &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#39;active&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">where&lt;/span> t.status &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#39;wait&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">and&lt;/span> &lt;span style="color:#66d9ef">not&lt;/span> &lt;span style="color:#66d9ef">exists&lt;/span> (
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">select&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#66d9ef">from&lt;/span> task_info i
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">where&lt;/span> i.status &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#39;processing&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">and&lt;/span> i.queue_id &lt;span style="color:#f92672">=&lt;/span> t.queue_id
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">and&lt;/span> i.queue_id &lt;span style="color:#f92672">&amp;lt;&amp;gt;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;parallel_task_queue&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">order&lt;/span> &lt;span style="color:#66d9ef">by&lt;/span> q.priority &lt;span style="color:#66d9ef">desc&lt;/span>, t.receive_time, t.id;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="多并行队列">多并行队列&lt;/h3>
+&lt;p>这里给出多并行队列的筛选方法，实际上单个并行队列足够满足大多数场景。&lt;/p></description></item><item><title>存储的发展</title><link>https://firebat.github.io/posts/storage/</link><pubDate>Wed, 07 Dec 2016 00:00:00 -0800</pubDate><guid>https://firebat.github.io/posts/storage/</guid><description>&lt;h2 id="文件系统">文件系统&lt;/h2>
+&lt;h3 id="professor-eggerts-dumb-file-system-1974">Professor Eggert&amp;rsquo;s Dumb File System (~1974)&lt;/h3>
+&lt;p>&lt;img src="./images/eggertfs.png" alt="img">&lt;/p>
+&lt;h3 id="fat---file-allocation-table-1977">FAT - File Allocation Table (~1977)&lt;/h3>
+&lt;p>&lt;img src="./images/fat.png" alt="img">&lt;/p>
+&lt;h3>&lt;/h3>
+&lt;p>&lt;img src="./images/unix.jpg" alt="img">&lt;/p>
+&lt;h3>&lt;/h3>
+&lt;p>&lt;img src="./images/pdp-11-40.jpg" alt="img">&lt;/p>
+&lt;h3 id="unix-file-system-1973">Unix File System (~1973)&lt;/h3>
+&lt;p>&lt;img src="./images/ufs.png" alt="img">&lt;/p>
+&lt;h3 id="lions-commentary-on-unix-6th-edition-1976">Lions&amp;rsquo; Commentary on UNIX 6th Edition (1976)&lt;/h3>
+&lt;p>&lt;img src="./images/lions.jpg" alt="img">&lt;/p>
+&lt;h3 id="unix-version-7-1979">Unix Version 7 (1979)&lt;/h3>
+&lt;ul>
+&lt;li>支持x86架构&lt;/li>
+&lt;li>最后一个可自由散布的版本&lt;/li>
+&lt;li>不可对学生提供原始码&lt;/li>
+&lt;/ul>
+&lt;h3 id="berkeley-software-distribution-bsd">Berkeley Software Distribution (BSD)&lt;/h3>
+&lt;ul>
+&lt;li>1977 1BSD ex&lt;/li>
+&lt;li>1978 2BSD vi, csh, berknet&lt;/li>
+&lt;li>1979 3BSD VAX虚拟内存&lt;/li>
+&lt;li>1980 4BSD job, TCP/IP&lt;/li>
+&lt;li>1981 4.1a rcp, rsh..&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="./images/bsd.jpg" alt="img">&lt;/p>
+&lt;h3>&lt;/h3>
+&lt;p>&lt;img src="./images/billjoy.jpg" alt="img">&lt;/p>
+&lt;p>Bill Joy - BSD, Sun co-founder, vi, csh, tcp/ip, NFS&lt;/p></description></item></channel></rss>

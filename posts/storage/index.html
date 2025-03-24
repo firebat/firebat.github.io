@@ -1,0 +1,298 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>存储的发展 | firebat</title>
+<link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/tags/>Tags</a></li><li><a href=/index.xml>Subscribe</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>存储的发展</span></h1><h2 class=date>2016/12/07</h2></div><main><h2 id=文件系统>文件系统</h2><h3 id=professor-eggerts-dumb-file-system-1974>Professor Eggert&rsquo;s Dumb File System (~1974)</h3><p><img src=./images/eggertfs.png alt=img></p><h3 id=fat---file-allocation-table-1977>FAT - File Allocation Table (~1977)</h3><p><img src=./images/fat.png alt=img></p><h3></h3><p><img src=./images/unix.jpg alt=img></p><h3></h3><p><img src=./images/pdp-11-40.jpg alt=img></p><h3 id=unix-file-system-1973>Unix File System (~1973)</h3><p><img src=./images/ufs.png alt=img></p><h3 id=lions-commentary-on-unix-6th-edition-1976>Lions&rsquo; Commentary on UNIX 6th Edition (1976)</h3><p><img src=./images/lions.jpg alt=img></p><h3 id=unix-version-7-1979>Unix Version 7 (1979)</h3><ul><li>支持x86架构</li><li>最后一个可自由散布的版本</li><li>不可对学生提供原始码</li></ul><h3 id=berkeley-software-distribution-bsd>Berkeley Software Distribution (BSD)</h3><ul><li>1977 1BSD ex</li><li>1978 2BSD vi, csh, berknet</li><li>1979 3BSD VAX虚拟内存</li><li>1980 4BSD job, TCP/IP</li><li>1981 4.1a rcp, rsh..</li></ul><p><img src=./images/bsd.jpg alt=img></p><h3></h3><p><img src=./images/billjoy.jpg alt=img></p><p>Bill Joy - BSD, Sun co-founder, vi, csh, tcp/ip, NFS</p><h3 id=berkeley-fast-file-system-1980-41b>Berkeley Fast File System (~1980 4.1b)</h3><p><img src=./images/bffs.png alt=img></p><h3></h3><p><img src=./images/EricAllmanAndMarshallKirkMcKusick.jpg alt=img></p><p>Eric Allman & Marshall Kirk McKusick and their last son, Tyson</p><h3></h3><p>There is some sort of perverse pleasure in knowing that it&rsquo;s basically impossible to send a piece of hate mail through the Internet without its being touched by a gay program. That&rsquo;s kind of funny. —Eric Allman</p><h3></h3><p><img src=./images/richard.jpg alt=img></p><p>GNU Opearting System (1984)</p><h3></h3><p><img src=./images/andrew.jpg alt=img></p><p>Minix Operating System (1984 ~ 1987)</p><h3></h3><p><img src=./images/minix15-floppies-scr-01.jpg alt=img></p><h3></h3><p><img src=./images/linus-torvalds.jpg alt=img></p><h3></h3><p>gcc on minix-386 doesn&rsquo;t optimize? (1991/3/29)
+Hello everybody,
+I&rsquo;ve had minix for a week now, and have upgraded to 386-minix (nice), and duly downloaded gcc for minix. Yes, it works.</p><p>PS and Minix-386 (1991/4/1)
+RTFSC (Read the F**ing Source Code :-) - It is heavily commented and the solution should be obvious (take that with a grain of salt, it certainly stumped me for a while :-). Simply change the 4 define-lines at the
+start (well, I&rsquo;d guess about line 40) that read</p><p>#define kernel &ldquo;/usr/src/kernel/kernel&rdquo; &mldr;</p><p>What would you like to see most in minix? (1991/8/26)
+Hello everybody out there using minix -
+I&rsquo;m doing a (free) operating system (just a hobby, won&rsquo;t be big and professional like gnu) for 386(486) AT clones. This has been brewing since april, and is starting to get ready. I&rsquo;d like any feedback on things people like/dislike in minix, as my OS resembles it somewhat (same physical layout of the file-system (due to practical reasons) among other things).</p><h3></h3><p><img src=./images/vfs.gif alt=img></p><h2 id=network-file-system>Network File System</h2><p>Network File System (NFS) is a distributed file system protocol originally developed by Sun Microsystems in 1984, allowing a user on a client computer to access files over a computer network much like local storage is accessed. NFS, like many other protocols, builds on the Open Network Computing Remote Procedure Call (ONC RPC) system. The NFS is an open standard defined in Request for Comments (RFC), allowing anyone to implement the protocol.</p><h3></h3><p><img src=./images/NAS.gif alt=img></p><h3 id=moosefs>MooseFS</h3><p>MooseFS is a fault tolerant, network distributed file system. It spreads data over several physical servers which are visible to the user as one resource. For standard file operations MooseFS acts as other Unix-alike file systems</p><ul><li>Master server - a single machine managing the whole filesystem, storing metadata for every file.</li><li>Chunk servers - any number of commodity servers storing files data and synchronizing it among themselves.</li><li>Client - any number of machines using <code>mfsmount</code> process to communicate with the managing server and with chunkservers.</li></ul><h3></h3><p><img src=./images/mfs_write.png alt=img></p><h3></h3><p><img src=./images/mfs_read.png alt=img></p><h2 id=分布式系统>分布式系统</h2><h3 id=cap>CAP</h3><ul><li><p>Consistence 一致性</p><p>all nodes see the same data at the same time</p></li><li><p>Availability 可用性</p><p>Reads and writes always succeed</p></li><li><p>Partition Tolerance 分区容错性</p><p>the system continues to operate despite arbitrary message loss or failure of part of the system</p></li></ul><h3 id=nwr>NWR</h3><p><em>Dynamo: Amazons Highly Available Key-value Store</em>
+#+BEGIN_VERSE
+W > N / 2
+W + R > N
+#+END_VERSE</p><ul><li>N 副本数</li><li>W 一次成功的写操作必须完成的写副本数</li><li>R 一次成功的读操作需要读的副本数</li></ul><h3></h3><p><img src=./images/object-mapping-simple-consistent-hashing.png alt=img></p><p>一致性哈希</p><h3></h3><p><img src=./images/object-mapping-modified-consistent-hashing.png alt=img></p><h3></h3><ul><li>[[http://www.cnblogs.com/yuxc/archive/2012/06/22/2558312.html][深入云存储系统Swift核心组件：Ring实现原理剖析)</li><li>[[http://yikun.github.io/2016/06/09/一致性哈希算法的理解与实践][一致性哈希算法的理解与实践)</li></ul><h2 id=对象存储>对象存储</h2><p><img src=./images/bitcask.jpg alt=img></p><p><img src=./images/Hash_Tree.svg.png alt=img></p><p>Merkle tree</p><h3 id=beansdb-2009>BeansDB (2009)</h3><p>Beansdb is a distributed key-value storage system designed for large scale online system, aiming for high avaliablility and easy management. It took the ideas from Amazon&rsquo;s Dynamo, then made some simplify to Keep It Simple Stupid (KISS).</p><ul><li>High availability data storage with multi readable and writable repications</li><li><em>Soft state and final consistency, synced with hash tree</em></li><li>Easy Scaling out without interrupting online service</li><li>High performance read/write for a key-value based object</li><li><em>Configurable availability/consistency by N,W,R</em></li><li><em>Memcache protocol compatibility</em></li></ul><h3 id=supported-memcache-commands>Supported memcache commands</h3><ul><li>get (key, ?key, @bucket)</li><li>set</li><li>append</li><li>incr</li><li>delete</li><li>stats</li><li>flush _all</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ telnet 127.0.0.1 <span style=color:#ae81ff>7900</span>
+</span></span><span style=display:flex><span>get @
+</span></span><span style=display:flex><span>VALUE @ <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>170</span>
+</span></span><span style=display:flex><span>0/ <span style=color:#ae81ff>43141</span> <span style=color:#ae81ff>9514</span>
+</span></span><span style=display:flex><span>1/ <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>0</span>
+</span></span><span style=display:flex><span>2/ <span style=color:#ae81ff>42462</span> <span style=color:#ae81ff>2</span>
+</span></span><span style=display:flex><span>3/ <span style=color:#ae81ff>39177</span> <span style=color:#ae81ff>2</span>
+</span></span><span style=display:flex><span>4/ <span style=color:#ae81ff>37044</span> <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>5/ <span style=color:#ae81ff>44330</span> <span style=color:#ae81ff>3</span>
+</span></span><span style=display:flex><span>6/ <span style=color:#ae81ff>45589</span> <span style=color:#ae81ff>3</span>
+</span></span><span style=display:flex><span>7/ <span style=color:#ae81ff>28358</span> <span style=color:#ae81ff>3</span>
+</span></span><span style=display:flex><span>8/ <span style=color:#ae81ff>17224</span> <span style=color:#ae81ff>3</span>
+</span></span><span style=display:flex><span>9/ <span style=color:#ae81ff>5155</span> <span style=color:#ae81ff>3</span>
+</span></span><span style=display:flex><span>a/ <span style=color:#ae81ff>53006</span> <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>b/ <span style=color:#ae81ff>27133</span> <span style=color:#ae81ff>4</span>
+</span></span><span style=display:flex><span>c/ <span style=color:#ae81ff>26906</span> <span style=color:#ae81ff>3</span>
+</span></span><span style=display:flex><span>d/ <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>0</span>
+</span></span><span style=display:flex><span>e/ <span style=color:#ae81ff>29129</span> <span style=color:#ae81ff>4</span>
+</span></span><span style=display:flex><span>f/ <span style=color:#ae81ff>56710</span> <span style=color:#ae81ff>2</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>get @42
+</span></span><span style=display:flex><span>VALUE @42 <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>50</span>
+</span></span><span style=display:flex><span>/pay/ucardlogo/1509/2a/1b1fdecfdb5d31.jpg <span style=color:#ae81ff>12806</span> <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>get ?/pay/ucardlogo/1509/2a/1b1fdecfdb5d31.jpg
+</span></span><span style=display:flex><span>VALUE ?/pay/ucardlogo/1509/2a/1b1fdecfdb5d31.jpg <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>25</span>
+</span></span><span style=display:flex><span><span style=color:#ae81ff>1</span> <span style=color:#ae81ff>12806</span> <span style=color:#ae81ff>1</span> <span style=color:#ae81ff>2853</span> <span style=color:#ae81ff>1442285794</span>
+</span></span></code></pre></div><p><img src=./images/beansdb.png alt=img></p><h3 id=用法>用法</h3><ul><li>面向10M以内文件, 如图片, 音频 (默认最高50M,可以改代码)</li><li>RAID10 数据存3份</li><li>使用ngx_memc</li><li>qclient-beansdb (xmemcached with NWR)</li><li>rsync同步大文件, sync.py同步小对象</li><li>数百T数据, 数十亿文件特别棒</li></ul><h3 id=swift>Swift</h3><p>OpenStack Object Storage（Swift）前身是 Rackspace Cloud Files 项目，于 2010 年贡献给 OpenStack 社区，是 OpenStack 最早的两个项目之一。Swift 可在比较便宜的通用硬件上构筑具有极强可扩展性和数据持久性的存储系统，支持多租户，通过 RESTful API 提供对容器（Container）和对象的 CRUD 操作。</p><h3></h3><p>WSGI是为Python语言定义的Web服务器和Web应用程序或框架之间的一种简单而通用的接口。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ paster create
+</span></span><span style=display:flex><span>Selected and implied templates:
+</span></span><span style=display:flex><span>  PasteScript#basic_package  A basic setuptools-enabled package
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Enter project name: demo
+</span></span><span style=display:flex><span>Variables:
+</span></span><span style=display:flex><span>  egg:      demo
+</span></span><span style=display:flex><span>  package:  demo
+</span></span><span style=display:flex><span>  project:  demo
+</span></span><span style=display:flex><span>Enter version <span style=color:#f92672>(</span>Version <span style=color:#f92672>(</span>like 0.1<span style=color:#f92672>))</span> <span style=color:#f92672>[</span><span style=color:#e6db74>&#39;&#39;</span><span style=color:#f92672>]</span>: 
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#75715e># demo/__init__.py</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>app</span>(environ, start_response): <span style=color:#75715e># or app = Flask(__name__)</span>
+</span></span><span style=display:flex><span>    start_response(<span style=color:#e6db74>&#39;200 OK&#39;</span>, [(<span style=color:#e6db74>&#39;Content-Type&#39;</span>, <span style=color:#e6db74>&#39;text/plain&#39;</span>)])
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>yield</span> <span style=color:#e6db74>&#34;Hello world!</span><span style=color:#ae81ff>\n</span><span style=color:#e6db74>&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>factory</span>(global_config, <span style=color:#f92672>**</span>local_config):
+</span></span><span style=display:flex><span>    print global_config
+</span></span><span style=display:flex><span>    print local_config
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> app
+</span></span></code></pre></div><h3></h3><p>PasteDeploy是一个用来查找和配置 WSGI 应用的系统, 配置支持app, filter, pipeline,factory, type, section等</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ini data-lang=ini><span style=display:flex><span><span style=color:#75715e># demo.ini</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>[DEFAULT]</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>title</span><span style=color:#f92672>=</span><span style=color:#e6db74>my website</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>[server:main]</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>use</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>egg:Paste#http</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># use=egg:gunicorn#main</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># workers=2</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># worker_class=gevent</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>[app:main]</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>use</span><span style=color:#f92672>=</span><span style=color:#e6db74>call:demo:app_factory</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># set title=demo site</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>database</span><span style=color:#f92672>=</span><span style=color:#e6db74>mysql://xxxx</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ paster serve demo.ini
+</span></span><span style=display:flex><span><span style=color:#f92672>{</span><span style=color:#e6db74>&#39;__file__&#39;</span>: <span style=color:#e6db74>&#39;/home/tom/demo/main.ini&#39;</span>, <span style=color:#e6db74>&#39;here&#39;</span>: <span style=color:#e6db74>&#39;/home/tom/demo&#39;</span>, <span style=color:#e6db74>&#39;title&#39;</span>: <span style=color:#e6db74>&#39;my website&#39;</span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>{</span><span style=color:#e6db74>&#39;database&#39;</span>: <span style=color:#e6db74>&#39;mysql://xxxx&#39;</span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>Starting server in PID 3756.
+</span></span><span style=display:flex><span>serving on http://127.0.0.1:8080
+</span></span></code></pre></div><h3 id=映射关系>映射关系</h3><p><img src=./images/swift.png alt=img></p><h3 id=数据节点>数据节点</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ tree /srv/node/sdb -L <span style=color:#ae81ff>5</span>
+</span></span><span style=display:flex><span>├── accounts
+</span></span><span style=display:flex><span>│   ├── <span style=color:#ae81ff>4422</span>
+</span></span><span style=display:flex><span>│   │   └── d84
+</span></span><span style=display:flex><span>│   │       └── 8a32648058cf2185fab166279963fd84
+</span></span><span style=display:flex><span>│   │           ├── 8a32648058cf2185fab166279963fd84.db
+</span></span><span style=display:flex><span>│   │           └── 8a32648058cf2185fab166279963fd84.db.pending
+</span></span><span style=display:flex><span>│   └── <span style=color:#ae81ff>632</span>
+</span></span><span style=display:flex><span>│       └── 84a
+</span></span><span style=display:flex><span>│           └── 13c312c524cb52e59041e34e9c4f384a
+</span></span><span style=display:flex><span>├── containers <span style=color:#f92672>(</span>同上<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>├── objects
+</span></span><span style=display:flex><span>│  ├── <span style=color:#ae81ff>1000</span>
+</span></span><span style=display:flex><span>│  │   ├── 6a5
+</span></span><span style=display:flex><span>│  │   │   └── 1f462ba176864aa5f5c35e28b533b6a5
+</span></span><span style=display:flex><span>│  │   │       └── 1473149348.59743.data
+</span></span><span style=display:flex><span>│  │   ├── aba
+</span></span><span style=display:flex><span>│  │   │   └── 1f42bcc1bcf1ec440d5d5aec24ddaaba
+</span></span><span style=display:flex><span>│  │   │       └── 1464159081.76922.ts
+</span></span><span style=display:flex><span>└── tmp
+</span></span></code></pre></div><h3 id=swift-proxy>Swift Proxy</h3><p><img src=./images/swift_proxy.jpg alt=img></p><h3 id=swift-ring>Swift Ring</h3><p><img src=./images/swift_ring.jpg alt=img></p><h3 id=swift-get>Swift Get</h3><p><img src=./images/swift_get.jpg alt=img></p><h3 id=swift-post>Swift Post</h3><p><img src=./images/swift_post.jpg alt=img></p><h3 id=swift-all>Swift All</h3><p><img src=./images/swift_all.png alt=img></p><h3 id=swift组件>Swift组件</h3><ul><li>Proxy Server 对外提供对象服务API, 查找服务地址并转发用户请求</li><li>Account Server 提供账户元数据和统计信息，并维护所含容器列表的服务</li><li>Container Server 提供容器元数据和统计信息，并维护所含对象列表的服务</li><li>Object Server 提供对象元数据和内容服务，对象以文件的形式存储在文件系统</li><li>Replicator 检测本地分区副本和远程副本是否一致, Push更新副本，删除文件</li><li>Updater 高负载时，将更新请求插入队列，之后进行异步更新</li><li>Auditor 检查对象，容器和账户的完整性，发现比特级进行隔离, 并同步副本</li><li>Account Reaper 账户清理服务，删除容器和对象数据</li><li>Authentication Server 验证用户身份</li><li>Cache Server 缓存认证Token, 账户容器的存在信息, 采用Memcached.</li></ul><h3></h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ swift-ring-builder object.builder
+</span></span><span style=display:flex><span>object.builder, build version <span style=color:#ae81ff>6</span>
+</span></span><span style=display:flex><span><span style=color:#ae81ff>8192</span> partitions, 2.000000 replicas, <span style=color:#ae81ff>1</span> regions, <span style=color:#ae81ff>3</span> zones, <span style=color:#ae81ff>6</span> devices, 0.02 balance, 0.00 dispersion
+</span></span><span style=display:flex><span>The minimum number of hours before a partition can be reassigned is <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>The overload factor is 0.00% <span style=color:#f92672>(</span>0.000000<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>Devices:    id  region  zone      ip address  port  replication ip  replication port      name weight partitions balance meta
+</span></span><span style=display:flex><span>             <span style=color:#ae81ff>0</span>       <span style=color:#ae81ff>1</span>     <span style=color:#ae81ff>1</span>     10.86.41.96  <span style=color:#ae81ff>6000</span>     10.86.41.96              <span style=color:#ae81ff>6000</span>        d1   1.00       <span style=color:#ae81ff>2731</span>    0.01 
+</span></span><span style=display:flex><span>             <span style=color:#ae81ff>1</span>       <span style=color:#ae81ff>1</span>     <span style=color:#ae81ff>1</span>     10.86.41.96  <span style=color:#ae81ff>6000</span>     10.86.41.96              <span style=color:#ae81ff>6000</span>        d2   1.00       <span style=color:#ae81ff>2731</span>    0.01 
+</span></span><span style=display:flex><span>             <span style=color:#ae81ff>2</span>       <span style=color:#ae81ff>1</span>     <span style=color:#ae81ff>2</span>    10.86.35.155  <span style=color:#ae81ff>6000</span>    10.86.35.155              <span style=color:#ae81ff>6000</span>        d1   1.00       <span style=color:#ae81ff>2730</span>   -0.02 
+</span></span><span style=display:flex><span>             <span style=color:#ae81ff>3</span>       <span style=color:#ae81ff>1</span>     <span style=color:#ae81ff>2</span>    10.86.35.155  <span style=color:#ae81ff>6000</span>    10.86.35.155              <span style=color:#ae81ff>6000</span>        d2   1.00       <span style=color:#ae81ff>2730</span>   -0.02 
+</span></span><span style=display:flex><span>             <span style=color:#ae81ff>4</span>       <span style=color:#ae81ff>1</span>     <span style=color:#ae81ff>3</span>    10.86.35.169  <span style=color:#ae81ff>6000</span>    10.86.35.169              <span style=color:#ae81ff>6000</span>        d1   1.00       <span style=color:#ae81ff>2731</span>    0.01 
+</span></span><span style=display:flex><span>             <span style=color:#ae81ff>5</span>       <span style=color:#ae81ff>1</span>     <span style=color:#ae81ff>3</span>    10.86.35.169  <span style=color:#ae81ff>6000</span>    10.86.35.169              <span style=color:#ae81ff>6000</span>        d2   1.00       <span style=color:#ae81ff>2731</span>    0.01 
+</span></span></code></pre></div><h3></h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ swift-get-nodes /etc/swift/object.ring.gz AUTH_test testdt /no/joss-logo.png
+</span></span><span style=display:flex><span>Account  AUTH_test
+</span></span><span style=display:flex><span>Containertestdt
+</span></span><span style=display:flex><span>Object   /no/joss-logo.png
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Partition1778
+</span></span><span style=display:flex><span>Hash     3793f1105a148c4a1f180a83a7289f67
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Server:Port Device10.86.35.155:6000 d1
+</span></span><span style=display:flex><span>Server:Port Device10.86.41.96:6000 d2
+</span></span><span style=display:flex><span>Server:Port Device10.86.35.169:6000 d1 <span style=color:#f92672>[</span>Handoff<span style=color:#f92672>]</span>
+</span></span><span style=display:flex><span>Server:Port Device10.86.41.96:6000 d1 <span style=color:#f92672>[</span>Handoff<span style=color:#f92672>]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>curl -I -XHEAD <span style=color:#e6db74>&#34;http://10.86.35.155:6000/d1/1778/AUTH_test/testdt//no/joss-logo.png&#34;</span>
+</span></span><span style=display:flex><span>curl -I -XHEAD <span style=color:#e6db74>&#34;http://10.86.41.96:6000/d2/1778/AUTH_test/testdt//no/joss-logo.png&#34;</span>
+</span></span><span style=display:flex><span>curl -I -XHEAD <span style=color:#e6db74>&#34;http://10.86.35.169:6000/d1/1778/AUTH_test/testdt//no/joss-logo.png&#34;</span> <span style=color:#75715e># [Handoff]</span>
+</span></span><span style=display:flex><span>curl -I -XHEAD <span style=color:#e6db74>&#34;http://10.86.41.96:6000/d1/1778/AUTH_test/testdt//no/joss-logo.png&#34;</span> <span style=color:#75715e># [Handoff]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Use your own device location of servers:
+</span></span><span style=display:flex><span>such as <span style=color:#e6db74>&#34;export DEVICE=/srv/node&#34;</span>
+</span></span><span style=display:flex><span>ssh 10.86.35.155 <span style=color:#e6db74>&#34;ls -lah </span><span style=color:#e6db74>${</span>DEVICE<span style=color:#66d9ef>:-</span>/srv/node*<span style=color:#e6db74>}</span><span style=color:#e6db74>/d1/objects/1778/f67/3793f1105a148c4a1f180a83a7289f67&#34;</span>
+</span></span><span style=display:flex><span>ssh 10.86.41.96 <span style=color:#e6db74>&#34;ls -lah </span><span style=color:#e6db74>${</span>DEVICE<span style=color:#66d9ef>:-</span>/srv/node*<span style=color:#e6db74>}</span><span style=color:#e6db74>/d2/objects/1778/f67/3793f1105a148c4a1f180a83a7289f67&#34;</span>
+</span></span><span style=display:flex><span>ssh 10.86.35.169 <span style=color:#e6db74>&#34;ls -lah </span><span style=color:#e6db74>${</span>DEVICE<span style=color:#66d9ef>:-</span>/srv/node*<span style=color:#e6db74>}</span><span style=color:#e6db74>/d1/objects/1778/f67/3793f1105a148c4a1f180a83a7289f67&#34;</span> <span style=color:#75715e># [Handoff]</span>
+</span></span><span style=display:flex><span>ssh 10.86.41.96 <span style=color:#e6db74>&#34;ls -lah </span><span style=color:#e6db74>${</span>DEVICE<span style=color:#66d9ef>:-</span>/srv/node*<span style=color:#e6db74>}</span><span style=color:#e6db74>/d1/objects/1778/f67/3793f1105a148c4a1f180a83a7289f67&#34;</span> <span style=color:#75715e># [Handoff]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>$ ls /srv/node/d2/objects/1778/f67/3793f1105a148c4a1f180a83a7289f67/
+</span></span><span style=display:flex><span>1470970382.20003.data
+</span></span></code></pre></div><h3></h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>
+</span></span><span style=display:flex><span>$ swift-recon object -d  -l -r
+</span></span><span style=display:flex><span><span style=color:#f92672>===============================================================================</span>
+</span></span><span style=display:flex><span>--&gt; Starting reconnaissance on <span style=color:#ae81ff>3</span> hosts
+</span></span><span style=display:flex><span><span style=color:#f92672>===============================================================================</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>[</span>2016-10-19 15:54:25<span style=color:#f92672>]</span> Checking on replication
+</span></span><span style=display:flex><span><span style=color:#f92672>[</span>replication_failure<span style=color:#f92672>]</span> low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>[</span>replication_success<span style=color:#f92672>]</span> low: 5408, high: 5408, avg: 5408.0, total: 5408, Failed: 0.0%, no_result: 0, reported: <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>[</span>replication_time<span style=color:#f92672>]</span> low: 0, high: 0, avg: 0.3, total: 0, Failed: 66.7%, no_result: 2, reported: <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>[</span>replication_attempted<span style=color:#f92672>]</span> low: 5408, high: 5408, avg: 5408.0, total: 5408, Failed: 0.0%, no_result: 0, reported: <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>Oldest completion was NEVER by 10.86.35.169:6000.
+</span></span><span style=display:flex><span>Most recent completion was 2016-10-19 07:43:02 <span style=color:#f92672>(</span><span style=color:#ae81ff>11</span> minutes ago<span style=color:#f92672>)</span> by 10.86.41.96:6000.
+</span></span><span style=display:flex><span><span style=color:#f92672>===============================================================================</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>[</span>2016-10-19 15:51:09<span style=color:#f92672>]</span> Checking load averages
+</span></span><span style=display:flex><span><span style=color:#f92672>[</span>5m_load_avg<span style=color:#f92672>]</span> low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: <span style=color:#ae81ff>3</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>[</span>15m_load_avg<span style=color:#f92672>]</span> low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: <span style=color:#ae81ff>3</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>[</span>1m_load_avg<span style=color:#f92672>]</span> low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: 3
+</span></span><span style=display:flex><span><span style=color:#f92672>===============================================================================</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>[</span>2016-10-19 15:51:09<span style=color:#f92672>]</span> Checking disk usage now
+</span></span><span style=display:flex><span>Distribution Graph:
+</span></span><span style=display:flex><span> 15%    <span style=color:#ae81ff>1</span> **********************************
+</span></span><span style=display:flex><span> 17%    <span style=color:#ae81ff>1</span> **********************************
+</span></span><span style=display:flex><span> 18%    <span style=color:#ae81ff>1</span> **********************************
+</span></span><span style=display:flex><span> 19%    <span style=color:#ae81ff>2</span> *********************************************************************
+</span></span><span style=display:flex><span> 20%    <span style=color:#ae81ff>1</span> **********************************
+</span></span><span style=display:flex><span>Disk usage: space used: <span style=color:#ae81ff>22106923008</span> of <span style=color:#ae81ff>119937073152</span>
+</span></span><span style=display:flex><span>Disk usage: space free: <span style=color:#ae81ff>97830150144</span> of <span style=color:#ae81ff>119937073152</span>
+</span></span><span style=display:flex><span>Disk usage: lowest: 15.46%, highest: 20.05%, avg: 18.4321014571%
+</span></span><span style=display:flex><span><span style=color:#f92672>===============================================================================</span>
+</span></span></code></pre></div><h3 id=用法-1>用法</h3><ul><li>通用存储方案, No RAID</li><li>多存储策略</li><li>大文件切分并发上传</li><li>对象超时机制</li><li>单容器200w记录无压力</li><li>rsync带宽限制</li><li>recon/informant监控</li><li>调整 /etc/rsyslog.d/10-swift.conf</li></ul><h3 id=haystack>Haystack</h3><p>Haystack是Facebook的海量图片存储系统</p><ul><li>Finding a needle in Haystack: Facebooks photo storage</li><li>总量260B, 20P, 增量1M 60T/W, 峰值550K/S</li><li>每张图4种尺寸, 分别存3份</li><li>三种服务 Cache, Directory, Store</li><li>两种元信息, Application 生成URL用 / Filesystem 读取文件用</li></ul><h3></h3><p>#+BEGIN_CENTER
+<img src=./images/fb_nfs.jpg alt=img>
+#+END_CENTER</p><h3 id=优化尽头>优化尽头</h3><ul><li>POSIX读文件效率低</li><li>缓存文件句柄, 修改内核增加open by filehandle方法减少IO</li><li>社交网络长尾效应</li><li>冗余元数据(文件权限, 所属用户)浪费空间</li></ul><h3 id=needle结构>Needle结构</h3><p>:PROPERTIES:
+:ARTICLE: smaller
+:END:</p><p>#+BEGIN_CENTER
+<img src=./images/needle.jpg alt=img>
+#+END_CENTER</p><ul><li>cookie 创建时生成, 后续的访问签名</li><li>key 图片编号</li><li>alternate key 图片规格</li><li>padding 8字节对齐</li></ul><h3 id=needle索引文件>Needle索引文件</h3><p>:PROPERTIES:
+:ARTICLE: smaller
+:END:</p><p>#+BEGIN_CENTER
+<img src=./images/needle_index.png alt=img></p><p>两级映射 needle.key => (needle.alternate key => meta)
+#+END_CENTER</p><h3 id=store服务>Store服务</h3><ul><li>挂载物理卷(/hay/haystack/) 作为存储基本单元, 如: 100个100G的物理卷提供10T存储量,系统级用xfs</li><li>小文件合并成文件块，通过offset和size 直接定位读取</li><li>异步追加 元信息 到索引文件，加速启动, 运行时全量加载到内存 (由于是异步操作，可能和数据块不一致，启动时需要做对比</li></ul><h3 id=directory服务>Directory服务</h3><p>本质上是一个映射表, 用数据库保存信息，提供一个PHP接口</p><ul><li>维护逻辑卷到物理卷的映射</li><li>判断请求转发到Store还是CDN</li><li>负载均衡</li><li>维护Store状态, 是否空闲/只读</li><li>为了便于维护, Store可写与容量有关; 扩容时无需文件迁移</li></ul><h3 id=cache服务>Cache服务</h3><ul><li>缓存文件, 相当于CDN</li><li>新上传文件直接缓存, 减少Store读写并发</li></ul><h3 id=haystack-1>HayStack</h3><p><img src=./images/haystack.jpg alt=img></p><h3 id=文件访问>文件访问</h3><p><code>http ://&lt;cdn>/&lt;Cache>/&lt;machine id>/&lt;logical volume, photo></code></p><ul><li>CDN 用 logical volume, photo 查缓存, 命中则返回，否则走Cache机</li><li>Cache 同上, 否则走Store机</li><li>Machine 同上, 否则返回错误</li></ul><h3 id=开源实现>开源实现</h3><ul><li>SeaweedFS 作者为Facebook员工</li><li>bfs - Bilibili File System</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ go get github.com/chrislusf/seaweedfs/weed
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>$ weed -master
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>$ weed volume -dir<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;./data1&#34;</span> -mserver<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;localhost:9333&#34;</span> -port<span style=color:#f92672>=</span><span style=color:#ae81ff>8080</span>
+</span></span><span style=display:flex><span>$ weed volume -dir<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;./data2&#34;</span> -mserver<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;localhost:9333&#34;</span> -port<span style=color:#f92672>=</span><span style=color:#ae81ff>8081</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>$ curl -X POST http://127.0.0.1:9333/dir/assign
+</span></span><span style=display:flex><span><span style=color:#f92672>{</span><span style=color:#e6db74>&#34;fid&#34;</span>:<span style=color:#e6db74>&#34;8,01995db7d7&#34;</span>,<span style=color:#e6db74>&#34;url&#34;</span>:<span style=color:#e6db74>&#34;127.0.0.1:8080&#34;</span>,<span style=color:#e6db74>&#34;publicUrl&#34;</span>:<span style=color:#e6db74>&#34;127.0.0.1:8080&#34;</span>,<span style=color:#e6db74>&#34;count&#34;</span>:1<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>{</span><span style=color:#e6db74>&#34;fid&#34;</span>:<span style=color:#e6db74>&#34;9,02af1b78ce&#34;</span>,<span style=color:#e6db74>&#34;url&#34;</span>:<span style=color:#e6db74>&#34;127.0.0.1:8080&#34;</span>,<span style=color:#e6db74>&#34;publicUrl&#34;</span>:<span style=color:#e6db74>&#34;127.0.0.1:8080&#34;</span>,<span style=color:#e6db74>&#34;count&#34;</span>:1<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>$ curl -X PUT -F file<span style=color:#f92672>=</span>@v6.pdf http://127.0.0.1:8080/8,01995db7d7
+</span></span><span style=display:flex><span><span style=color:#f92672>{</span><span style=color:#e6db74>&#34;name&#34;</span>:<span style=color:#e6db74>&#34;v6.pdf&#34;</span>,<span style=color:#e6db74>&#34;size&#34;</span>:189495<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>$ curl http://localhost:9333/dir/lookup?volumeId<span style=color:#f92672>=</span><span style=color:#ae81ff>8</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>{</span><span style=color:#e6db74>&#34;volumeId&#34;</span>:<span style=color:#e6db74>&#34;8&#34;</span>,<span style=color:#e6db74>&#34;locations&#34;</span>:<span style=color:#f92672>[{</span><span style=color:#e6db74>&#34;url&#34;</span>:<span style=color:#e6db74>&#34;127.0.0.1:8080&#34;</span>,<span style=color:#e6db74>&#34;publicUrl&#34;</span>:<span style=color:#e6db74>&#34;127.0.0.1:8080&#34;</span><span style=color:#f92672>}]}</span>
+</span></span><span style=display:flex><span>$ curl -I http://127.0.0.1:8080/8,01995db7d7
+</span></span><span style=display:flex><span>HTTP/1.1 <span style=color:#ae81ff>200</span> OK
+</span></span><span style=display:flex><span>Accept-Ranges: bytes
+</span></span><span style=display:flex><span>Content-Disposition: inline; filename<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;v6.pdf&#34;</span>
+</span></span><span style=display:flex><span>Content-Length: <span style=color:#ae81ff>235616</span>
+</span></span><span style=display:flex><span>Content-Type: application/pdf
+</span></span></code></pre></div><h2 id=nginx>Nginx</h2><p>通过lua路由请求、通过插件实时图片处理</p><h3></h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ cat nginx/conf/vhost/vh_beansdb.conf
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    upstream beansdb_0_b <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        ...
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    location / <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        set $memc_key $uri;
+</span></span><span style=display:flex><span>        set_by_lua_file $server <span style=color:#e6db74>&#39;conf/vhost/vh_beansdb_fnv1a.lua&#39;</span>;
+</span></span><span style=display:flex><span>        memc_pass $server;
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>$ cat nginx/conf/vhost/vh_beansdb_fnv1a.lua
+</span></span><span style=display:flex><span>require <span style=color:#e6db74>&#34;libhash&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>buckets <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;beansdb_c_f&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_c_f&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_c_f&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_c_f&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>local bucket_size <span style=color:#f92672>=</span> 268435456; -- <span style=color:#ae81ff>1</span> &lt;&lt; <span style=color:#ae81ff>32</span> / bucket_count;
+</span></span><span style=display:flex><span>local hash <span style=color:#f92672>=</span> libhash.fnv1a<span style=color:#f92672>(</span>ngx.var.memc_key, string.len<span style=color:#f92672>(</span>ngx.var.memc_key<span style=color:#f92672>))</span>;
+</span></span><span style=display:flex><span>local bucket <span style=color:#f92672>=</span> math.floor<span style=color:#f92672>(</span>hash / bucket_size<span style=color:#f92672>)</span>;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>return</span> buckets<span style=color:#f92672>[</span>bucket+1<span style=color:#f92672>]</span>;
+</span></span></code></pre></div><h3 id=图片处理配置>图片处理配置</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>server <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    gm_buffer 10M;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    location /gm <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>         alias imgs;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>         set $resize 400x300&gt;;
+</span></span><span style=display:flex><span>         set $rotate 180;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>         gm strip;
+</span></span><span style=display:flex><span>         gm auto-orient;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>         gm resize $resize;
+</span></span><span style=display:flex><span>         gm rotate $rotate;
+</span></span><span style=display:flex><span>         gm quality 85;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>         gm gravity SouthEast;
+</span></span><span style=display:flex><span>         gm composite -geometry +10+10 -image <span style=color:#e6db74>&#39;/your/watermark/file&#39;</span> -min-width 100;
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><h3></h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#66d9ef>typedef</span> <span style=color:#a6e22e>ngx_int_t</span> (<span style=color:#f92672>*</span>ngx_http_gm_command_pt)(<span style=color:#66d9ef>ngx_http_request_t</span> <span style=color:#f92672>*</span>r, <span style=color:#66d9ef>void</span> <span style=color:#f92672>*</span>option, Image <span style=color:#f92672>**</span>image,
+</span></span><span style=display:flex><span>        ImageInfo <span style=color:#f92672>*</span>image_info);
+</span></span><span style=display:flex><span><span style=color:#66d9ef>typedef</span> <span style=color:#a6e22e>ngx_int_t</span> (<span style=color:#f92672>*</span>ngx_http_gm_parse_pt)(<span style=color:#66d9ef>ngx_conf_t</span> <span style=color:#f92672>*</span>cf, <span style=color:#66d9ef>ngx_array_t</span> <span style=color:#f92672>*</span>args, <span style=color:#66d9ef>void</span> <span style=color:#f92672>**</span>option);
+</span></span><span style=display:flex><span><span style=color:#66d9ef>typedef</span> <span style=color:#66d9ef>ngx_buf_t</span> <span style=color:#f92672>*</span>(<span style=color:#f92672>*</span>ngx_http_gm_out_pt)(<span style=color:#66d9ef>ngx_http_request_t</span> <span style=color:#f92672>*</span>r, Image <span style=color:#f92672>*</span>image);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>typedef</span> <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>ngx_str_t</span>                   name;
+</span></span><span style=display:flex><span>    ngx_http_gm_command_pt      handler;
+</span></span><span style=display:flex><span>    ngx_http_gm_parse_pt        option_parse_handler;
+</span></span><span style=display:flex><span>    ngx_http_gm_out_pt          out_handler;
+</span></span><span style=display:flex><span>} <span style=color:#66d9ef>ngx_http_gm_command_t</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>typedef</span> <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>ngx_str_t</span>                   option;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>ngx_http_complex_value_t</span>   <span style=color:#f92672>*</span>option_cv;
+</span></span><span style=display:flex><span>} <span style=color:#66d9ef>ngx_http_gm_option_t</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>typedef</span> <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>ngx_http_gm_command_t</span>       <span style=color:#f92672>*</span>command;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>void</span>                        <span style=color:#f92672>*</span>option;
+</span></span><span style=display:flex><span>} <span style=color:#66d9ef>ngx_http_gm_command_info_t</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>typedef</span> <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>ngx_array_t</span>                 <span style=color:#f92672>*</span>cmds;          <span style=color:#f92672>/</span><span style=color:#960050;background-color:#1e0010>##</span> <span style=color:#66d9ef>ngx_http_gm_command_info_t</span> <span style=color:#960050;background-color:#1e0010>*/</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>size_t</span>                       buffer_size;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>ngx_flag_t</span>                   enable;
+</span></span><span style=display:flex><span>} <span style=color:#66d9ef>ngx_http_gm_conf_t</span>;
+</span></span></code></pre></div><h3></h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#66d9ef>ngx_int_t</span> <span style=color:#a6e22e>gm_quality_image</span>(<span style=color:#66d9ef>ngx_http_request_t</span> <span style=color:#f92672>*</span>r, <span style=color:#66d9ef>void</span> <span style=color:#f92672>*</span>option, Image <span style=color:#f92672>**</span>image, ImageInfo <span style=color:#f92672>*</span>image_info)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    u_char                     <span style=color:#f92672>*</span>quality;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span>                         value;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>dd</span>(<span style=color:#e6db74>&#34;start&#34;</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    quality <span style=color:#f92672>=</span> <span style=color:#a6e22e>gm_get_option_value</span>(r, (<span style=color:#66d9ef>ngx_http_gm_option_t</span> <span style=color:#f92672>*</span>)option);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (quality <span style=color:#f92672>==</span> NULL) {
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>ngx_log_error</span>(NGX_LOG_ERR, r<span style=color:#f92672>-&gt;</span>connection<span style=color:#f92672>-&gt;</span>log, <span style=color:#ae81ff>0</span>, <span style=color:#e6db74>&#34;gm filter: get quality failed&#34;</span>);
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> NGX_ERROR;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>ngx_strlen</span>(quality) <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>){
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> NGX_OK;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ngx_log_debug1</span>(NGX_LOG_DEBUG_HTTP, r<span style=color:#f92672>-&gt;</span>connection<span style=color:#f92672>-&gt;</span>log, <span style=color:#ae81ff>0</span>, <span style=color:#e6db74>&#34;gm filter: quality </span><span style=color:#ae81ff>\&#34;</span><span style=color:#e6db74>%s</span><span style=color:#ae81ff>\&#34;</span><span style=color:#e6db74>&#34;</span>, quality);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    value <span style=color:#f92672>=</span> <span style=color:#a6e22e>atoi</span>((<span style=color:#66d9ef>char</span> <span style=color:#f92672>*</span>) quality);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (value <span style=color:#f92672>&lt;=</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>||</span> value <span style=color:#f92672>&gt;</span> <span style=color:#ae81ff>100</span>) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> NGX_ERROR;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    image_info<span style=color:#f92672>-&gt;</span>quality <span style=color:#f92672>=</span> value;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> NGX_OK;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=总结>总结</h2><ul><li>对症下药</li><li>工具链很重要</li><li>抄是一门艺术</li><li>RTFSC</li></ul><p>Thank You</p></main><footer><hr>© <a href=https://github.com/firebat>firebat</a> 2020 &ndash; 2025</footer></body></html>
