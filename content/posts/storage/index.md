@@ -5,27 +5,26 @@ tags = ["存储"]
 +++
 ## 文件系统
 ### Professor Eggert's Dumb File System (~1974)
+Dr.Eggert在本科期间为了“改进UNIX”，创建了他的第一个文件系统。
 ![img](./images/eggertfs.png)
+- 每个扇区占用512字节
+- 第一个扇区分成16份，用于存放文件目录
+- 每个目录条目包含文件名、起始位置、文件大小
+
+实际上确实有几种文件系统是参照这种方案实现的，比如[RT-11](https://en.wikipedia.org/wiki/RT-11)，广泛用于实时操作系统。
 
 ### FAT - File Allocation Table (~1977)
+为了减少碎片化问题，引入了FAT文件分配表
 ![img](./images/fat.png)
-
-### 
-![img](./images/unix.jpg)
-
-### 
-![img](./images/pdp-11-40.jpg)
+- 保留地址0块，用于引导扇区
+- 保留地址1块，用于超级块，包含文件系统信息、版本号、根目录位置等
+- 每个目录条目包含文件名、扩展名、第一个块地址、文件大小、标志位等信息，目录也是文件
+- 链表结构，顺序访问慢（可通过碎片整理优化）
 
 ### Unix File System (~1973)
 ![img](./images/ufs.png)
-
-### Lions' Commentary on UNIX 6th Edition (1976)
-![img](./images/lions.jpg)
-
-### Unix Version 7 (1979)
-- 支持x86架构
-- 最后一个可自由散布的版本
-- 不可对学生提供原始码
+- 引入inode管理文件索引(index node)
+- 树形结构
 
 ### Berkeley Software Distribution (BSD)
 - 1977 1BSD ex
@@ -33,64 +32,19 @@ tags = ["存储"]
 - 1979 3BSD VAX虚拟内存
 - 1980 4BSD job, TCP/IP
 - 1981 4.1a rcp, rsh..
-
-![img](./images/bsd.jpg)
-
-### 
 ![img](./images/billjoy.jpg)
-
 Bill Joy - BSD, Sun co-founder, vi, csh, tcp/ip, NFS
 
 ### Berkeley Fast File System (~1980 4.1b)
 ![img](./images/bffs.png)
+- 增加一个块位图，标记数据块是否空闲
 
-### 
 ![img](./images/EricAllmanAndMarshallKirkMcKusick.jpg)
-
 Eric Allman & Marshall Kirk McKusick and their last son, Tyson
-   
-### 
-There is some sort of perverse pleasure in knowing that it's basically impossible to send a piece of hate mail through the Internet without its being touched by a gay program. That's kind of funny. —Eric Allman
-
-### 
-![img](./images/richard.jpg)
-
-GNU Opearting System (1984)
-
-### 
-![img](./images/andrew.jpg)
-
-Minix Operating System (1984 ~ 1987)
-
-### 
-![img](./images/minix15-floppies-scr-01.jpg)
-
-### 
-![img](./images/linus-torvalds.jpg)
-
-### 
-
-gcc on minix-386 doesn't optimize? (1991/3/29)
-Hello everybody,
-I've had minix for a week now, and have upgraded to 386-minix (nice), and duly downloaded gcc for minix. Yes, it works.
-
-PS and Minix-386 (1991/4/1)
-RTFSC (Read the F**ing Source Code :-) - It is heavily commented and the solution should be obvious (take that with a grain of salt, it certainly stumped me for a while :-). Simply change the 4 define-lines at the
-start (well, I'd guess about line 40) that read
-
-#define kernel "/usr/src/kernel/kernel" ...
-
-What would you like to see most in minix? (1991/8/26)
-Hello everybody out there using minix -
-I'm doing a (free) operating system (just a hobby, won't be big and professional like gnu) for 386(486) AT clones.  This has been brewing since april, and is starting to get ready.  I'd like any feedback on things people like/dislike in minix, as my OS resembles it somewhat (same physical layout of the file-system (due to practical reasons) among other things).
-
-### 
-![img](./images/vfs.gif)
 
 ## Network File System
 Network File System (NFS) is a distributed file system protocol originally developed by Sun Microsystems in 1984, allowing a user on a client computer to access files over a computer network much like local storage is accessed. NFS, like many other protocols, builds on the Open Network Computing Remote Procedure Call (ONC RPC) system. The NFS is an open standard defined in Request for Comments (RFC), allowing anyone to implement the protocol.
- 
-### 
+
 ![img](./images/NAS.gif)
 
 ### MooseFS
@@ -100,78 +54,61 @@ MooseFS is a fault tolerant, network distributed file system. It spreads data ov
 - Chunk servers -  any number of commodity servers storing files data and synchronizing it among themselves.
 - Client -  any number of machines using `mfsmount` process to communicate with the managing server and with chunkservers.
 
-### 
 ![img](./images/mfs_write.png)
-
-### 
 ![img](./images/mfs_read.png)
 
 
 ## 分布式系统
 ### CAP
-- Consistence 一致性
-
-  all nodes see the same data at the same time
-  
-- Availability 可用性
-
-  Reads and writes always succeed
-  
-- Partition Tolerance 分区容错性
-  
-  the system continues to operate despite arbitrary message loss or failure of part of the system
+- Consistence 一致性, all nodes see the same data at the same time
+- Availability 可用性, Reads and writes always succeed
+- Partition Tolerance 分区容错性, the system continues to operate despite arbitrary message loss or failure of part of the system
   
 ### NWR
-*Dynamo: Amazons Highly Available Key-value Store*
-#+BEGIN_VERSE
+`
 W > N / 2
 W + R > N
-#+END_VERSE
+`
 
 - N 副本数
 - W 一次成功的写操作必须完成的写副本数
 - R 一次成功的读操作需要读的副本数
 
-### 
+### 一致性哈希
+简单实现
 ![img](./images/object-mapping-simple-consistent-hashing.png)
 
-一致性哈希
-
-### 
+避免雪崩
 ![img](./images/object-mapping-modified-consistent-hashing.png)
 
-### 
-- [[http://www.cnblogs.com/yuxc/archive/2012/06/22/2558312.html][深入云存储系统Swift核心组件：Ring实现原理剖析)
-- [[http://yikun.github.io/2016/06/09/一致性哈希算法的理解与实践][一致性哈希算法的理解与实践)
-
+- [深入云存储系统Swift核心组件：Ring实现原理剖析)(http://www.cnblogs.com/yuxc/archive/2012/06/22/2558312.html)
+- [一致性哈希算法的理解与实践)(http://yikun.github.io/2016/06/09/一致性哈希算法的理解与实践)
 
 ## 对象存储
+### LSM-Tree
+![](./images/lsm.png)
+最初源于BigTable论文，可参考开源LevelDB引擎
+- 内存表采用红黑树，数据写满时，冻结后写入L0层SSTable(Sorted String Table)
+- 每一层满时，依次合并下沉
+- 磁盘顺序写，性能极好
+
+### Bitcask
+- LSM简化版，仅追加写，无压缩合并
+- 更新时，通过对比时间戳，更新key索引指向新记录
 ![img](./images/bitcask.jpg)
 
+### Merkle Tree
+- 父节点的Hash值由子节点计算生成，可快速发现集群中的故障节点。
 ![img](./images/Hash_Tree.svg.png)
 
-Merkle tree
-
+Merkle tree也用于比特币计算
+![](./images/en-blockchain-overview.svg)
 
 ### BeansDB (2009)
-Beansdb is a distributed key-value storage system designed for large scale online system, aiming for high avaliablility and easy management. It took the ideas from Amazon's Dynamo, then made some simplify to Keep It Simple Stupid (KISS).
-
-- High availability data storage with multi readable and writable repications
-- _Soft state and final consistency, synced with hash tree_
-- Easy Scaling out without interrupting online service
-- High performance read/write for a key-value based object
-- _Configurable availability/consistency by N,W,R_
-- _Memcache protocol compatibility_
-
-### Supported memcache commands
-- get (key, ?key, @bucket)
-- set
-- append
-- incr
-- delete
-- stats
-- flush _all
-
+豆瓣开源的的分布式存储系统，基于Amazon Dynamo的简化实现。
+- 索引采用Merkle Tree
+- 底层使用Bitcask存储数据
+- Key通过Fnv1a计算定位，根据前缀定位目标Bucket，数据写入，向上更新索引树
 
 ```sh
 $ telnet 127.0.0.1 7900
@@ -202,82 +139,33 @@ get ?/pay/ucardlogo/1509/2a/1b1fdecfdb5d31.jpg
 VALUE ?/pay/ucardlogo/1509/2a/1b1fdecfdb5d31.jpg 0 25
 1 12806 1 2853 1442285794
 ```
-
-
 ![img](./images/beansdb.png)
-
-
-### 用法
 - 面向10M以内文件, 如图片, 音频 (默认最高50M,可以改代码)
 - RAID10 数据存3份
 - 使用ngx_memc
-- qclient-beansdb (xmemcached with NWR)
 - rsync同步大文件, sync.py同步小对象
-- 数百T数据, 数十亿文件特别棒
+- 适用于数百T数据, 数十亿文件
 
 ### Swift
 OpenStack Object Storage（Swift）前身是 Rackspace Cloud Files 项目，于 2010 年贡献给 OpenStack 社区，是 OpenStack 最早的两个项目之一。Swift 可在比较便宜的通用硬件上构筑具有极强可扩展性和数据持久性的存储系统，支持多租户，通过 RESTful API 提供对容器（Container）和对象的 CRUD 操作。
 
-
-### 
-WSGI是为Python语言定义的Web服务器和Web应用程序或框架之间的一种简单而通用的接口。
-```sh
-$ paster create
-Selected and implied templates:
-  PasteScript#basic_package  A basic setuptools-enabled package
-
-Enter project name: demo
-Variables:
-  egg:      demo
-  package:  demo
-  project:  demo
-Enter version (Version (like 0.1)) ['']: 
-```
-
-```python
-# demo/__init__.py
-def app(environ, start_response): # or app = Flask(__name__)
-    start_response('200 OK', [('Content-Type', 'text/plain')])
-    yield "Hello world!\n"
-
-def factory(global_config, **local_config):
-    print global_config
-    print local_config
-    return app
-```
-
-### 
-PasteDeploy是一个用来查找和配置 WSGI 应用的系统, 配置支持app, filter, pipeline,factory, type, section等
-
-```ini
-# demo.ini
-[DEFAULT]
-title=my website
-
-[server:main]
-use = egg:Paste#http
-# use=egg:gunicorn#main
-# workers=2
-# worker_class=gevent
-
-[app:main]
-use=call:demo:app_factory
-# set title=demo site
-database=mysql://xxxx
-```
-
-```sh
-$ paster serve demo.ini
-{'__file__': '/home/tom/demo/main.ini', 'here': '/home/tom/demo', 'title': 'my website'}
-{'database': 'mysql://xxxx'}
-Starting server in PID 3756.
-serving on http://127.0.0.1:8080
-```
+![img](./images/swift_all.png)
+- Proxy Server 对外提供对象服务API, 查找服务地址并转发用户请求
+- Account Server 提供账户元数据和统计信息，并维护所含容器列表的服务
+- Container Server 提供容器元数据和统计信息，并维护所含对象列表的服务
+- Object Server 提供对象元数据和内容服务，对象以文件的形式存储在文件系统
+- Replicator 可选 检测本地分区副本和远程副本是否一致, Push更新副本，删除文件
+- Updater 可选 高负载时，将更新请求插入队列，之后进行异步更新
+- Auditor 可选 检查对象，容器和账户的完整性，发现比特级进行隔离, 并同步副本
+- Account Reaper 可选 账户清理服务，删除容器和对象数据
+- Authentication Server 验证用户身份
+- Cache Server 可选 缓存认证Token, 账户容器的存在信息, 采用Memcached.
 
 ### 映射关系
 ![img](./images/swift.png)
-
-### 数据节点
+- 有Account、Container、Object三层服务组成
+- 通过MD5计算，根据前缀定位到物理节点
+- 物理节点通过后缀划分目录存放数据
 ```sh
 $ tree /srv/node/sdb -L 5
 ├── accounts
@@ -300,35 +188,8 @@ $ tree /srv/node/sdb -L 5
 │  │   │       └── 1464159081.76922.ts
 └── tmp
 ```
+索引结构
 
-### Swift Proxy
-![img](./images/swift_proxy.jpg)
-
-### Swift Ring
-![img](./images/swift_ring.jpg)
-
-### Swift Get
-![img](./images/swift_get.jpg)
-
-### Swift Post
-![img](./images/swift_post.jpg)
-
-### Swift All
-![img](./images/swift_all.png)
-
-### Swift组件
-- Proxy Server 对外提供对象服务API, 查找服务地址并转发用户请求
-- Account Server 提供账户元数据和统计信息，并维护所含容器列表的服务
-- Container Server 提供容器元数据和统计信息，并维护所含对象列表的服务
-- Object Server 提供对象元数据和内容服务，对象以文件的形式存储在文件系统
-- Replicator 检测本地分区副本和远程副本是否一致, Push更新副本，删除文件
-- Updater 高负载时，将更新请求插入队列，之后进行异步更新
-- Auditor 检查对象，容器和账户的完整性，发现比特级进行隔离, 并同步副本
-- Account Reaper 账户清理服务，删除容器和对象数据
-- Authentication Server 验证用户身份
-- Cache Server 缓存认证Token, 账户容器的存在信息, 采用Memcached.
-   
-### 
 ```sh
 $ swift-ring-builder object.builder
 object.builder, build version 6
@@ -408,8 +269,6 @@ Disk usage: space free: 97830150144 of 119937073152
 Disk usage: lowest: 15.46%, highest: 20.05%, avg: 18.4321014571%
 ===============================================================================
 ```
-
-### 用法
 - 通用存储方案, No RAID
 - 多存储策略
 - 大文件切分并发上传
@@ -420,48 +279,28 @@ Disk usage: lowest: 15.46%, highest: 20.05%, avg: 18.4321014571%
 - 调整 /etc/rsyslog.d/10-swift.conf
 
 ### Haystack
-Haystack是Facebook的海量图片存储系统
+Facebook的海量图片存储系统
 
-- Finding a needle in Haystack: Facebooks photo storage
+- [Finding a needle in Haystack: Facebooks photo storage](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf)
 - 总量260B, 20P, 增量1M 60T/W, 峰值550K/S
 - 每张图4种尺寸, 分别存3份
 - 三种服务 Cache, Directory, Store
 - 两种元信息, Application 生成URL用 / Filesystem 读取文件用
 
-### 
-#+BEGIN_CENTER
+**演化过程**
 ![img](./images/fb_nfs.jpg)
-#+END_CENTER
-
-### 优化尽头
 - POSIX读文件效率低
 - 缓存文件句柄, 修改内核增加open by filehandle方法减少IO
 - 社交网络长尾效应
 - 冗余元数据(文件权限, 所属用户)浪费空间
 
-### Needle结构
-:PROPERTIES:
-:ARTICLE:  smaller
-:END:
+**HayStack**
+![img](./images/haystack.jpg)
+`http ://<cdn>/<Cache>/<machine id>/<logical volume, photo>`
 
-#+BEGIN_CENTER
-![img](./images/needle.jpg)
-#+END_CENTER
-- cookie 创建时生成, 后续的访问签名
-- key 图片编号
-- alternate key 图片规格
-- padding 8字节对齐
-
-### Needle索引文件
-:PROPERTIES:
-:ARTICLE:  smaller
-:END:
-
-#+BEGIN_CENTER
-![img](./images/needle_index.png)
-
-两级映射 needle.key => (needle.alternate key => meta)
-#+END_CENTER
+- CDN 用 logical volume, photo 查缓存, 命中则返回，否则走Cache机
+- Cache  同上, 否则走Store机
+- Machine 同上, 否则返回错误
 
 ### Store服务
 
@@ -469,7 +308,7 @@ Haystack是Facebook的海量图片存储系统
 - 小文件合并成文件块，通过offset和size 直接定位读取
 - 异步追加 元信息 到索引文件，加速启动, 运行时全量加载到内存 (由于是异步操作，可能和数据块不一致，启动时需要做对比
 
-### Directory服务  
+### Directory服务
 本质上是一个映射表, 用数据库保存信息，提供一个PHP接口
 
 - 维护逻辑卷到物理卷的映射
@@ -482,16 +321,17 @@ Haystack是Facebook的海量图片存储系统
 - 缓存文件, 相当于CDN
 - 新上传文件直接缓存, 减少Store读写并发
 
-### HayStack
-![img](./images/haystack.jpg)
 
+### Needle结构
+![img](./images/needle.jpg)
+- cookie 创建时生成, 后续的访问签名
+- key 图片编号
+- alternate key 图片规格
+- padding 8字节对齐
 
-### 文件访问
-`http ://<cdn>/<Cache>/<machine id>/<logical volume, photo>`
-
-- CDN 用 logical volume, photo 查缓存, 命中则返回，否则走Cache机
-- Cache  同上, 否则走Store机
-- Machine 同上, 否则返回错误
+### Needle索引
+![img](./images/needle_index.png)
+两级映射 `needle.key => (needle.alternate key => meta)`
 
 ### 开源实现
 - SeaweedFS 作者为Facebook员工
@@ -521,8 +361,8 @@ Content-Length: 235616
 Content-Type: application/pdf
 ```
 
-## Nginx
-通过lua路由请求、通过插件实时图片处理
+## Nginx Proxy
+通过lua路由请求
 
 ### 
 ```sh
@@ -553,7 +393,8 @@ local bucket = math.floor(hash / bucket_size);
 return buckets[bucket+1];
 ```
 
-### 图片处理配置
+## 图片处理配置
+通过[ngx-gm-filter](https://github.com/firebat/ngx-gm-filter)插件实时处理图片
 ```sh
 server {
     gm_buffer 10M;
@@ -574,69 +415,6 @@ server {
          gm gravity SouthEast;
          gm composite -geometry +10+10 -image '/your/watermark/file' -min-width 100;
     }
-}
-```
-
-### 
-```c
-typedef ngx_int_t (*ngx_http_gm_command_pt)(ngx_http_request_t *r, void *option, Image **image,
-        ImageInfo *image_info);
-typedef ngx_int_t (*ngx_http_gm_parse_pt)(ngx_conf_t *cf, ngx_array_t *args, void **option);
-typedef ngx_buf_t *(*ngx_http_gm_out_pt)(ngx_http_request_t *r, Image *image);
-
-typedef struct {
-    ngx_str_t                   name;
-    ngx_http_gm_command_pt      handler;
-    ngx_http_gm_parse_pt        option_parse_handler;
-    ngx_http_gm_out_pt          out_handler;
-} ngx_http_gm_command_t;
-
-typedef struct {
-    ngx_str_t                   option;
-    ngx_http_complex_value_t   *option_cv;
-} ngx_http_gm_option_t;
-
-typedef struct {
-    ngx_http_gm_command_t       *command;
-    void                        *option;
-} ngx_http_gm_command_info_t;
-
-typedef struct {
-    ngx_array_t                 *cmds;          /## ngx_http_gm_command_info_t */
-    size_t                       buffer_size;
-    ngx_flag_t                   enable;
-} ngx_http_gm_conf_t;
-```
-
-### 
-```c
-ngx_int_t gm_quality_image(ngx_http_request_t *r, void *option, Image **image, ImageInfo *image_info)
-{
-    u_char                     *quality;
-    int                         value;
-
-    dd("start");
-
-    quality = gm_get_option_value(r, (ngx_http_gm_option_t *)option);
-    if (quality == NULL) {
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, "gm filter: get quality failed");
-        return NGX_ERROR;
-    }
-
-    if (ngx_strlen(quality) == 0){
-        return NGX_OK;
-    }
-
-    ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "gm filter: quality \"%s\"", quality);
-
-    value = atoi((char *) quality);
-    if (value <= 0 || value > 100) {
-        return NGX_ERROR;
-    }
-
-    image_info->quality = value;
-
-    return NGX_OK;
 }
 ```
 
