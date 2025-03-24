@@ -186,22 +186,28 @@ P2P技术的发展，产生了各种网络共享下载的应用，如Napster、G
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="多并行队列">多并行队列&lt;/h3>
 &lt;p>这里给出多并行队列的筛选方法，实际上单个并行队列足够满足大多数场景。&lt;/p></description></item><item><title>存储的发展</title><link>https://firebat.github.io/posts/storage/</link><pubDate>Wed, 07 Dec 2016 00:00:00 -0800</pubDate><guid>https://firebat.github.io/posts/storage/</guid><description>&lt;h2 id="文件系统">文件系统&lt;/h2>
 &lt;h3 id="professor-eggerts-dumb-file-system-1974">Professor Eggert&amp;rsquo;s Dumb File System (~1974)&lt;/h3>
-&lt;p>&lt;img src="./images/eggertfs.png" alt="img">&lt;/p>
+&lt;p>Dr.Eggert在本科期间为了“改进UNIX”，创建了他的第一个文件系统。
+&lt;img src="./images/eggertfs.png" alt="img">&lt;/p>
+&lt;ul>
+&lt;li>每个扇区占用512字节&lt;/li>
+&lt;li>第一个扇区分成16份，用于存放文件目录&lt;/li>
+&lt;li>每个目录条目包含文件名、起始位置、文件大小&lt;/li>
+&lt;/ul>
+&lt;p>实际上确实有几种文件系统是参照这种方案实现的，比如&lt;a href="https://en.wikipedia.org/wiki/RT-11">RT-11&lt;/a>，广泛用于实时操作系统。&lt;/p>
 &lt;h3 id="fat---file-allocation-table-1977">FAT - File Allocation Table (~1977)&lt;/h3>
-&lt;p>&lt;img src="./images/fat.png" alt="img">&lt;/p>
-&lt;h3>&lt;/h3>
-&lt;p>&lt;img src="./images/unix.jpg" alt="img">&lt;/p>
-&lt;h3>&lt;/h3>
-&lt;p>&lt;img src="./images/pdp-11-40.jpg" alt="img">&lt;/p>
+&lt;p>为了减少碎片化问题，引入了FAT文件分配表
+&lt;img src="./images/fat.png" alt="img">&lt;/p>
+&lt;ul>
+&lt;li>保留地址0块，用于引导扇区&lt;/li>
+&lt;li>保留地址1块，用于超级块，包含文件系统信息、版本号、根目录位置等&lt;/li>
+&lt;li>每个目录条目包含文件名、扩展名、第一个块地址、文件大小、标志位等信息，目录也是文件&lt;/li>
+&lt;li>链表结构，顺序访问慢（可通过碎片整理优化）&lt;/li>
+&lt;/ul>
 &lt;h3 id="unix-file-system-1973">Unix File System (~1973)&lt;/h3>
 &lt;p>&lt;img src="./images/ufs.png" alt="img">&lt;/p>
-&lt;h3 id="lions-commentary-on-unix-6th-edition-1976">Lions&amp;rsquo; Commentary on UNIX 6th Edition (1976)&lt;/h3>
-&lt;p>&lt;img src="./images/lions.jpg" alt="img">&lt;/p>
-&lt;h3 id="unix-version-7-1979">Unix Version 7 (1979)&lt;/h3>
 &lt;ul>
-&lt;li>支持x86架构&lt;/li>
-&lt;li>最后一个可自由散布的版本&lt;/li>
-&lt;li>不可对学生提供原始码&lt;/li>
+&lt;li>引入inode管理文件索引(index node)&lt;/li>
+&lt;li>树形结构&lt;/li>
 &lt;/ul>
 &lt;h3 id="berkeley-software-distribution-bsd">Berkeley Software Distribution (BSD)&lt;/h3>
 &lt;ul>
@@ -209,9 +215,9 @@ P2P技术的发展，产生了各种网络共享下载的应用，如Napster、G
 &lt;li>1978 2BSD vi, csh, berknet&lt;/li>
 &lt;li>1979 3BSD VAX虚拟内存&lt;/li>
 &lt;li>1980 4BSD job, TCP/IP&lt;/li>
-&lt;li>1981 4.1a rcp, rsh..&lt;/li>
+&lt;li>1981 4.1a rcp, rsh..
+&lt;img src="./images/billjoy.jpg" alt="img">
+Bill Joy - BSD, Sun co-founder, vi, csh, tcp/ip, NFS&lt;/li>
 &lt;/ul>
-&lt;p>&lt;img src="./images/bsd.jpg" alt="img">&lt;/p>
-&lt;h3>&lt;/h3>
-&lt;p>&lt;img src="./images/billjoy.jpg" alt="img">&lt;/p>
-&lt;p>Bill Joy - BSD, Sun co-founder, vi, csh, tcp/ip, NFS&lt;/p></description></item></channel></rss>
+&lt;h3 id="berkeley-fast-file-system-1980-41b">Berkeley Fast File System (~1980 4.1b)&lt;/h3>
+&lt;p>&lt;img src="./images/bffs.png" alt="img">&lt;/p></description></item></channel></rss>
