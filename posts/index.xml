@@ -209,15 +209,20 @@ P2P技术的发展，产生了各种网络共享下载的应用，如Napster、G
 &lt;li>引入inode管理文件索引(index node)&lt;/li>
 &lt;li>树形结构&lt;/li>
 &lt;/ul>
-&lt;h3 id="berkeley-software-distribution-bsd">Berkeley Software Distribution (BSD)&lt;/h3>
-&lt;ul>
-&lt;li>1977 1BSD ex&lt;/li>
-&lt;li>1978 2BSD vi, csh, berknet&lt;/li>
-&lt;li>1979 3BSD VAX虚拟内存&lt;/li>
-&lt;li>1980 4BSD job, TCP/IP&lt;/li>
-&lt;li>1981 4.1a rcp, rsh..
-&lt;img src="./images/billjoy.jpg" alt="img">
-Bill Joy - BSD, Sun co-founder, vi, csh, tcp/ip, NFS&lt;/li>
-&lt;/ul>
 &lt;h3 id="berkeley-fast-file-system-1980-41b">Berkeley Fast File System (~1980 4.1b)&lt;/h3>
-&lt;p>&lt;img src="./images/bffs.png" alt="img">&lt;/p></description></item></channel></rss>
+&lt;p>&lt;img src="./images/bffs.png" alt="img">&lt;/p>
+&lt;ul>
+&lt;li>增加一个块位图，标记数据块是否空闲&lt;/li>
+&lt;/ul>
+&lt;h2 id="network-file-system">Network File System&lt;/h2>
+&lt;p>网络文件系统, 一种使用于分散式文件系统的协定，由Sun公司开发，于1984年向外公布。允许远程主机通过网络挂载文件系统，并像它们是本地挂载的文件系统一样与它们进行交互。
+&lt;img src="./images/NAS.gif" alt="img">&lt;/p>
+&lt;h3 id="moosefs">MooseFS&lt;/h3>
+&lt;p>具有容错性的网络分布式文件系统。它把数据分散存放在多个物理服务器上，而呈现给用户的则是一个统一的资源。&lt;/p>
+&lt;ul>
+&lt;li>Master server - a single machine managing the whole filesystem, storing metadata for every file.&lt;/li>
+&lt;li>Chunk servers - any number of commodity servers storing files data and synchronizing it among themselves.&lt;/li>
+&lt;li>Client - any number of machines using &lt;code>mfsmount&lt;/code> process to communicate with the managing server and with chunkservers.&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="./images/mfs_write.png" alt="img">
+&lt;img src="./images/mfs_read.png" alt="img">&lt;/p></description></item></channel></rss>
