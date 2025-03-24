@@ -51,21 +51,15 @@ Dr.Eggert在本科期间为了“改进UNIX”，创建了他的第一个文件�
 - Partition Tolerance 分区容错性, 部分节点丢失或无效时，系统仍然可用
   
 ### NWR
-- `W > N / 2` 
-- `W + R > N`
-
+- `W > N / 2` and `W + R > N`
 - N 副本数
 - W 一次成功的写操作必须完成的写副本数
 - R 一次成功的读操作需要读的副本数
 
 ### 一致性哈希
-简单实现
-![img](./images/object-mapping-simple-consistent-hashing.png)
+![img](./images/consistent-hashing.png)
 
-避免雪崩
-![img](./images/object-mapping-modified-consistent-hashing.png)
-
-- [深入云存储系统Swift核心组件：Ring实现原理剖析)(http://www.cnblogs.com/yuxc/archive/2012/06/22/2558312.html)
+- [深入云存储系统Swift核心组件：Ring实现原理剖析](http://www.cnblogs.com/yuxc/archive/2012/06/22/2558312.html)
 - [一致性哈希算法的理解与实践)(http://yikun.github.io/2016/06/09/一致性哈希算法的理解与实践)
 
 ## 对象存储
