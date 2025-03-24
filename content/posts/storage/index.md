@@ -66,9 +66,12 @@ Dr.Eggert在本科期间为了“改进UNIX”，创建了他的第一个文件�
 ### LSM-Tree
 最初源于BigTable论文，可参考开源LevelDB引擎
 ![](./images/lsm.png)
-- 内存表采用红黑树，数据写满时，冻结后写入L0层SSTable(Sorted String Table)
-- 每一层满时，依次合并下沉
-- 磁盘顺序写，性能极好
+- Memtable 内存表，有序，可采用红黑树、跳表，写满时冻结
+- SSTable 有序字符串表，采用键值对结构，不可变
+- Compaction 当SSTable写满时，合并压缩，同时删除旧数据
+- WAL 确保数据安全可靠
+- 磁盘顺序写，性能极好，适用于数据有明显冷热区分的日志场景
+- 查询扩散，可通过BloomFilter过滤优化
 
 ### Bitcask
 源自Riak, 一个使用Erlang实现的KV存储引擎
