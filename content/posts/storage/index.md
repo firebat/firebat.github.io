@@ -64,7 +64,7 @@ Dr.Eggert在本科期间为了“改进UNIX”，创建了他的第一个文件�
 
 ## 对象存储
 ### LSM-Tree
-最初源于BigTable论文，可参考开源LevelDB引擎
+是一种分层、有序、面向磁盘的数据结构，最初源于BigTable论文，可开源实现[LevelDB](https://github.com/google/leveldb)引擎
 ![](./images/lsm.png)
 - Memtable 内存表，有序，可采用红黑树、跳表，写满时冻结
 - SSTable 有序字符串表，采用键值对结构，不可变
@@ -262,7 +262,7 @@ Disk usage: lowest: 15.46%, highest: 20.05%, avg: 18.4321014571%
 ### Haystack
 Facebook的海量图片存储系统
 
-- [Finding a needle in Haystack: Facebooks photo storage](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf)
+
 - 总量260B, 20P, 增量1M 60T/W, 峰值550K/S
 - 每张图4种尺寸, 分别存3份
 - 三种服务 Cache, Directory, Store
@@ -285,7 +285,7 @@ Facebook的海量图片存储系统
 
 ### Store服务
 
-- 挂载物理卷(/hay/haystack/<logical valume id>) 作为存储基本单元, 如: 100个100G的物理卷提供10T存储量,系统级用xfs
+- 挂载物理卷(`/hay/haystack/<logical valume id>`) 作为存储基本单元, 如: 100个100G的物理卷提供10T存储量,系统级用xfs
 - 小文件合并成文件块，通过offset和size 直接定位读取
 - 异步追加 元信息 到索引文件，加速启动, 运行时全量加载到内存 (由于是异步操作，可能和数据块不一致，启动时需要做对比
 
@@ -316,8 +316,8 @@ Facebook的海量图片存储系统
 两级映射 `needle.key => (needle.alternate key => meta)`
 
 ### 开源实现
-- SeaweedFS 作者为Facebook员工
-- bfs - Bilibili File System
+- [SeaweedFS](https://github.com/seaweedfs/seaweedfs) 参照Haystack的分布式存储实现
+- [bfs](https://github.com/Terry-Mao/bfs)Bilibili基于Haystack的小文件存储系统
 
 ```sh
 $ go get github.com/chrislusf/seaweedfs/weed
@@ -408,3 +408,8 @@ server {
 
 Thank You
 
+## 参考
+- [Bigtable: A Distributed Storage System for Structured Data](https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/bigtable-osdi06.pdf)
+- [Bitcask - A Log-Structured Hash Table for Fast Key/Value Data](https://riak.com/assets/bitcask-intro.pdf)
+- [Finding a needle in Haystack: Facebooks photo storage](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf)
+- [Merkle Trees Optimized for Stateless Clients in Bitcoin](https://eprint.iacr.org/2021/340.pdf)
