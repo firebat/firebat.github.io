@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>firebat</title><link>https://firebat.github.io/</link><description>Recent content on firebat</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 28 Feb 2025 04:04:38 -0400</lastBuildDate><atom:link href="https://firebat.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>浅析Voip原理</title><link>https://firebat.github.io/posts/voip/</link><pubDate>Fri, 28 Feb 2025 04:04:38 -0400</pubDate><guid>https://firebat.github.io/posts/voip/</guid><description>&lt;p>&lt;img src="./images/webrtc-comprehensive.png" alt="WebRTC">
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>firebat</title><link>https://firebat.github.io/</link><description>Recent content on firebat</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Fri, 28 Feb 2025 04:04:38 -0400</lastBuildDate><atom:link href="https://firebat.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>浅析Voip原理</title><link>https://firebat.github.io/posts/voip/</link><pubDate>Fri, 28 Feb 2025 04:04:38 -0400</pubDate><guid>https://firebat.github.io/posts/voip/</guid><description>&lt;p>&lt;img src="./images/webrtc-comprehensive.png" alt="WebRTC">
 P2P技术的发展，产生了各种网络共享下载的应用，如Napster、Gnutella；音视频编码算法的进步、硬件性能的提升以及移动互联网的发展，在我们身边诞生出形形色色的网络应用，如网络电话、网络会议、网络直播等，同时也带来了各种商业上的成功。&lt;/p>
 &lt;ul>
 &lt;li>Skype 2003年诞生的一款即时通信应用软件，可通过互联网进行语音和视频通话，2011年微软85亿美元收购。&lt;/li>
@@ -225,4 +225,16 @@ P2P技术的发展，产生了各种网络共享下载的应用，如Napster、G
 &lt;li>Client - any number of machines using &lt;code>mfsmount&lt;/code> process to communicate with the managing server and with chunkservers.&lt;/li>
 &lt;/ul>
 &lt;p>&lt;img src="./images/mfs_write.png" alt="img">
-&lt;img src="./images/mfs_read.png" alt="img">&lt;/p></description></item></channel></rss>
+&lt;img src="./images/mfs_read.png" alt="img">&lt;/p></description></item><item><title>About</title><link>https://firebat.github.io/about/</link><pubDate>Thu, 01 Jan 2015 00:00:00 +0800</pubDate><guid>https://firebat.github.io/about/</guid><description>&lt;h2 id="who-am-i">Who am I&lt;/h2>
+&lt;ul>
+&lt;li>Software engineer for over 15 years&lt;/li>
+&lt;li>Specialize in java, go and python, experience in c, javascript and lisp&lt;/li>
+&lt;li>Emacs user on gentoo&lt;/li>
+&lt;li>Radio amateur, &lt;a href="https://www.qrz.com/db/BI1VMS">BI1VMS&lt;/a>&lt;/li>
+&lt;li>Motocycle rider&lt;/li>
+&lt;li>Motto: strict standards and good skills (规格严格 功夫到家)&lt;/li>
+&lt;/ul>
+&lt;h2 id="contact">Contact&lt;/h2>
+&lt;ul>
+&lt;li>Email: &lt;a href="mailto:zzy.hit@gmail.com">zzy.hit@gmail.com&lt;/a>&lt;/li>
+&lt;/ul></description></item></channel></rss>
