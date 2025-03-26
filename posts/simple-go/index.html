@@ -1,0 +1,290 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Go简明教程 | firebat</title>
+<link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/tags/>Tags</a></li><li><a href=/about>About</a></li><li><a href=/index.xml>Subscribe</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>Go简明教程</span></h1><h2 class=date>2022/08/22</h2></div><main><p>本教程为《<a href=https://gopl-zh.github.io/>Go语言圣经</a>》内容简化，作为开发同学快速上手用。</p><h1 id=语言基础>语言基础</h1><ul><li>没有异常、宏</li><li>常量编译时计算</li><li>包、变量 声明后必须使用，否则报错</li><li>使用<code>_</code>丢弃数据，防止编译报错（变量、包）</li><li>包初始化默认执行<code>init()</code></li><li>首字母大写可外部访问，否则仅内部访问</li><li><code>switch</code>默认<code>break</code>，相邻<code>case</code>执行需加<code>fallthrough</code> (用得少）</li></ul><h1 id=关键字>关键字</h1><p>25个，仅用于语法结构</p><pre tabindex=0><code>break    default        func      interface   select
+case     defer          go        map         struct
+chan     else           goto      package     switch
+const    fallthrough    if        range       type
+continue for            import    return      var
+</code></pre><h1 id=预定义名>预定义名</h1><p>30多个，用于常量、类型、函数</p><pre tabindex=0><code>内建常量 true false iota nil
+内建类型 int int8 int16 int32 int64
+        uint uint8 uint16 uint32 uint64 uintptr
+        float32 float64 complex128 complex64
+        bool byte rune string error
+内建函数 make len cap new append copy close delete
+        complex real(实部) imag(虚部)
+        panic recover
+</code></pre><h1 id=包>包</h1><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#f92672>package</span> <span style=color:#a6e22e>包名</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> (
+</span></span><span style=display:flex><span>  [<span style=color:#a6e22e>别名</span>] <span style=color:#a6e22e>包名</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>_</span> <span style=color:#a6e22e>包名</span>        <span style=color:#75715e>// 触发init() 如: 注册驱动</span>
+</span></span><span style=display:flex><span>)
+</span></span></code></pre></div><h1 id=常量>常量</h1><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>常量名</span> <span style=color:#a6e22e>常量类型</span> = <span style=color:#a6e22e>表达式</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>PI</span> <span style=color:#66d9ef>int</span> = <span style=color:#ae81ff>3.14159</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>const</span> (
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// 批量定义</span>
+</span></span><span style=display:flex><span>)
+</span></span></code></pre></div><h1 id=变量>变量</h1><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>变量名</span> <span style=color:#a6e22e>类型</span> = <span style=color:#a6e22e>表达式</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>name</span> <span style=color:#66d9ef>string</span> = <span style=color:#e6db74>&#34;alice&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>name</span> = <span style=color:#e6db74>&#34;alice&#34;</span>     <span style=color:#75715e>// 类型自动识别</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>name</span> <span style=color:#f92672>:=</span> <span style=color:#e6db74>&#34;alice&#34;</span>        <span style=color:#75715e>// 函数内简写</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>var</span> (
+</span></span><span style=display:flex><span>  <span style=color:#75715e>// 批量定义</span>
+</span></span><span style=display:flex><span>)
+</span></span></code></pre></div><h1 id=数组切片哈希>数组切片哈希</h1><ul><li>数组，定长</li><li>切片，变长，通过data、len、cap 定义一个数据空间</li><li>哈希，无序</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>数组</span> [<span style=color:#a6e22e>长度</span>]<span style=color:#a6e22e>类型</span> 
+</span></span><span style=display:flex><span><span style=color:#a6e22e>array</span> <span style=color:#f92672>:=</span> [<span style=color:#ae81ff>2</span>]<span style=color:#66d9ef>int</span>{<span style=color:#ae81ff>1</span>,<span style=color:#ae81ff>2</span>}
+</span></span><span style=display:flex><span><span style=color:#a6e22e>array</span> <span style=color:#f92672>:=</span> [<span style=color:#f92672>...</span>]<span style=color:#66d9ef>int</span>{<span style=color:#ae81ff>1</span>,<span style=color:#ae81ff>2</span>,<span style=color:#ae81ff>3</span>}  <span style=color:#75715e>// ... 自适应长度</span>
+</span></span><span style=display:flex><span>len(<span style=color:#a6e22e>array</span>)                <span style=color:#75715e>// 长度</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span>, <span style=color:#a6e22e>value</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>array</span> {
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>切片</span> []<span style=color:#a6e22e>类型</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>slice</span> <span style=color:#f92672>:=</span> make([]<span style=color:#a6e22e>T</span>, <span style=color:#a6e22e>len</span>)
+</span></span><span style=display:flex><span><span style=color:#a6e22e>slice</span> <span style=color:#f92672>:=</span> make([]<span style=color:#a6e22e>T</span>, <span style=color:#a6e22e>len</span>, <span style=color:#a6e22e>cap</span>)
+</span></span><span style=display:flex><span><span style=color:#a6e22e>slice</span> <span style=color:#f92672>:=</span> []<span style=color:#66d9ef>string</span>{
+</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;Red&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;Green&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;Blue&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>len(<span style=color:#a6e22e>slice</span>)            <span style=color:#75715e>// 长度</span>
+</span></span><span style=display:flex><span>cap(<span style=color:#a6e22e>slice</span>)            <span style=color:#75715e>// 容量</span>
+</span></span><span style=display:flex><span>append(<span style=color:#a6e22e>slice</span>, <span style=color:#a6e22e>value</span>)  <span style=color:#75715e>// 自动扩容</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span>, <span style=color:#a6e22e>value</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>slice</span> {
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>哈希</span> <span style=color:#66d9ef>map</span>[<span style=color:#a6e22e>键类型</span>]<span style=color:#a6e22e>值类型</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>map</span> <span style=color:#f92672>:=</span> make(<span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>int</span>)
+</span></span><span style=display:flex><span><span style=color:#66d9ef>map</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>int</span>{
+</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;Red&#34;</span>: <span style=color:#ae81ff>0</span>,
+</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;Green&#34;</span>: <span style=color:#ae81ff>1</span>,
+</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;Blue&#34;</span>: <span style=color:#ae81ff>2</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>delete(<span style=color:#66d9ef>map</span>, <span style=color:#a6e22e>key</span>)
+</span></span><span style=display:flex><span><span style=color:#66d9ef>for</span> <span style=color:#a6e22e>key</span>, <span style=color:#a6e22e>value</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#66d9ef>map</span> {    <span style=color:#75715e>// 迭代遍历</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h1 id=定义类型>定义类型</h1><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>类型名</span> <span style=color:#a6e22e>底层类型</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Celsius</span> <span style=color:#a6e22e>float6</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Point</span> <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>X</span> <span style=color:#66d9ef>int</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Y</span> <span style=color:#66d9ef>int</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Circle</span> <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Point</span>                  <span style=color:#75715e>// 匿名嵌入，类似继承</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Radius</span> <span style=color:#66d9ef>int</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Node</span> <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Value</span> <span style=color:#66d9ef>int</span>,
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Next</span>  <span style=color:#f92672>*</span><span style=color:#a6e22e>Node</span>            <span style=color:#75715e>// 同类型指针</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h1 id=make和new>make和new</h1><ul><li>make 初始化内置类型(仅<code>slice/hash/channel</code>) ，返回引用</li><li>new 根据类型分配内存，返回指针</li><li>若分不清，可统一用 <code>Type{}</code> 和 <code>&amp;Type{}</code> 方式</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>func</span> make(<span style=color:#a6e22e>t</span> <span style=color:#a6e22e>Type</span>, <span style=color:#a6e22e>size</span> <span style=color:#f92672>...</span><span style=color:#a6e22e>IntegerType</span>) <span style=color:#a6e22e>Type</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> new(<span style=color:#a6e22e>Type</span>) <span style=color:#f92672>*</span><span style=color:#a6e22e>Type</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>默认空值</span> <span style=color:#e6db74>&#34;&#34;</span> <span style=color:#ae81ff>0</span> <span style=color:#66d9ef>nil</span> <span style=color:#66d9ef>false</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&amp;</span><span style=color:#a6e22e>变量</span>    <span style=color:#960050;background-color:#1e0010>#</span> <span style=color:#a6e22e>取地址</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>*</span><span style=color:#a6e22e>指针</span>    <span style=color:#960050;background-color:#1e0010>#</span> <span style=color:#a6e22e>取变量</span>
+</span></span></code></pre></div><h1 id=类型转换>类型转换</h1><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#75715e>// 显示转换</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>目标变量</span> = <span style=color:#a6e22e>目标类型</span>(<span style=color:#a6e22e>源变量</span>)
+</span></span><span style=display:flex><span><span style=color:#a6e22e>s</span> = :int64(<span style=color:#a6e22e>x</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 断言转换</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>目标变量</span> = <span style=color:#a6e22e>源变量</span>.(<span style=color:#a6e22e>目标类型</span>)
+</span></span><span style=display:flex><span><span style=color:#a6e22e>s</span>, <span style=color:#a6e22e>ok</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>x</span>.(<span style=color:#a6e22e>T</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 识别转换</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>switch</span> <span style=color:#a6e22e>目标变量</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>源变量</span>.(<span style=color:#66d9ef>type</span>) {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>case</span> <span style=color:#66d9ef>nil</span>:                 <span style=color:#75715e>// nil</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>case</span> <span style=color:#66d9ef>bool</span>:                <span style=color:#75715e>// 数据类型</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>case</span> <span style=color:#66d9ef>func</span>(<span style=color:#66d9ef>int</span>) <span style=color:#66d9ef>float64</span>:   <span style=color:#75715e>// 函数类型</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>default</span>:                  <span style=color:#75715e>// 未知类型</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 强制转换</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>目标变量</span> = <span style=color:#f92672>*</span>(<span style=color:#f92672>*</span><span style=color:#a6e22e>目标类型</span>)(<span style=color:#a6e22e>unsafe</span>.<span style=color:#a6e22e>Pointer</span>(<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>源变量</span>))
+</span></span></code></pre></div><h1 id=函数>函数</h1><ul><li>一等公民，可闭包、可作为参数、返回值传递</li><li>支持多返回值</li><li>没有重载和默认值</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>函数名</span>(<span style=color:#a6e22e>参数列表</span>) (<span style=color:#a6e22e>返回列表</span>) {
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>Upper</span>(<span style=color:#a6e22e>s</span> <span style=color:#66d9ef>string</span>)        <span style=color:#75715e>// 函数声明</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>Upper</span> = <span style=color:#66d9ef>func</span>(<span style=color:#a6e22e>s</span> <span style=color:#66d9ef>string</span>) {   <span style=color:#75715e>// 函数赋值</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> () {                  <span style=color:#75715e>// 立即执行匿名函数</span>
+</span></span><span style=display:flex><span>}()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>sum</span>(<span style=color:#a6e22e>vals</span> <span style=color:#f92672>...</span><span style=color:#66d9ef>int</span>) <span style=color:#66d9ef>int</span>   <span style=color:#75715e>// 可变参数</span>
+</span></span></code></pre></div><h1 id=error>Error</h1><ul><li>通常作为函数最后一个返回值</li><li>与异常思路略有不同，异常默认返回，需处理则catch；Error默认继续，需处理则if</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>MustDoSomething</span>() (<span style=color:#66d9ef>any</span>, <span style=color:#66d9ef>error</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>, <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>New</span>(<span style=color:#e6db74>&#34;Error happened&#34;</span>)
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>#</span> <span style=color:#a6e22e>自定义错误</span> <span style=color:#a6e22e>带编码</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>CodeError</span> <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Code</span>    <span style=color:#66d9ef>int</span> <span style=color:#e6db74>`json:&#34;code&#34;`</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Message</span> <span style=color:#66d9ef>string</span> <span style=color:#e6db74>`json:&#34;message&#34;`</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>c</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>CodeError</span>) <span style=color:#a6e22e>Error</span>() <span style=color:#66d9ef>string</span> { <span style=color:#75715e>// 含有Error()方法的结构均可作为error使用</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>c</span>.<span style=color:#a6e22e>Message</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h1 id=context>Context</h1><ul><li><ul><li>调用链上下文管理，通常作为函数第一个参数</li></ul></li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a6e22e>ctx</span> <span style=color:#f92672>:=</span><span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Background</span>()
+</span></span><span style=display:flex><span><span style=color:#a6e22e>ctx</span> = <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>WithValue</span>(<span style=color:#a6e22e>parent</span>, <span style=color:#a6e22e>key</span>, <span style=color:#a6e22e>value</span>) <span style=color:#75715e>// 装饰器模式，内部是个链，性能不好</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>GetUser</span>(<span style=color:#a6e22e>ctx</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Context</span>, <span style=color:#a6e22e>name</span> <span style=color:#66d9ef>string</span>)(<span style=color:#a6e22e>UserInfo</span>, <span style=color:#66d9ef>error</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>value</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>ctx</span>.<span style=color:#a6e22e>Value</span>(<span style=color:#a6e22e>key</span>) 
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h1 id=panic>Panic</h1><ul><li>严重错误、无法恢复时使用，否则使用error机制 <code>if err != nil</code></li><li>立即中断程序运行，执行对应的延时函数（defer机制）</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>MustCompile</span>(<span style=color:#a6e22e>expr</span> <span style=color:#66d9ef>string</span>) {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>re</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>Compile</span>(<span style=color:#a6e22e>expr</span>)
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>    panic(<span style=color:#a6e22e>err</span>)
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>re</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h1 id=defer>Defer</h1><ul><li>延时处理函数，函数执行后、内存释放前执行</li><li>可以写多个，先入后出</li><li><code>os.Exit</code>、<code>log.Fatal</code> 会导致<code>Defer</code>函数不执行，慎用</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>ReadFile</span>(<span style=color:#a6e22e>filename</span> <span style=color:#66d9ef>string</span>) {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>f</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Open</span>(<span style=color:#a6e22e>filename</span>)
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>, <span style=color:#a6e22e>err</span>
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>f</span>.<span style=color:#a6e22e>Close</span>()
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>ReadAll</span>(<span style=color:#a6e22e>f</span>)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h1 id=recover>Recover</h1><ul><li>试图恢复panic</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>defer</span> <span style=color:#66d9ef>func</span>() {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>switch</span> <span style=color:#a6e22e>p</span> <span style=color:#f92672>:=</span> recover(); <span style=color:#a6e22e>p</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>case</span> <span style=color:#66d9ef>nil</span>:         <span style=color:#960050;background-color:#1e0010>#</span> <span style=color:#a6e22e>no</span> <span style=color:#a6e22e>panic</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>case</span> <span style=color:#e6db74>&#34;x&#34;</span>:         <span style=color:#960050;background-color:#1e0010>#</span> <span style=color:#a6e22e>expected</span> <span style=color:#a6e22e>panic</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>default</span>:          <span style=color:#960050;background-color:#1e0010>#</span> <span style=color:#a6e22e>keep</span> <span style=color:#a6e22e>going</span>
+</span></span><span style=display:flex><span>        panic(<span style=color:#a6e22e>p</span>)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>panic(<span style=color:#e6db74>&#34;x&#34;</span>)
+</span></span></code></pre></div><h1 id=方法-method>方法 Method</h1><ul><li>绑定类型与函数，面向对象编程</li><li>接收器通常用指针（引用传递），否则为副本（值传递）</li><li>接收器变量名为类型首字母小写</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>p</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Point</span>) <span style=color:#a6e22e>ScaleBy</span>(<span style=color:#a6e22e>factor</span> <span style=color:#66d9ef>float64</span>) {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>p</span>.<span style=color:#a6e22e>X</span> <span style=color:#f92672>*=</span> <span style=color:#a6e22e>factor</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>p</span>.<span style=color:#a6e22e>Y</span> <span style=color:#f92672>*=</span> <span style=color:#a6e22e>factor</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>p</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>Point</span>{<span style=color:#ae81ff>1</span>,<span style=color:#ae81ff>2</span>}
+</span></span><span style=display:flex><span><span style=color:#a6e22e>p</span>.<span style=color:#a6e22e>ScaleBy</span>(<span style=color:#ae81ff>2</span>)
+</span></span></code></pre></div><h1 id=接口-interface>接口 Interface</h1><ul><li>以行为定类型，面向行为编程</li><li>任意类型<code>interface {}</code> 1.18版本后内建<code>type any interface{}</code></li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#f92672>package</span> <span style=color:#a6e22e>io</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Reader</span> <span style=color:#66d9ef>interface</span> {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Read</span>(<span style=color:#a6e22e>p</span> []<span style=color:#66d9ef>byte</span>)(<span style=color:#a6e22e>n</span> <span style=color:#66d9ef>int</span>, <span style=color:#a6e22e>e</span> <span style=color:#66d9ef>error</span>)
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Writer</span> <span style=color:#66d9ef>interface</span> {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Write</span>(<span style=color:#a6e22e>p</span> []<span style=color:#66d9ef>byte</span>) (<span style=color:#a6e22e>n</span> <span style=color:#66d9ef>int</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Closer</span> <span style=color:#66d9ef>interface</span> {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Close</span>() <span style=color:#66d9ef>error</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>ReadWriter</span> <span style=color:#66d9ef>interface</span> {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Reader</span>                    <span style=color:#75715e>// 内嵌继承</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>Writer</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>ByteCounter</span> <span style=color:#66d9ef>int</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>b</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>ByteCounter</span>) <span style=color:#a6e22e>Write</span>(<span style=color:#a6e22e>p</span> []<span style=color:#66d9ef>byte</span>)(<span style=color:#66d9ef>int</span> <span style=color:#66d9ef>error</span>) {  <span style=color:#75715e>// 满足约定即可使用</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h1 id=范型>范型</h1><ul><li>同类数据，逻辑复用</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>RestDTO</span> [<span style=color:#a6e22e>T</span> <span style=color:#66d9ef>any</span>] <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Code</span>    <span style=color:#66d9ef>int</span>     <span style=color:#e6db74>`json:&#34;code&#34;`</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Message</span> <span style=color:#66d9ef>string</span>  <span style=color:#e6db74>`json:&#34;message&#34;`</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Data</span>    <span style=color:#a6e22e>T</span>       <span style=color:#e6db74>`json:&#34;data&#34;`</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>IdProvider</span> [<span style=color:#a6e22e>T</span> <span style=color:#66d9ef>int</span> | <span style=color:#66d9ef>string</span>] <span style=color:#66d9ef>interface</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Next</span>() <span style=color:#a6e22e>T</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h1 id=并发>并发</h1><ul><li><code>goroutine</code> 协程并发执行，没有唯一标识（即无法实现ThreadLocal，需要Context机制）</li><li><code>channel</code> 协程间通信</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a6e22e>done</span> <span style=color:#f92672>:=</span> make(<span style=color:#66d9ef>chan</span> <span style=color:#66d9ef>string</span>, [<span style=color:#a6e22e>缓冲大小</span>])
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>go</span> <span style=color:#66d9ef>func</span>() {            <span style=color:#75715e>// 并发执行</span>
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Sleep</span>(<span style=color:#ae81ff>3000</span>)
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>done</span> <span style=color:#f92672>&lt;-</span> <span style=color:#e6db74>&#34;done&#34;</span>       <span style=color:#75715e>// 发送信息</span>
+</span></span><span style=display:flex><span>}()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>done</span>                 <span style=color:#75715e>// 阻塞等待</span>
+</span></span><span style=display:flex><span>close(<span style=color:#a6e22e>done</span>)
+</span></span></code></pre></div><h1 id=多路复用>多路复用</h1><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>done</span> = make(<span style=color:#66d9ef>chan</span> <span style=color:#66d9ef>struct</span>{})
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>cancelled</span>() <span style=color:#66d9ef>bool</span> {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>select</span> {                <span style=color:#75715e>// Select 多路复用</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>case</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>done</span>:
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>default</span>:
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>false</span>
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h1 id=懒处理>懒处理</h1><ul><li>仅执行一次，单例模式常用</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>var</span> (
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>once</span>       <span style=color:#a6e22e>sync</span>.<span style=color:#a6e22e>Once</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>instance</span>   <span style=color:#f92672>*</span><span style=color:#a6e22e>Type</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>GetInstance</span>() <span style=color:#f92672>*</span><span style=color:#a6e22e>Type</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>once</span>.<span style=color:#a6e22e>Do</span>(<span style=color:#66d9ef>func</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>instance</span> = <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>Type</span>{}
+</span></span><span style=display:flex><span>    })
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>instance</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h1 id=互斥锁>互斥锁</h1><pre tabindex=0><code>mu := sync.Mutex              // 不可重入
+
+func() {
+  mu.Lock()                   // 临界区
+  defer mu.Unlock()
+  ...
+}
+</code></pre><h1 id=读写锁>读写锁</h1><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a6e22e>mu</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>sync</span>.<span style=color:#a6e22e>RWMutex</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>mu</span>.<span style=color:#a6e22e>RLock</span>()
+</span></span><span style=display:flex><span><span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>mu</span>.<span style=color:#a6e22e>RUnlock</span>()
+</span></span></code></pre></div><h1 id=反射>反射</h1><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#f92672>import</span> <span style=color:#a6e22e>reflect</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>t</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>reflect</span>.<span style=color:#a6e22e>TypeOf</span>(<span style=color:#a6e22e>i</span>) <span style=color:#75715e>// 类型元信息</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>v</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>reflect</span>.<span style=color:#a6e22e>ValueOf</span>(<span style=color:#a6e22e>i</span>) <span style=color:#75715e>// 实际数值</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>tag</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>Elem</span>().<span style=color:#a6e22e>Field</span>(<span style=color:#ae81ff>0</span>).<span style=color:#a6e22e>Tag</span>         <span style=color:#75715e>// 获取标签 如`json:name`</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>val</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>v</span>.<span style=color:#a6e22e>Elem</span>().<span style=color:#a6e22e>Field</span>(<span style=color:#ae81ff>0</span>).<span style=color:#a6e22e>String</span>()    <span style=color:#75715e>// 获取字段值</span>
+</span></span></code></pre></div><h1 id=测试>测试</h1><ul><li>与源文件同包，以<code>_test.go</code>结尾</li><li>功能测试以Test开头</li><li>基准测试以Benchmark开头，默认进行功能测试，可通过<code>-run=NONE</code>禁止</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ go test <span style=color:#f92672>[</span>package<span style=color:#f92672>]</span>
+</span></span><span style=display:flex><span>  -v                 输出测试函数与时间
+</span></span><span style=display:flex><span>  -run<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;&#34;</span>            测试名（正则匹配）
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  -bench<span style=color:#f92672>=</span>测试名（正则匹配）
+</span></span><span style=display:flex><span>  -benchmem 统计内存分配
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>  -coverprofile<span style=color:#f92672>=</span>cover.out   覆盖率分析
+</span></span><span style=display:flex><span>  -cpuprofile<span style=color:#f92672>=</span>cpu.out
+</span></span><span style=display:flex><span>  -blockprofile<span style=color:#f92672>=</span>block.out
+</span></span><span style=display:flex><span>  -memprofile<span style=color:#f92672>=</span>mem.out
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>$ go tool cover -html<span style=color:#f92672>=</span>覆盖率文件
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#f92672>import</span>  <span style=color:#e6db74>&#34;testing&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 功能测试</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>TestName</span>(<span style=color:#a6e22e>t</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>testing</span>.<span style=color:#a6e22e>T</span>) {
+</span></span><span style=display:flex><span>  <span style=color:#a6e22e>tests</span> <span style=color:#f92672>:=</span> []<span style=color:#66d9ef>struct</span> {        <span style=color:#75715e>// Case表</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>input</span> <span style=color:#a6e22e>输入类型</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>want</span> <span style=color:#a6e22e>结果类型</span>
+</span></span><span style=display:flex><span>  }{
+</span></span><span style=display:flex><span>    {<span style=color:#a6e22e>case1</span>, <span style=color:#a6e22e>want1</span>},
+</span></span><span style=display:flex><span>    <span style=color:#f92672>...</span>
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>, <span style=color:#a6e22e>test</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>tests</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>got</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>xxx</span>(<span style=color:#a6e22e>input</span>)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>got</span> <span style=color:#f92672>!=</span> <span style=color:#a6e22e>test</span>.<span style=color:#a6e22e>want</span> {
+</span></span><span style=display:flex><span>      <span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>Errorf</span>(<span style=color:#e6db74>&#34;.....&#34;</span>)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 性能测试</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>BenchmarkName</span>(<span style=color:#a6e22e>b</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>testing</span>.<span style=color:#a6e22e>B</span>) {
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span><span style=color:#f92672>:=</span><span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>i</span>&lt;<span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>N</span>; <span style=color:#a6e22e>i</span><span style=color:#f92672>++</span> {
+</span></span><span style=display:flex><span>    <span style=color:#75715e>//</span>
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div></main><footer><hr>© <a href=https://github.com/firebat>firebat</a> 2015 &ndash; 2025</footer></body></html>
