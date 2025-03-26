@@ -1,5 +1,5 @@
 +++
-date = '2022-04-19T00:00:00-08:00'
+date = '2022-04-19T00:00:00+08:00'
 title = '异步任务队列'
 tags = ["调度"]
 +++
@@ -159,7 +159,8 @@ interface TaskReceiver {
 interface TaskRunner extends Runnable {
 
     startRunner()
-    stopRunner()
+
+	stopRunner()
 
     isRunning()
 
