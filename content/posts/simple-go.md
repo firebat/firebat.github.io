@@ -193,7 +193,7 @@ func (c *CodeError) Error() string { // 含有Error()方法的结构均可作为
 }
 ```
 # Context
-- - 调用链上下文管理，通常作为函数第一个参数
+- 调用链上下文管理，通常作为函数第一个参数
 ```go
 ctx :=context.Background()
 ctx = context.WithValue(parent, key, value) // 装饰器模式，内部是个链，性能不好
