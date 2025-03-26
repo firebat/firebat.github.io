@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Python on firebat</title><link>https://firebat.github.io/tags/python/</link><description>Recent content in Python on firebat</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Thu, 27 Apr 2023 00:00:00 +0800</lastBuildDate><atom:link href="https://firebat.github.io/tags/python/index.xml" rel="self" type="application/rss+xml"/><item><title>Python必知必会</title><link>https://firebat.github.io/posts/python-basic/</link><pubDate>Thu, 27 Apr 2023 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/python-basic/</guid><description>&lt;p>本篇不介绍Python语言特性，仅着重介绍项目结构和常用工具，为初学者建立正确的工程架构提供参考。若有意深入研读相关框架工具原理源码，请务必掌握如下Python语言高级特性&lt;/p>
+&lt;ul>
+&lt;li>Lambda&lt;/li>
+&lt;li>&lt;a href="https://python3-cookbook.readthedocs.io/zh-cn/latest/chapters/p15_c_extensions.html">装饰器&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://eventlet.readthedocs.io/en/latest/">Eventlet&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://python3-cookbook.readthedocs.io/zh-cn/latest/chapters/p15_c_extensions.html">C语言扩展&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h1 id="环境准备">环境准备&lt;/h1>
+&lt;h2 id="vitrualenv">vitrualenv&lt;/h2>
+&lt;p>创建一个独立隔绝的虚拟环境，用来安装工程所需的依赖包&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;code>virtualenv&lt;/code> is a tool to create isolated Python environments. Since Python 3.3, a subset of it has been integrated into the standard library under the venv module &lt;a href="https://virtualenv.pypa.io/en/latest/">https://virtualenv.pypa.io/en/latest/&lt;/a>&lt;/p>&lt;/blockquote>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>python3 -m venv venv
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>source venv/bin/activate
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>which python
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>deactivate
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="依赖管理">依赖管理&lt;/h1>
+&lt;h2 id="pip">pip&lt;/h2>
+&lt;p>包管理工具，用于安装、卸载、检查依赖。可通过&lt;code>freeze&lt;/code>将依赖关系导出到文件，后通过&lt;code>install -r&lt;/code>恢复&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;code>pip&lt;/code> is the package installer for Python. You can use pip to install packages from the Python Package Index and other indexes. &lt;a href="https://pypi.org/project/pip/">https://pypi.org/project/pip/&lt;/a>&lt;/p></description></item></channel></rss>

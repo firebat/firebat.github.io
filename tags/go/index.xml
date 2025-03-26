@@ -174,11 +174,7 @@ continue for import return var
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="context">Context&lt;/h1>
 &lt;ul>
-&lt;li>
-&lt;ul>
 &lt;li>调用链上下文管理，通常作为函数第一个参数&lt;/li>
-&lt;/ul>
-&lt;/li>
 &lt;/ul>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">ctx&lt;/span> &lt;span style="color:#f92672">:=&lt;/span>&lt;span style="color:#a6e22e">context&lt;/span>.&lt;span style="color:#a6e22e">Background&lt;/span>()
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">ctx&lt;/span> = &lt;span style="color:#a6e22e">context&lt;/span>.&lt;span style="color:#a6e22e">WithValue&lt;/span>(&lt;span style="color:#a6e22e">parent&lt;/span>, &lt;span style="color:#a6e22e">key&lt;/span>, &lt;span style="color:#a6e22e">value&lt;/span>) &lt;span style="color:#75715e">// 装饰器模式，内部是个链，性能不好&lt;/span>

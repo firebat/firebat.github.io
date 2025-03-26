@@ -83,7 +83,7 @@ P2P技术的发展，产生了各种网络共享下载的应用，如Napster、G
 &lt;ul>
 &lt;li>场景更严格，原理同上，无法打洞&lt;/li>
 &lt;/ul>
-&lt;p>判断网络是否能够打通，有一种简单的计算方法&lt;/p></description></item><item><title>RTOS实现原理</title><link>https://firebat.github.io/posts/rtos/</link><pubDate>Mon, 04 Dec 2023 00:00:00 -0800</pubDate><guid>https://firebat.github.io/posts/rtos/</guid><description>&lt;h1 id="目的">目的&lt;/h1>
+&lt;p>判断网络是否能够打通，有一种简单的计算方法&lt;/p></description></item><item><title>RTOS实现原理</title><link>https://firebat.github.io/posts/rtos/</link><pubDate>Mon, 04 Dec 2023 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/rtos/</guid><description>&lt;h1 id="目的">目的&lt;/h1>
 &lt;p>为什么会有这篇文章？
 首先是好奇。月亮为什么会有盈缺？苹果为什么会落下？烧开水的壶盖为什么会跳动？无线电为什么会传播？正是因为好奇，人类才从洞穴走向了宇宙深空。好奇心是人类的基本特征，是追求进步、推动创新的源动力。记得有一道经典的面试题：浏览器输入URL后会车发生了什么？同样，在我们生活之中有各种类似的问题，当用手机扫描共享单车完成支付后，锁是怎么打开的？当把燃气充值卡后插入表中，发生了什么？&lt;/p>
 &lt;p>其次是有用。计算机归根结底是一门应用学科，当我们在准备掌握一门新技术时，总会想到一个问题：有什么用。掌握编程语言让我们知道如何编写逻辑，掌握数据结构有助于更好地组织逻辑，其中最重要且复杂的要数操作系统。每一位有想法的计算机专业学生，都把写一个编译器或操作系统作为自己的终极目标或专业能力试金石。比如Linus在1997年的硕士毕业论文，题目就是《Linux: A Portable Operating System》。但当我们真正深入操作系统时不免会遇到重重困难：要么是书厚、代码多、门槛高；又或是时代久远，各种硬件环境、工具链资料缺失，难以复现；又或者是从xv6或30天系列入手，学完后遇到另一个问题“有什么用”。而学习RTOS就很好的避开了上述问题，不仅代码量少上手容易，迅速理解操作系统的工作原理；又能紧跟时代，获取到最新的硬件和技术资料；而且还能和实际生活应用联系起来。比如北京在20年治理雾霾过程中的空气质量监测，疫情期间公共场合的人体温度红外识别；记得B站上看过一个纪录片，福岛核事故后续，几位退休人员组成的民间团体，拿着自制的辐射检测仪深入街道、学校、树林检测环境的危害程度，来标记安全的活动区域，令人印象深刻。&lt;/p>
@@ -120,7 +120,27 @@ P2P技术的发展，产生了各种网络共享下载的应用，如Napster、G
 &lt;li>2020年11月，苹果发布第一款基于ARM架构的自研处理器Apple M1，采用ARMv8-A指令集架构。&lt;/li>
 &lt;li>2021年11月，富士通基于A64FX处理器打造的超级计算机“富岳”蝉联超算第一，采用ARMv8.2-A架构&lt;/li>
 &lt;/ul>
-&lt;p>早期单片机多用于外设接口控制器，服务于处理器系统， 随着芯片工艺不断改进，集成度和运算能力不断提升，微控制器也获得广泛的应用和发展。目前，比较常见的单片机有&lt;/p></description></item><item><title>RTOS系统移植</title><link>https://firebat.github.io/posts/rtos-port/</link><pubDate>Wed, 08 Feb 2023 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/rtos-port/</guid><description>&lt;h1 id="硬件">硬件&lt;/h1>
+&lt;p>早期单片机多用于外设接口控制器，服务于处理器系统， 随着芯片工艺不断改进，集成度和运算能力不断提升，微控制器也获得广泛的应用和发展。目前，比较常见的单片机有&lt;/p></description></item><item><title>Python必知必会</title><link>https://firebat.github.io/posts/python-basic/</link><pubDate>Thu, 27 Apr 2023 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/python-basic/</guid><description>&lt;p>本篇不介绍Python语言特性，仅着重介绍项目结构和常用工具，为初学者建立正确的工程架构提供参考。若有意深入研读相关框架工具原理源码，请务必掌握如下Python语言高级特性&lt;/p>
+&lt;ul>
+&lt;li>Lambda&lt;/li>
+&lt;li>&lt;a href="https://python3-cookbook.readthedocs.io/zh-cn/latest/chapters/p15_c_extensions.html">装饰器&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://eventlet.readthedocs.io/en/latest/">Eventlet&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://python3-cookbook.readthedocs.io/zh-cn/latest/chapters/p15_c_extensions.html">C语言扩展&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h1 id="环境准备">环境准备&lt;/h1>
+&lt;h2 id="vitrualenv">vitrualenv&lt;/h2>
+&lt;p>创建一个独立隔绝的虚拟环境，用来安装工程所需的依赖包&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;code>virtualenv&lt;/code> is a tool to create isolated Python environments. Since Python 3.3, a subset of it has been integrated into the standard library under the venv module &lt;a href="https://virtualenv.pypa.io/en/latest/">https://virtualenv.pypa.io/en/latest/&lt;/a>&lt;/p>&lt;/blockquote>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>python3 -m venv venv
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>source venv/bin/activate
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>which python
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>deactivate
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="依赖管理">依赖管理&lt;/h1>
+&lt;h2 id="pip">pip&lt;/h2>
+&lt;p>包管理工具，用于安装、卸载、检查依赖。可通过&lt;code>freeze&lt;/code>将依赖关系导出到文件，后通过&lt;code>install -r&lt;/code>恢复&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;code>pip&lt;/code> is the package installer for Python. You can use pip to install packages from the Python Package Index and other indexes. &lt;a href="https://pypi.org/project/pip/">https://pypi.org/project/pip/&lt;/a>&lt;/p></description></item><item><title>RTOS系统移植</title><link>https://firebat.github.io/posts/rtos-port/</link><pubDate>Wed, 08 Feb 2023 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/rtos-port/</guid><description>&lt;h1 id="硬件">硬件&lt;/h1>
 &lt;p>开发板 STM32F103C8T6 核心板，也称STM32 Blue Pill
 &lt;img src="images/stm32f103.jpg" alt="">&lt;/p>
 &lt;p>下载器 STLink&lt;/p>
@@ -357,11 +377,7 @@ continue for import return var
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="context">Context&lt;/h1>
 &lt;ul>
-&lt;li>
-&lt;ul>
 &lt;li>调用链上下文管理，通常作为函数第一个参数&lt;/li>
-&lt;/ul>
-&lt;/li>
 &lt;/ul>
 &lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">ctx&lt;/span> &lt;span style="color:#f92672">:=&lt;/span>&lt;span style="color:#a6e22e">context&lt;/span>.&lt;span style="color:#a6e22e">Background&lt;/span>()
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">ctx&lt;/span> = &lt;span style="color:#a6e22e">context&lt;/span>.&lt;span style="color:#a6e22e">WithValue&lt;/span>(&lt;span style="color:#a6e22e">parent&lt;/span>, &lt;span style="color:#a6e22e">key&lt;/span>, &lt;span style="color:#a6e22e">value&lt;/span>) &lt;span style="color:#75715e">// 装饰器模式，内部是个链，性能不好&lt;/span>
