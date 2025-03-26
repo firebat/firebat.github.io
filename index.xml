@@ -120,7 +120,68 @@ P2P技术的发展，产生了各种网络共享下载的应用，如Napster、G
 &lt;li>2020年11月，苹果发布第一款基于ARM架构的自研处理器Apple M1，采用ARMv8-A指令集架构。&lt;/li>
 &lt;li>2021年11月，富士通基于A64FX处理器打造的超级计算机“富岳”蝉联超算第一，采用ARMv8.2-A架构&lt;/li>
 &lt;/ul>
-&lt;p>早期单片机多用于外设接口控制器，服务于处理器系统， 随着芯片工艺不断改进，集成度和运算能力不断提升，微控制器也获得广泛的应用和发展。目前，比较常见的单片机有&lt;/p></description></item><item><title>异步任务队列</title><link>https://firebat.github.io/posts/async-task/</link><pubDate>Tue, 19 Apr 2022 00:00:00 -0800</pubDate><guid>https://firebat.github.io/posts/async-task/</guid><description>&lt;p>在我们介绍更复杂的调度管理问题之前，先了解一种基本的异步任务执行方案。&lt;/p>
+&lt;p>早期单片机多用于外设接口控制器，服务于处理器系统， 随着芯片工艺不断改进，集成度和运算能力不断提升，微控制器也获得广泛的应用和发展。目前，比较常见的单片机有&lt;/p></description></item><item><title>RTOS系统移植</title><link>https://firebat.github.io/posts/rtos-port/</link><pubDate>Wed, 08 Feb 2023 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/rtos-port/</guid><description>&lt;h1 id="硬件">硬件&lt;/h1>
+&lt;p>开发板 STM32F103C8T6 核心板，也称STM32 Blue Pill
+&lt;img src="images/stm32f103.jpg" alt="">&lt;/p>
+&lt;p>下载器 STLink&lt;/p>
+&lt;p>&lt;img src="images/stlink.jpg" alt="">&lt;/p>
+&lt;h1 id="软件">软件&lt;/h1>
+&lt;p>&lt;a href="https://www.st.com/en/development-tools/stm32cubeide.html">STMCubeIDE&lt;/a> 是意法半导体基于Eclipse构建的开发工具，可以快速生成项目框架。&lt;/p>
+&lt;p>选择芯片为STM32F103
+&lt;img src="images/cubeide_f103.jpg" alt="">&lt;/p>
+&lt;p>配置端口、时钟和调试模式&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>GPIO/PC13&lt;/code> 为&lt;code>GPIO_Output&lt;/code>模式&lt;/li>
+&lt;li>&lt;code>RCC/High Speed Clock&lt;/code> 高速时钟源为&lt;code>Crystal/Ceramic Resonator&lt;/code> 晶振/ 外部陶瓷振荡器&lt;/li>
+&lt;li>&lt;code>SYS/Debug&lt;/code> 调试模式为&lt;code>Serial Wire&lt;/code>
+&lt;img src="images/cubeide_conf.jpg" alt="">&lt;/li>
+&lt;/ul>
+&lt;p>设置HCLK高速总线时钟为72MHz
+&lt;img src="images/cubeide_clock.jpg" alt="">&lt;/p>
+&lt;p>生成独立的头文件
+&lt;img src="images/cubeide_gen.jpg" alt="">&lt;/p>
+&lt;p>保存设置后，提示自动生成代码。只要在指定区域编写用户代码，后续修改ioc的配置可重新生成代码。这里通过HAL库函数修改GPIOC的状态，跟踪这些库函数可以看到，GPIOC、GPIOC_BASE等均是对应寄存器的地址定义。
+&lt;img src="images/cubeide_edit.jpg" alt="">&lt;/p>
+&lt;p>点击Run按钮IDE将自动构建并下载文件到芯片，Debug模式也可以在代码中设置断点调试。Memory Regions窗口会展示空间使用状况，由于使用HAL库，Flash的空间占用了增长到4.59KB。
+&lt;img src="images/cubeide_run.jpg" alt="">&lt;/p>
+&lt;h1 id="µcos-iiii移植">µC/OS IIII移植&lt;/h1>
+&lt;p>开源、商业化收费，是Micrium公司开发的一款嵌入式实时操作系统，代码规范符合ANSI-C标准，简洁干净非常适合学习。最早出自于1992 年美国嵌入式系统专家Jean J.Labrosse 在《嵌入式系统编程》杂志的文章连载。1998年发布的第二代，通过严格的测试，2000年获得DO-178BA级认证，得到美国联邦航空管理局FAA的认证，可以用在飞行器上。2009年发行第三代，经过了全新的设计，具有高度可移植性，没有任务数目的限制。&lt;/p>
+&lt;p>官网提供了系统移植例程，这里可以参考STM32F107的&lt;/p>
+&lt;p>网盘链接：https://pan.baidu.com/s/14qwunKCyeArTFGCYIIizbw 提取码：hadl&lt;/p>
+&lt;ul>
+&lt;li>创建RTOS，将解压后的&lt;code>uC-CPU&lt;/code>, &lt;code>uC-LIB&lt;/code>, &lt;code>uCOS-III&lt;/code> 拷贝进去&lt;/li>
+&lt;li>创建&lt;code>uC-Config&lt;/code>，将EvalBoards中uCOS-III、BSP下的文件拷贝进去
+&lt;img src="images/uc_1.jpg" alt="">&lt;/li>
+&lt;/ul>
+&lt;p>添加RTOS到Source Location
+&lt;img src="images/uc_2.jpg" alt="">&lt;/p>
+&lt;p>IDE使用gcc编译器进行构建，所以&lt;code>uC-CPU&lt;/code>、&lt;code>uC-LIB&lt;/code>、&lt;code>uCOS-III&lt;/code>目录中&lt;code>ARM-Cortext-M3&lt;/code>只保留GNU（RealView对应Keil公司的MDK编译器）。其余的可直接删掉，或者右键&lt;code>Resource Configurations / Exclude from Build..&lt;/code>
+&lt;img src="images/uc_3.jpg" alt="">&lt;/p>
+&lt;p>将所有包含代码的目录添加到&lt;code>Include Paths&lt;/code>
+&lt;img src="images/uc_4.jpg" alt="">&lt;/p>
+&lt;p>清除&lt;code>bsp.h&lt;/code>仅保留&lt;code>cpu.h&lt;/code>的引用
+&lt;img src="images/uc_5.jpg" alt="">&lt;/p>
+&lt;p>清除&lt;code>bsp.c&lt;/code>的无效内容
+&lt;img src="images/uc_6.jpg" alt="">&lt;/p>
+&lt;p>使用&lt;code>Ctrl+B&lt;/code>进行尝试编译，此时剩下&lt;code>BSP_CPU_ClkFreq&lt;/code>报错。引用&lt;code>stm32f1xx_hal.h&lt;/code>后重写该方法，使用&lt;code>HAL_RCC_GetHCLKFreq&lt;/code>获取HCLK时钟频率
+&lt;img src="images/uc_7.jpg" alt="">&lt;/p>
+&lt;p>修改&lt;code>Core/Src/stm32f1xx_it.c&lt;/code>，激活OS的系统时钟。此处的&lt;code>HAL_IncTick&lt;/code>用于激活HAL库的时间函数，比如&lt;code>HAL_Delay&lt;/code>
+&lt;img src="images/uc_8.jpg" alt="">&lt;/p>
+&lt;p>修改&lt;code>uCOS-III/Ports/ARM-Cortex-M3/Generic/GNU/os_cpu_a.s&lt;/code>的38、133行，将所有&lt;code>OS_CPU_PendSVHandler&lt;/code>改名为&lt;code>PendSV_Handler&lt;/code>。本质是使用ucOS的PendSV替换掉默认的
+&lt;img src="images/uc_9.jpg" alt="">&lt;/p>
+&lt;p>注释掉&lt;code>stm32f1xx_it.c&lt;/code>中的&lt;code>PendSV_Handler&lt;/code>
+&lt;img src="images/uc_10.jpg" alt="">&lt;/p>
+&lt;p>使用uCOS提供的函数重写main方法
+&lt;img src="images/uc_11.jpg" alt="">&lt;/p>
+&lt;p>重新编译后下载，uCOS可以正常运行。&lt;/p>
+&lt;h1 id="freertos">FreeRTOS&lt;/h1>
+&lt;p>开源、免费，2003年由Richard Barry创建，是除Linux以外最受欢迎的嵌入式操作系统。2017年作者加入亚马逊担任首席工程师，FreeRTOS也由亚马逊管理，商业化版本为OpenRTOS。
+&lt;img src="images/freertos.jpg" alt="">&lt;/p>
+&lt;p>从https://github.com/FreeRTOS/FreeRTOS-Kernel 获取系统源码。将FreeRTOS下的文件、&lt;code>include&lt;/code>、&lt;code>portable&lt;/code>下的&lt;code>GCC/ARM_CM3&lt;/code>和&lt;code>MemMang&lt;/code>拷贝到新建的RTOS源码目录；MemMang下每个文件代表不同的内存管理方式，这里选用&lt;code>heap_2&lt;/code>方式。
+将&lt;code>FreeRTOS\Demo\CORTEX_STM32F103_GCC_Rowley\FreeRTOSConfig.h&lt;/code>拷贝到&lt;code>include&lt;/code>目录。
+&lt;img src="images/freertos_1.jpg" alt="">&lt;/p>
+&lt;p>添加到构建路径中
+&lt;img src="images/freertos_2.jpg" alt="">&lt;/p></description></item><item><title>异步任务队列</title><link>https://firebat.github.io/posts/async-task/</link><pubDate>Tue, 19 Apr 2022 00:00:00 -0800</pubDate><guid>https://firebat.github.io/posts/async-task/</guid><description>&lt;p>在我们介绍更复杂的调度管理问题之前，先了解一种基本的异步任务执行方案。&lt;/p>
 &lt;h2 id="场景">场景&lt;/h2>
 &lt;p>业务系统构建过程中，为了实现逻辑复用，面临大量的计算组装问题。如:&lt;/p>
 &lt;ul>
@@ -232,7 +293,6 @@ P2P技术的发展，产生了各种网络共享下载的应用，如Napster、G
 &lt;li>Emacs user on gentoo&lt;/li>
 &lt;li>Radio amateur, &lt;a href="https://www.qrz.com/db/BI1VMS">BI1VMS&lt;/a>&lt;/li>
 &lt;li>Motocycle rider&lt;/li>
-&lt;li>Motto: strict standards and good skills (规格严格 功夫到家)&lt;/li>
 &lt;/ul>
 &lt;h2 id="contact">Contact&lt;/h2>
 &lt;ul>

@@ -1,0 +1,30 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>RTOS系统移植 | firebat</title>
+<link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/tags/>Tags</a></li><li><a href=/about>About</a></li><li><a href=/index.xml>Subscribe</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>RTOS系统移植</span></h1><h2 class=date>2023/02/08</h2></div><main><h1 id=硬件>硬件</h1><p>开发板 STM32F103C8T6 核心板，也称STM32 Blue Pill
+<img src=images/stm32f103.jpg alt></p><p>下载器 STLink</p><p><img src=images/stlink.jpg alt></p><h1 id=软件>软件</h1><p><a href=https://www.st.com/en/development-tools/stm32cubeide.html>STMCubeIDE</a> 是意法半导体基于Eclipse构建的开发工具，可以快速生成项目框架。</p><p>选择芯片为STM32F103
+<img src=images/cubeide_f103.jpg alt></p><p>配置端口、时钟和调试模式</p><ul><li><code>GPIO/PC13</code> 为<code>GPIO_Output</code>模式</li><li><code>RCC/High Speed Clock</code> 高速时钟源为<code>Crystal/Ceramic Resonator</code> 晶振/ 外部陶瓷振荡器</li><li><code>SYS/Debug</code> 调试模式为<code>Serial Wire</code>
+<img src=images/cubeide_conf.jpg alt></li></ul><p>设置HCLK高速总线时钟为72MHz
+<img src=images/cubeide_clock.jpg alt></p><p>生成独立的头文件
+<img src=images/cubeide_gen.jpg alt></p><p>保存设置后，提示自动生成代码。只要在指定区域编写用户代码，后续修改ioc的配置可重新生成代码。这里通过HAL库函数修改GPIOC的状态，跟踪这些库函数可以看到，GPIOC、GPIOC_BASE等均是对应寄存器的地址定义。
+<img src=images/cubeide_edit.jpg alt></p><p>点击Run按钮IDE将自动构建并下载文件到芯片，Debug模式也可以在代码中设置断点调试。Memory Regions窗口会展示空间使用状况，由于使用HAL库，Flash的空间占用了增长到4.59KB。
+<img src=images/cubeide_run.jpg alt></p><h1 id=µcos-iiii移植>µC/OS IIII移植</h1><p>开源、商业化收费，是Micrium公司开发的一款嵌入式实时操作系统，代码规范符合ANSI-C标准，简洁干净非常适合学习。最早出自于1992 年美国嵌入式系统专家Jean J.Labrosse 在《嵌入式系统编程》杂志的文章连载。1998年发布的第二代，通过严格的测试，2000年获得DO-178BA级认证，得到美国联邦航空管理局FAA的认证，可以用在飞行器上。2009年发行第三代，经过了全新的设计，具有高度可移植性，没有任务数目的限制。</p><p>官网提供了系统移植例程，这里可以参考STM32F107的</p><p>网盘链接：https://pan.baidu.com/s/14qwunKCyeArTFGCYIIizbw 提取码：hadl</p><ul><li>创建RTOS，将解压后的<code>uC-CPU</code>, <code>uC-LIB</code>, <code>uCOS-III</code> 拷贝进去</li><li>创建<code>uC-Config</code>，将EvalBoards中uCOS-III、BSP下的文件拷贝进去
+<img src=images/uc_1.jpg alt></li></ul><p>添加RTOS到Source Location
+<img src=images/uc_2.jpg alt></p><p>IDE使用gcc编译器进行构建，所以<code>uC-CPU</code>、<code>uC-LIB</code>、<code>uCOS-III</code>目录中<code>ARM-Cortext-M3</code>只保留GNU（RealView对应Keil公司的MDK编译器）。其余的可直接删掉，或者右键<code>Resource Configurations / Exclude from Build..</code>
+<img src=images/uc_3.jpg alt></p><p>将所有包含代码的目录添加到<code>Include Paths</code>
+<img src=images/uc_4.jpg alt></p><p>清除<code>bsp.h</code>仅保留<code>cpu.h</code>的引用
+<img src=images/uc_5.jpg alt></p><p>清除<code>bsp.c</code>的无效内容
+<img src=images/uc_6.jpg alt></p><p>使用<code>Ctrl+B</code>进行尝试编译，此时剩下<code>BSP_CPU_ClkFreq</code>报错。引用<code>stm32f1xx_hal.h</code>后重写该方法，使用<code>HAL_RCC_GetHCLKFreq</code>获取HCLK时钟频率
+<img src=images/uc_7.jpg alt></p><p>修改<code>Core/Src/stm32f1xx_it.c</code>，激活OS的系统时钟。此处的<code>HAL_IncTick</code>用于激活HAL库的时间函数，比如<code>HAL_Delay</code>
+<img src=images/uc_8.jpg alt></p><p>修改<code>uCOS-III/Ports/ARM-Cortex-M3/Generic/GNU/os_cpu_a.s</code>的38、133行，将所有<code>OS_CPU_PendSVHandler</code>改名为<code>PendSV_Handler</code>。本质是使用ucOS的PendSV替换掉默认的
+<img src=images/uc_9.jpg alt></p><p>注释掉<code>stm32f1xx_it.c</code>中的<code>PendSV_Handler</code>
+<img src=images/uc_10.jpg alt></p><p>使用uCOS提供的函数重写main方法
+<img src=images/uc_11.jpg alt></p><p>重新编译后下载，uCOS可以正常运行。</p><h1 id=freertos>FreeRTOS</h1><p>开源、免费，2003年由Richard Barry创建，是除Linux以外最受欢迎的嵌入式操作系统。2017年作者加入亚马逊担任首席工程师，FreeRTOS也由亚马逊管理，商业化版本为OpenRTOS。
+<img src=images/freertos.jpg alt></p><p>从https://github.com/FreeRTOS/FreeRTOS-Kernel 获取系统源码。将FreeRTOS下的文件、<code>include</code>、<code>portable</code>下的<code>GCC/ARM_CM3</code>和<code>MemMang</code>拷贝到新建的RTOS源码目录；MemMang下每个文件代表不同的内存管理方式，这里选用<code>heap_2</code>方式。
+将<code>FreeRTOS\Demo\CORTEX_STM32F103_GCC_Rowley\FreeRTOSConfig.h</code>拷贝到<code>include</code>目录。
+<img src=images/freertos_1.jpg alt></p><p>添加到构建路径中
+<img src=images/freertos_2.jpg alt></p><p>使用FreeRTOS的<code>xPortPendSVHandler</code>、<code>vPortSVCHandler</code>并替换默认的异常<code>Handler</code>。此处<code>configTOTAL_HEAP_SIZE</code>代表堆可用RAM总量，无需大内存时可调小。
+<img src=images/freertos_3.jpg alt></p><p>注释掉默认的<code>PendSV_Handler</code>、<code>SVC_Handler</code>，并在<code>SysTick_Handler</code>中启动RTOS心跳
+<img src=images/freertos_4.jpg alt></p><p>编写测试程序以验证是否移植成功。
+<img src=images/freertos_5.jpg alt></p><h1 id=串口通信>串口通信</h1><p>在项目配置中可以通过启用USART1进行串口通信，对应PA9、PA10管脚生效，并生成<code>usart.h</code>和<code>usart.c</code>文件
+<img src=images/serial_conf.jpg alt></p><p>重定义底层实现，将printf函数的数据内容通过husart1串口发送出去。
+<img src=images/usart1.jpg alt></p><p>效果如下
+<img src=images/serial_console.jpg alt></p></main><footer><hr>© <a href=https://github.com/firebat>firebat</a> 2015 &ndash; 2025</footer></body></html>
