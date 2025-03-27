@@ -201,7 +201,58 @@ P2P技术的发展，产生了各种网络共享下载的应用，如Napster、G
 将&lt;code>FreeRTOS\Demo\CORTEX_STM32F103_GCC_Rowley\FreeRTOSConfig.h&lt;/code>拷贝到&lt;code>include&lt;/code>目录。
 &lt;img src="images/freertos_1.jpg" alt="">&lt;/p>
 &lt;p>添加到构建路径中
-&lt;img src="images/freertos_2.jpg" alt="">&lt;/p></description></item><item><title>Go简明教程</title><link>https://firebat.github.io/posts/simple-go/</link><pubDate>Mon, 22 Aug 2022 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/simple-go/</guid><description>&lt;p>本教程为《&lt;a href="https://gopl-zh.github.io/">Go语言圣经&lt;/a>》内容简化，作为开发同学快速上手用。&lt;/p>
+&lt;img src="images/freertos_2.jpg" alt="">&lt;/p></description></item><item><title>Go依赖管理</title><link>https://firebat.github.io/posts/go-dep/</link><pubDate>Wed, 01 Feb 2023 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/go-dep/</guid><description>&lt;p>最初起源于Google公司内部的代码依赖管理方式：所有源代码放在一个巨大的仓库中，直接使用路径引用，无包版本控制，无第三方仓库，从当前分支中构建所有内容。&lt;/p>
+&lt;ul>
+&lt;li>添加依赖意味着将仓库代码克隆到本地&lt;code>$GOPATH&lt;/code>中缓存，版本指向克隆时的主分支。&lt;/li>
+&lt;/ul>
+&lt;p>2017年Russ Cox 在GopherCon发表&lt;a href="https://go.dev/blog/toward-go2">Toward Go2&lt;/a>后，Go1.11发布，兼容性作为Go语言演化的第一考虑。一个模块是一组相关的Go包集合，被当做一个独立的单元进行统一版本管理，为了&lt;code>可复制构建&lt;/code>和&lt;code>新旧兼容&lt;/code>。&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>1.11&lt;/code>版本引入Go Modules，保持与Go1兼容，默认为&lt;code>GO111MODULE=off&lt;/code>&lt;/li>
+&lt;li>&lt;code>1.13&lt;/code>版本默认&lt;code>GO111MODULE=auto&lt;/code> 检测是否包含go.mod，如果有则启用module模式&lt;/li>
+&lt;li>&lt;code>1.14&lt;/code>版本GoMod可供生产使用，鼓励用户从其他以来管理系统迁移到Go Mod&lt;/li>
+&lt;li>&lt;code>1.16&lt;/code>版本默认&lt;code>GO111MODULE=on&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;h1 id="版本号">版本号&lt;/h1>
+&lt;p>默认版本号结构为&lt;code>v&amp;lt;major&amp;gt;.&amp;lt;minor&amp;gt;.&amp;lt;patch&amp;gt;[-meta]&lt;/code> 参考&lt;a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning 2.0.0&lt;/a>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>Major&lt;/code> 发布不兼容版本时递增，且Minor, Patch置为0&lt;/li>
+&lt;li>&lt;code>Minor&lt;/code> 发布向后兼容的更改时递增，且Patch置为0&lt;/li>
+&lt;li>&lt;code>Patch&lt;/code> 公共接口不做修改，仅仅是Bug修复或部分优化时递增&lt;/li>
+&lt;li>&lt;code>-pre&lt;/code> 预发版，如&lt;code>v1.2.3&lt;/code>之前发布&lt;code>v1.2.3-pre&lt;/code>&lt;/li>
+&lt;li>&lt;code>+incompatible&lt;/code> 构建元数据中保留的版本，标识主版本号升级到2以上（第一个非兼容版本）时使用。参考 &lt;a href="https://go.dev/ref/mod#non-module-compat">Compatibility with non-module&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="伪版本">伪版本&lt;/h2>
+&lt;p>通过时间戳/提交哈希，固化一个非稳定版本(如&lt;code>0.x.x&lt;/code>, &lt;code>-pre&lt;/code>) 参考 &lt;a href="https://go.dev/ref/mod#glos-pseudo-version">Pseudo Version&lt;/a>。慎重依赖非稳定版本，避免重复构建失效。&lt;/p>
+&lt;pre tabindex="0">&lt;code>vx.y.z-yyyymmddhhmmss-abcdef
+&lt;/code>&lt;/pre>&lt;h2 id="版本路径">版本路径&lt;/h2>
+&lt;p>当模块出现一次非兼容升级时，路径必须有一个类似&lt;code>/v2&lt;/code>的后缀。以遵循&lt;code>同路径必须兼容&lt;/code>原则。&lt;/p>
+&lt;pre tabindex="0">&lt;code>example.com/mod =&amp;gt; exmaple.com/mod/v2
+&lt;/code>&lt;/pre>&lt;h2 id="版本选择">版本选择&lt;/h2>
+&lt;ul>
+&lt;li>如果go.mod中已标记版本号，使用&lt;code>固定版本&lt;/code>&lt;/li>
+&lt;li>未指定版本，&lt;code>import&lt;/code>时导入&lt;code>最新版本&lt;/code>&lt;/li>
+&lt;li>某个模块被多个模块间接依赖，使用该模块的&lt;code>最小可用版本&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;pre tabindex="0">&lt;code>M v1.0.0 -&amp;gt; module A
+ module X(M v1.1.1) // 确保A/B模块同时兼容
+M v1.1.1 -&amp;gt; module B
+&lt;/code>&lt;/pre>&lt;h1 id="包管理">包管理&lt;/h1>
+&lt;ul>
+&lt;li>&lt;code>go mod init &amp;lt;module&amp;gt;&lt;/code> 初始化模块&lt;/li>
+&lt;li>&lt;code>go get &amp;lt;module&amp;gt;&lt;/code> 添加、升级最新版&lt;/li>
+&lt;li>&lt;code>go get &amp;lt;module&amp;gt;@&amp;lt;version&amp;gt;&lt;/code> 添加、升级、降级指定版&lt;/li>
+&lt;li>&lt;code>go get &amp;lt;module&amp;gt;@none&lt;/code> 删除模块，并将需要它的模块降级&lt;/li>
+&lt;li>&lt;code>go get -u &amp;lt;module&amp;gt;&lt;/code> 升级到minor, patch到最新可用版本&lt;/li>
+&lt;li>&lt;code>go mod tidy&lt;/code> 自动清理未使用的模块&lt;/li>
+&lt;li>&lt;code>go mod graph&lt;/code> 模块依赖信息&lt;/li>
+&lt;li>&lt;code>go mod why &amp;lt;module&amp;gt;&lt;/code> 模块依赖路径&lt;/li>
+&lt;li>&lt;code>go list -m all&lt;/code> 列出全部模块&lt;/li>
+&lt;/ul>
+&lt;h1 id="参考">参考&lt;/h1>
+&lt;ul>
+&lt;li>&lt;a href="https://research.swtch.com/vgo">Go &amp;amp; Versioning&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://research.swtch.com/vgo-principles">The Principles of Versioning in Go&lt;/a> by &lt;code>Russ Cox&lt;/code>, Go团队Leader&lt;/li>
+&lt;/ul></description></item><item><title>Go简明教程</title><link>https://firebat.github.io/posts/go-intro/</link><pubDate>Mon, 22 Aug 2022 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/go-intro/</guid><description>&lt;p>本教程为《&lt;a href="https://gopl-zh.github.io/">Go语言圣经&lt;/a>》内容简化，作为开发同学快速上手用。&lt;/p>
 &lt;h1 id="语言基础">语言基础&lt;/h1>
 &lt;ul>
 &lt;li>没有异常、宏&lt;/li>
@@ -649,7 +700,7 @@ func() {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">order&lt;/span> &lt;span style="color:#66d9ef">by&lt;/span> q.priority &lt;span style="color:#66d9ef">desc&lt;/span>, t.receive_time, t.id;
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="多并行队列">多并行队列&lt;/h3>
-&lt;p>这里给出多并行队列的筛选方法，实际上单个并行队列足够满足大多数场景。&lt;/p></description></item><item><title>存储的发展</title><link>https://firebat.github.io/posts/storage/</link><pubDate>Wed, 07 Dec 2016 00:00:00 -0800</pubDate><guid>https://firebat.github.io/posts/storage/</guid><description>&lt;h2 id="文件系统">文件系统&lt;/h2>
+&lt;p>这里给出多并行队列的筛选方法，实际上单个并行队列足够满足大多数场景。&lt;/p></description></item><item><title>存储的发展</title><link>https://firebat.github.io/posts/storage/</link><pubDate>Wed, 07 Dec 2016 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/storage/</guid><description>&lt;h2 id="文件系统">文件系统&lt;/h2>
 &lt;h3 id="professor-eggerts-dumb-file-system-1974">Professor Eggert&amp;rsquo;s Dumb File System (~1974)&lt;/h3>
 &lt;p>Dr.Eggert在本科期间为了“改进UNIX”，创建了他的第一个文件系统。
 &lt;img src="./images/eggertfs.png" alt="img">&lt;/p>
