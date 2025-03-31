@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>方法论 on firebat</title><link>https://firebat.github.io/tags/%E6%96%B9%E6%B3%95%E8%AE%BA/</link><description>Recent content in 方法论 on firebat</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Fri, 06 Sep 2024 00:00:00 +0800</lastBuildDate><atom:link href="https://firebat.github.io/tags/%E6%96%B9%E6%B3%95%E8%AE%BA/index.xml" rel="self" type="application/rss+xml"/><item><title>程序设计方法</title><link>https://firebat.github.io/posts/howto-code/</link><pubDate>Fri, 06 Sep 2024 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/howto-code/</guid><description>&lt;h1 id="认识你的语言">认识你的语言&lt;/h1>
+&lt;p>程序设计本身是一种语言应用，语言是个符号系统，是思想的载体。如何写代码，本质上体现了程序员如何对现实世界进行的抽象。传统的欧陆哲学中，语言没有被作为一门独立的学科来研究，但是许多其他领域不可分割的一部分。二十世纪初，分析哲学将语言哲学置于中心地位，主要关心的问题有：意义的本质、语言用法、语言认知及语言与现实的关系。&lt;/p>
+&lt;p>首先，我们不妨先了解一下编程语言的本质，之后再讨论如何更好的使用它。1960年John McCarthy 写了一篇关于关于符号表达式计算的论文《符号表达式的递归函数及其机器计算》。在这篇论文中，McCarthy向我们展示了用一种简单的数据结构S表达式(S-expression)来表示代码和数据，并在此基础上构建一种完整的语言。Lisp语言形式简单、内涵深刻，Paul Graham在《Lisp之根源》中将其对编程的贡献与欧几里德对几何的贡献相提并论。Lisp原意为表处理(LISt Processing)，是第二悠久的高级编程语言，只有Fortran比它早一年。
+&lt;img src="images/lisp_40_50.jpg" alt="">
+&lt;img src="images/lisp_60_70.jpg" alt="">
+&lt;img src="images/lisp_80_90.jpg" alt="">
+&lt;img src="images/lisp_2000.jpg" alt="">&lt;/p>
+&lt;p>在计算机技术发展过程中，Lisp遭遇了人工智能寒冬，逐渐被人遗忘；而现代主流编程语言，或多或少仍能看出Lisp的影子，如：if-then-else、递归函数、垃圾回收、函数是一种数据、宏等。&lt;/p>
+&lt;h1 id="数据结构">数据结构&lt;/h1>
+&lt;p>构造元(Cons Cell)是Lisp最基本的数据结构，由两个存放地址的内存空间组成&lt;/p>
+&lt;ul>
+&lt;li>CAR - Contents of the Address part of the Register&lt;/li>
+&lt;li>CDR - Contents of the Decrement part of the Register&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="images/cons.png" alt="">&lt;/p>
+&lt;p>这个命名习惯，源自Lisp最初实现的硬件环境。IBM 704上一个字由36位组成，其中A类指令的前3位为操作类型，3到17位表示减量，18-20位标识Tag，21-35位表示地址。如果Tag标记的Index Register中的值大于Decrement，则Index Register减少Decrement，否则跳转到Address，这可用于实现循环。&lt;/p>
+&lt;p>&lt;img src="images/ibm_704_word.jpg" alt="">&lt;/p>
+&lt;p>通过这个最基本的构造单元，可以组成List、Tree等各种复杂的数据结构。&lt;/p>
+&lt;p>&lt;em>Dotted Pair&lt;/em>&lt;/p>
+&lt;p>&lt;img src="images/lisp_dotted_pair.png" alt="">&lt;/p>
+&lt;pre tabindex="0">&lt;code>* (cons 1 2)
+(1 . 2)
+&lt;/code>&lt;/pre>&lt;p>&lt;em>List&lt;/em>&lt;/p>
+&lt;p>&lt;img src="images/lisp_list.png" alt="">&lt;/p>
+&lt;pre tabindex="0">&lt;code>* (cons 1 (cons 2 (cons 3 nil)))
+(1 2 3)
+&lt;/code>&lt;/pre>&lt;p>&lt;em>Tree&lt;/em>&lt;/p>
+&lt;p>&lt;img src="images/lisp_tree.png" alt="">&lt;/p>
+&lt;pre tabindex="0">&lt;code>* (cons (cons 1 2) (cons 3 4))
+((1 . 2) 3 . 4)
+&lt;/code>&lt;/pre>&lt;p>在Lisp中除Cons Cell之外，均为原子(atom)类型，如：数字、字符、符号、空列表等。&lt;/p></description></item></channel></rss>

@@ -83,7 +83,37 @@ P2P技术的发展，产生了各种网络共享下载的应用，如Napster、G
 &lt;ul>
 &lt;li>场景更严格，原理同上，无法打洞&lt;/li>
 &lt;/ul>
-&lt;p>判断网络是否能够打通，有一种简单的计算方法&lt;/p></description></item><item><title>RTOS实现原理</title><link>https://firebat.github.io/posts/rtos/</link><pubDate>Mon, 04 Dec 2023 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/rtos/</guid><description>&lt;h1 id="目的">目的&lt;/h1>
+&lt;p>判断网络是否能够打通，有一种简单的计算方法&lt;/p></description></item><item><title>程序设计方法</title><link>https://firebat.github.io/posts/howto-code/</link><pubDate>Fri, 06 Sep 2024 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/howto-code/</guid><description>&lt;h1 id="认识你的语言">认识你的语言&lt;/h1>
+&lt;p>程序设计本身是一种语言应用，语言是个符号系统，是思想的载体。如何写代码，本质上体现了程序员如何对现实世界进行的抽象。传统的欧陆哲学中，语言没有被作为一门独立的学科来研究，但是许多其他领域不可分割的一部分。二十世纪初，分析哲学将语言哲学置于中心地位，主要关心的问题有：意义的本质、语言用法、语言认知及语言与现实的关系。&lt;/p>
+&lt;p>首先，我们不妨先了解一下编程语言的本质，之后再讨论如何更好的使用它。1960年John McCarthy 写了一篇关于关于符号表达式计算的论文《符号表达式的递归函数及其机器计算》。在这篇论文中，McCarthy向我们展示了用一种简单的数据结构S表达式(S-expression)来表示代码和数据，并在此基础上构建一种完整的语言。Lisp语言形式简单、内涵深刻，Paul Graham在《Lisp之根源》中将其对编程的贡献与欧几里德对几何的贡献相提并论。Lisp原意为表处理(LISt Processing)，是第二悠久的高级编程语言，只有Fortran比它早一年。
+&lt;img src="images/lisp_40_50.jpg" alt="">
+&lt;img src="images/lisp_60_70.jpg" alt="">
+&lt;img src="images/lisp_80_90.jpg" alt="">
+&lt;img src="images/lisp_2000.jpg" alt="">&lt;/p>
+&lt;p>在计算机技术发展过程中，Lisp遭遇了人工智能寒冬，逐渐被人遗忘；而现代主流编程语言，或多或少仍能看出Lisp的影子，如：if-then-else、递归函数、垃圾回收、函数是一种数据、宏等。&lt;/p>
+&lt;h1 id="数据结构">数据结构&lt;/h1>
+&lt;p>构造元(Cons Cell)是Lisp最基本的数据结构，由两个存放地址的内存空间组成&lt;/p>
+&lt;ul>
+&lt;li>CAR - Contents of the Address part of the Register&lt;/li>
+&lt;li>CDR - Contents of the Decrement part of the Register&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="images/cons.png" alt="">&lt;/p>
+&lt;p>这个命名习惯，源自Lisp最初实现的硬件环境。IBM 704上一个字由36位组成，其中A类指令的前3位为操作类型，3到17位表示减量，18-20位标识Tag，21-35位表示地址。如果Tag标记的Index Register中的值大于Decrement，则Index Register减少Decrement，否则跳转到Address，这可用于实现循环。&lt;/p>
+&lt;p>&lt;img src="images/ibm_704_word.jpg" alt="">&lt;/p>
+&lt;p>通过这个最基本的构造单元，可以组成List、Tree等各种复杂的数据结构。&lt;/p>
+&lt;p>&lt;em>Dotted Pair&lt;/em>&lt;/p>
+&lt;p>&lt;img src="images/lisp_dotted_pair.png" alt="">&lt;/p>
+&lt;pre tabindex="0">&lt;code>* (cons 1 2)
+(1 . 2)
+&lt;/code>&lt;/pre>&lt;p>&lt;em>List&lt;/em>&lt;/p>
+&lt;p>&lt;img src="images/lisp_list.png" alt="">&lt;/p>
+&lt;pre tabindex="0">&lt;code>* (cons 1 (cons 2 (cons 3 nil)))
+(1 2 3)
+&lt;/code>&lt;/pre>&lt;p>&lt;em>Tree&lt;/em>&lt;/p>
+&lt;p>&lt;img src="images/lisp_tree.png" alt="">&lt;/p>
+&lt;pre tabindex="0">&lt;code>* (cons (cons 1 2) (cons 3 4))
+((1 . 2) 3 . 4)
+&lt;/code>&lt;/pre>&lt;p>在Lisp中除Cons Cell之外，均为原子(atom)类型，如：数字、字符、符号、空列表等。&lt;/p></description></item><item><title>RTOS实现原理</title><link>https://firebat.github.io/posts/rtos/</link><pubDate>Mon, 04 Dec 2023 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/rtos/</guid><description>&lt;h1 id="目的">目的&lt;/h1>
 &lt;p>为什么会有这篇文章？
 首先是好奇。月亮为什么会有盈缺？苹果为什么会落下？烧开水的壶盖为什么会跳动？无线电为什么会传播？正是因为好奇，人类才从洞穴走向了宇宙深空。好奇心是人类的基本特征，是追求进步、推动创新的源动力。记得有一道经典的面试题：浏览器输入URL后会车发生了什么？同样，在我们生活之中有各种类似的问题，当用手机扫描共享单车完成支付后，锁是怎么打开的？当把燃气充值卡后插入表中，发生了什么？&lt;/p>
 &lt;p>其次是有用。计算机归根结底是一门应用学科，当我们在准备掌握一门新技术时，总会想到一个问题：有什么用。掌握编程语言让我们知道如何编写逻辑，掌握数据结构有助于更好地组织逻辑，其中最重要且复杂的要数操作系统。每一位有想法的计算机专业学生，都把写一个编译器或操作系统作为自己的终极目标或专业能力试金石。比如Linus在1997年的硕士毕业论文，题目就是《Linux: A Portable Operating System》。但当我们真正深入操作系统时不免会遇到重重困难：要么是书厚、代码多、门槛高；又或是时代久远，各种硬件环境、工具链资料缺失，难以复现；又或者是从xv6或30天系列入手，学完后遇到另一个问题“有什么用”。而学习RTOS就很好的避开了上述问题，不仅代码量少上手容易，迅速理解操作系统的工作原理；又能紧跟时代，获取到最新的硬件和技术资料；而且还能和实际生活应用联系起来。比如北京在20年治理雾霾过程中的空气质量监测，疫情期间公共场合的人体温度红外识别；记得B站上看过一个纪录片，福岛核事故后续，几位退休人员组成的民间团体，拿着自制的辐射检测仪深入街道、学校、树林检测环境的危害程度，来标记安全的活动区域，令人印象深刻。&lt;/p>
