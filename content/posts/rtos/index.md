@@ -607,7 +607,7 @@ void rt_system_scheduler_start(void)
 }
 ```
 `rt_hw_context_switch_to`用于启动第一次切换，见`libcpu/arm/coretx-m3/context_gcc.S`
-```armasm
+```asm
 /*
  * void rt_hw_context_switch_to(rt_uint32 to);
  * R0 --> to
@@ -653,7 +653,7 @@ rt_hw_context_switch_to:
     CPSIE   I
 ```
 `PendSV_Handler`负责具体的任务切换动作
-```armasm
+```asm
 /* R0 --> switch from thread stack
  * R1 --> switch to thread stack
  * psr, pc, LR, R12, R3, R2, R1, R0 are pushed into [from] stack
