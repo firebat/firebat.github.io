@@ -1,76 +1,144 @@
 <!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Python必知必会 | firebat</title>
-<link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/tags/>Tags</a></li><li><a href=/about>About</a></li><li><a href=/index.xml>Subscribe</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>Python必知必会</span></h1><h2 class=date>2023/04/27</h2></div><main><p>本篇不介绍Python语言特性，仅着重介绍项目结构和常用工具，为初学者建立正确的工程架构提供参考。若有意深入研读相关框架工具原理源码，请务必掌握如下Python语言高级特性</p><ul><li>Lambda</li><li><a href=https://python3-cookbook.readthedocs.io/zh-cn/latest/chapters/p15_c_extensions.html>装饰器</a></li><li><a href=https://eventlet.readthedocs.io/en/latest/>Eventlet</a></li><li><a href=https://python3-cookbook.readthedocs.io/zh-cn/latest/chapters/p15_c_extensions.html>C语言扩展</a></li></ul><h1 id=环境准备>环境准备</h1><h2 id=vitrualenv>vitrualenv</h2><p>创建一个独立隔绝的虚拟环境，用来安装工程所需的依赖包</p><blockquote><p><code>virtualenv</code> is a tool to create isolated Python environments. Since Python 3.3, a subset of it has been integrated into the standard library under the venv module <a href=https://virtualenv.pypa.io/en/latest/>https://virtualenv.pypa.io/en/latest/</a></p></blockquote><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>python3 -m venv venv
-</span></span><span style=display:flex><span>source venv/bin/activate
+<link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/tags/>Tags</a></li><li><a href=/index.xml>Subscribe</a></li><li><a href=/about>About</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>Python必知必会</span></h1><h2 class=date>2023/04/27</h2></div><main><p>本篇不介绍Python语言特性，仅着重介绍项目结构和常用工具，为初学者建立正确的工程架构提供参考。若有意深入研读相关框架工具原理源码，请务必掌握如下Python语言高级特性</p><ul><li>Lambda</li><li><a href=https://python3-cookbook.readthedocs.io/zh-cn/latest/chapters/p15_c_extensions.html>装饰器</a></li><li><a href=https://eventlet.readthedocs.io/en/latest/>Eventlet</a></li><li><a href=https://python3-cookbook.readthedocs.io/zh-cn/latest/chapters/p15_c_extensions.html>C语言扩展</a></li></ul><h1 id=环境准备>环境准备</h1><h2 id=vitrualenv>vitrualenv</h2><p>创建一个独立隔绝的虚拟环境，用来安装工程所需的依赖包</p><blockquote><p><code>virtualenv</code> is a tool to create isolated Python environments. Since Python 3.3, a subset of it has been integrated into the standard library under the venv module <a href=https://virtualenv.pypa.io/en/latest/>https://virtualenv.pypa.io/en/latest/</a></p></blockquote><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>python3 -m venv venv
+</span></span><span style=display:flex><span><span style=color:#6639ba>source</span> venv/bin/activate
 </span></span><span style=display:flex><span>which python
 </span></span><span style=display:flex><span>deactivate
-</span></span></code></pre></div><h1 id=依赖管理>依赖管理</h1><h2 id=pip>pip</h2><p>包管理工具，用于安装、卸载、检查依赖。可通过<code>freeze</code>将依赖关系导出到文件，后通过<code>install -r</code>恢复</p><blockquote><p><code>pip</code> is the package installer for Python. You can use pip to install packages from the Python Package Index and other indexes. <a href=https://pypi.org/project/pip/>https://pypi.org/project/pip/</a></p></blockquote><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>pip install &lt;package&gt;
+</span></span></code></pre></td></tr></table></div></div><h1 id=依赖管理>依赖管理</h1><h2 id=pip>pip</h2><p>包管理工具，用于安装、卸载、检查依赖。可通过<code>freeze</code>将依赖关系导出到文件，后通过<code>install -r</code>恢复</p><blockquote><p><code>pip</code> is the package installer for Python. You can use pip to install packages from the Python Package Index and other indexes. <a href=https://pypi.org/project/pip/>https://pypi.org/project/pip/</a></p></blockquote><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>pip install &lt;package&gt;
 </span></span><span style=display:flex><span>pip uninstall &lt;package&gt;
 </span></span><span style=display:flex><span>pip list
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>pip freeze &gt; requirements.txt
 </span></span><span style=display:flex><span>pip install -r requirements.txt
-</span></span></code></pre></div><p><code>pip uninstall</code>卸载指定的包，也可以使用<code>pip-autoremove</code>自动卸载其依赖的其它无用的包</p><h1 id=项目管理>项目管理</h1><h2 id=distutils>Distutils</h2><p><code>distutils</code> 是标准库中负责建立Python第三方库的安装器，使用它能够进行Python模块的安装和发布。通过定义一个setup.py文件，包含名称、版本、依赖等信息。详情参考https://docs.python.org/zh-cn/3.7/distutils/apiref.html#distutils.core.setup</p><blockquote><p>The distutils package provides support for building and installing additional modules into a Python installation. The new modules may be either 100%-pure Python, or may be extension modules written in C, or may be collections of Python packages which include modules coded in both Python and C.</p></blockquote><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#75715e>#!/usr/bin/env python</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>pip uninstall</code>卸载指定的包，也可以使用<code>pip-autoremove</code>自动卸载其依赖的其它无用的包</p><h1 id=项目管理>项目管理</h1><h2 id=distutils>Distutils</h2><p><code>distutils</code> 是标准库中负责建立Python第三方库的安装器，使用它能够进行Python模块的安装和发布。通过定义一个setup.py文件，包含名称、版本、依赖等信息。详情参考https://docs.python.org/zh-cn/3.7/distutils/apiref.html#distutils.core.setup</p><blockquote><p>The distutils package provides support for building and installing additional modules into a Python installation. The new modules may be either 100%-pure Python, or may be extension modules written in C, or may be collections of Python packages which include modules coded in both Python and C.</p></blockquote><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">9
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#57606a>#!/usr/bin/env python</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#f92672>from</span> distutils.core <span style=color:#f92672>import</span> setup
+</span></span><span style=display:flex><span><span style=color:#cf222e>from</span> <span style=color:#24292e>distutils.core</span> <span style=color:#cf222e>import</span> setup
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>setup(
-</span></span><span style=display:flex><span>    name<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;Hello&#39;</span>,
-</span></span><span style=display:flex><span>    version<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;1.0&#39;</span>,
-</span></span><span style=display:flex><span>    packages<span style=color:#f92672>=</span>[<span style=color:#e6db74>&#39;hello&#39;</span>],
-</span></span><span style=display:flex><span>)
-</span></span></code></pre></div><p>通过<code>python setup.py</code>命令执行对应的操作</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#f92672>(</span>venv<span style=color:#f92672>)</span> $ python setup.py build
+</span></span><span style=display:flex><span>setup<span style=color:#1f2328>(</span>
+</span></span><span style=display:flex><span>    name<span style=color:#0550ae>=</span><span style=color:#0a3069>&#39;Hello&#39;</span><span style=color:#1f2328>,</span>
+</span></span><span style=display:flex><span>    version<span style=color:#0550ae>=</span><span style=color:#0a3069>&#39;1.0&#39;</span><span style=color:#1f2328>,</span>
+</span></span><span style=display:flex><span>    packages<span style=color:#0550ae>=</span><span style=color:#1f2328>[</span><span style=color:#0a3069>&#39;hello&#39;</span><span style=color:#1f2328>],</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>通过<code>python setup.py</code>命令执行对应的操作</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#0550ae>(</span>venv<span style=color:#0550ae>)</span> $ python setup.py build
 </span></span><span style=display:flex><span>running build
 </span></span><span style=display:flex><span>running build_py
 </span></span><span style=display:flex><span>creating build
 </span></span><span style=display:flex><span>creating build/lib
 </span></span><span style=display:flex><span>creating build/lib/hello
 </span></span><span style=display:flex><span>copying hello/__init__.py -&gt; build/lib/hello
-</span></span></code></pre></div><table><thead><tr><th>常用命令 ｜ 说明 ｜</th><th></th></tr></thead><tbody><tr><td><code>python setup.py build</code></td><td>构建项目，结果导出到<code>build</code>目录</td></tr><tr><td><code>python setup.py install</code></td><td>安装项目，到<code>python</code>命令所属环境</td></tr><tr><td><code>python setup.py sdist</code></td><td>创建源代码分发包，生成<code>&lt;Package>-&lt;Version>.tar.gz</code>文件到<code>dist</code>目录</td></tr><tr><td><code>python setup.py bdist</code></td><td>创建二进制分发包，生成<code>&lt;Package>-&lt;Version>.&lt;arch>.tar.gz</code>到<code>dist</code>目录</td></tr></tbody></table><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ python setup.py --help-commands
+</span></span></code></pre></td></tr></table></div></div><table><thead><tr><th>常用命令 ｜ 说明 ｜</th><th></th></tr></thead><tbody><tr><td><code>python setup.py build</code></td><td>构建项目，结果导出到<code>build</code>目录</td></tr><tr><td><code>python setup.py install</code></td><td>安装项目，到<code>python</code>命令所属环境</td></tr><tr><td><code>python setup.py sdist</code></td><td>创建源代码分发包，生成<code>&lt;Package>-&lt;Version>.tar.gz</code>文件到<code>dist</code>目录</td></tr><tr><td><code>python setup.py bdist</code></td><td>创建二进制分发包，生成<code>&lt;Package>-&lt;Version>.&lt;arch>.tar.gz</code>到<code>dist</code>目录</td></tr></tbody></table><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ python setup.py --help-commands
 </span></span><span style=display:flex><span>Standard commands:
 </span></span><span style=display:flex><span>  build            build everything needed to install
-</span></span><span style=display:flex><span>  build_py         <span style=color:#e6db74>&#34;build&#34;</span> pure Python modules <span style=color:#f92672>(</span>copy to build directory<span style=color:#f92672>)</span>
-</span></span><span style=display:flex><span>  build_ext        build C/C++ extensions <span style=color:#f92672>(</span>compile/link to build directory<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  build_py         <span style=color:#0a3069>&#34;build&#34;</span> pure Python modules <span style=color:#0550ae>(</span>copy to build directory<span style=color:#0550ae>)</span>
+</span></span><span style=display:flex><span>  build_ext        build C/C++ extensions <span style=color:#0550ae>(</span>compile/link to build directory<span style=color:#0550ae>)</span>
 </span></span><span style=display:flex><span>  build_clib       build C/C++ libraries used by Python extensions
-</span></span><span style=display:flex><span>  build_scripts    <span style=color:#e6db74>&#34;build&#34;</span> scripts <span style=color:#f92672>(</span>copy and fixup <span style=color:#75715e>#! line)</span>
-</span></span><span style=display:flex><span>  clean            clean up temporary files from <span style=color:#e6db74>&#39;build&#39;</span> command
+</span></span><span style=display:flex><span>  build_scripts    <span style=color:#0a3069>&#34;build&#34;</span> scripts <span style=color:#0550ae>(</span>copy and fixup <span style=color:#57606a>#! line)</span>
+</span></span><span style=display:flex><span>  clean            clean up temporary files from <span style=color:#0a3069>&#39;build&#39;</span> <span style=color:#6639ba>command</span>
 </span></span><span style=display:flex><span>  install          install everything from build directory
-</span></span><span style=display:flex><span>  install_lib      install all Python modules <span style=color:#f92672>(</span>extensions and pure Python<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  install_lib      install all Python modules <span style=color:#0550ae>(</span>extensions and pure Python<span style=color:#0550ae>)</span>
 </span></span><span style=display:flex><span>  install_headers  install C/C++ header files
-</span></span><span style=display:flex><span>  install_scripts  install scripts <span style=color:#f92672>(</span>Python or otherwise<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  install_scripts  install scripts <span style=color:#0550ae>(</span>Python or otherwise<span style=color:#0550ae>)</span>
 </span></span><span style=display:flex><span>  install_data     install data files
-</span></span><span style=display:flex><span>  sdist            create a source distribution <span style=color:#f92672>(</span>tarball, zip file, etc.<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  sdist            create a <span style=color:#6639ba>source</span> distribution <span style=color:#0550ae>(</span>tarball, zip file, etc.<span style=color:#0550ae>)</span>
 </span></span><span style=display:flex><span>  register         register the distribution with the Python package index
-</span></span><span style=display:flex><span>  bdist            create a built <span style=color:#f92672>(</span>binary<span style=color:#f92672>)</span> distribution
-</span></span><span style=display:flex><span>  bdist_dumb       create a <span style=color:#e6db74>&#34;dumb&#34;</span> built distribution
+</span></span><span style=display:flex><span>  bdist            create a built <span style=color:#0550ae>(</span>binary<span style=color:#0550ae>)</span> distribution
+</span></span><span style=display:flex><span>  bdist_dumb       create a <span style=color:#0a3069>&#34;dumb&#34;</span> built distribution
 </span></span><span style=display:flex><span>  bdist_rpm        create an RPM distribution
-</span></span><span style=display:flex><span>  bdist_wininst    create an executable installer <span style=color:#66d9ef>for</span> MS Windows
+</span></span><span style=display:flex><span>  bdist_wininst    create an executable installer <span style=color:#cf222e>for</span> MS Windows
 </span></span><span style=display:flex><span>  check            perform some checks on the package
 </span></span><span style=display:flex><span>  upload           upload binary package to PyPI
-</span></span></code></pre></div><p><code>distutils</code>对于简单的分发很有用，但功能较少。</p><blockquote><p>Distutils is deprecated with removal planned for Python 3.12.</p></blockquote><h2 id=setuptools>Setuptools</h2><p><code>setuptools</code>是<code>distutils</code>增强版，不包括在标准库中。其扩展了很多功能，能够帮助开发者更好的创建和分发 Python 包。大部分用户会使用更先进的setuptools模块，只需要更换引用即可。</p><blockquote><p>Setuptools is a fully-featured, actively-maintained, and stable library designed to facilitate packaging Python projects. It helps developers to easily share reusable code (in the form of a library) and programs (e.g., CLI/GUI tools implemented in Python) <a href=https://pypi.org/project/setuptools/>https://pypi.org/project/setuptools/</a></p></blockquote><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#f92672>from</span> setuptools <span style=color:#f92672>import</span> setup
-</span></span></code></pre></div><p>相比前者<code>setup</code>增加了额外特性，其中比较重要的几个
+</span></span></code></pre></td></tr></table></div></div><p><code>distutils</code>对于简单的分发很有用，但功能较少。</p><blockquote><p>Distutils is deprecated with removal planned for Python 3.12.</p></blockquote><h2 id=setuptools>Setuptools</h2><p><code>setuptools</code>是<code>distutils</code>增强版，不包括在标准库中。其扩展了很多功能，能够帮助开发者更好的创建和分发 Python 包。大部分用户会使用更先进的setuptools模块，只需要更换引用即可。</p><blockquote><p>Setuptools is a fully-featured, actively-maintained, and stable library designed to facilitate packaging Python projects. It helps developers to easily share reusable code (in the form of a library) and programs (e.g., CLI/GUI tools implemented in Python) <a href=https://pypi.org/project/setuptools/>https://pypi.org/project/setuptools/</a></p></blockquote><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#cf222e>from</span> <span style=color:#24292e>setuptools</span> <span style=color:#cf222e>import</span> setup
+</span></span></code></pre></td></tr></table></div></div><p>相比前者<code>setup</code>增加了额外特性，其中比较重要的几个
 详情参考 <a href=https://setuptools.pypa.io/en/latest/deprecated/changed_keywords.html>https://setuptools.pypa.io/en/latest/deprecated/changed_keywords.html</a>，</p><ul><li><code>install_requires</code> 代替 <code>requires</code> 自动安装依赖。<code>requirements.txt</code>管理开发依赖，二者略不同</li><li><code>packages=find_packages()</code> 自动搜索包</li><li><code>entry_points</code> 注册入口，比如定义<code>console_scripts</code>在安装后可执行的命令
 此外还支持<code>python setup.py develop</code>命令进行开发方式安装，源码变更后应用立即生效。</li></ul><h1 id=部署>部署</h1><p>针对库和命令工具，可直接发布到pip源供安装使用；Web服务需要遵循WSGI规范进行部署</p><h2 id=devpi>devpi</h2><p>The MIT-licensed devpi system features a powerful PyPI-compatible server and a complementary command line tool to drive packaging, testing and release activities with Python <a href=https://github.com/devpi/devpi>https://github.com/devpi/devpi</a></p><h2 id=wsgi>WSGI</h2><p>全称 Web Server Gateway Interface，或者 Python Web Server Gateway Interface ，是为 Python 语言定义的 Web 服务器和 Web 应用程序或框架之间的一种简单而通用的接口。最早由<a href=https://peps.python.org/pep-0333/>PEP-333</a>定义，当前版本v1.0.1由<a href=https://peps.python.org/pep-3333/>PEP-3333</a>定义。自从 WSGI 被开发出来以后，许多其它语言中也出现了类似接口。WSGI协议把整个web服务端分为三个部分：Server、Application、Middleware。
-<img src=images/wsgi.jpg alt></p><ul><li>Server负责从客户端接受请求，将Request转发给Application，再将返回的Response返回给客户端</li><li>Application负责接收Request，处理请求，并返回结果给Server</li><li>Middleware介于二者之间，又同时具备两种角色的能力</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#75715e># hello/app.py</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>app</span>(env, start_response):
-</span></span><span style=display:flex><span>    start_response(<span style=color:#e6db74>&#39;200 OK&#39;</span>, [(<span style=color:#e6db74>&#39;Content-Type&#39;</span>, <span style=color:#e6db74>&#39;text/html&#39;</span>)])
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> [<span style=color:#e6db74>b</span><span style=color:#e6db74>&#39;Hello app&#39;</span>]
-</span></span></code></pre></div><p>可以直接用<a href=https://uwsgi-docs.readthedocs.io/en/latest/>uwsgi</a>启动一个服务</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ pip install uwsgi
+<img src=images/wsgi.jpg alt></p><ul><li>Server负责从客户端接受请求，将Request转发给Application，再将返回的Response返回给客户端</li><li>Application负责接收Request，处理请求，并返回结果给Server</li><li>Middleware介于二者之间，又同时具备两种角色的能力</li></ul><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#57606a># hello/app.py</span>
+</span></span><span style=display:flex><span><span style=color:#cf222e>def</span> <span style=color:#6639ba>app</span><span style=color:#1f2328>(</span>env<span style=color:#1f2328>,</span> start_response<span style=color:#1f2328>):</span>
+</span></span><span style=display:flex><span>    start_response<span style=color:#1f2328>(</span><span style=color:#0a3069>&#39;200 OK&#39;</span><span style=color:#1f2328>,</span> <span style=color:#1f2328>[(</span><span style=color:#0a3069>&#39;Content-Type&#39;</span><span style=color:#1f2328>,</span> <span style=color:#0a3069>&#39;text/html&#39;</span><span style=color:#1f2328>)])</span>
+</span></span><span style=display:flex><span>    <span style=color:#cf222e>return</span> <span style=color:#1f2328>[</span><span style=color:#0a3069>b</span><span style=color:#0a3069>&#39;Hello app&#39;</span><span style=color:#1f2328>]</span>
+</span></span></code></pre></td></tr></table></div></div><p>可以直接用<a href=https://uwsgi-docs.readthedocs.io/en/latest/>uwsgi</a>启动一个服务</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ pip install uwsgi
 </span></span><span style=display:flex><span>$ uwsgi --http :8080 --wsgi-file hello/app.py
-</span></span></code></pre></div><p>也可以使用某个按照WSGI实现的Server容器启动服务，如<a href=https://gunicorn.org/>Gunicorn</a></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ pip install gunicorn
+</span></span></code></pre></td></tr></table></div></div><p>也可以使用某个按照WSGI实现的Server容器启动服务，如<a href=https://gunicorn.org/>Gunicorn</a></p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ pip install gunicorn
 </span></span><span style=display:flex><span>$ gunicorn -b :8080 hello.app:app
-</span></span></code></pre></div><p>在Python中method、class和instance都可以是callable类型</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>App</span>:
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>def</span> __init__(self, env, start_response):
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>pass</span>
+</span></span></code></pre></td></tr></table></div></div><p>在Python中method、class和instance都可以是callable类型</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#cf222e>class</span> <span style=color:#1f2328>App</span><span style=color:#1f2328>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#cf222e>def</span> __init__<span style=color:#1f2328>(</span><span style=color:#6a737d>self</span><span style=color:#1f2328>,</span> env<span style=color:#1f2328>,</span> start_response<span style=color:#1f2328>):</span>
+</span></span><span style=display:flex><span>        <span style=color:#cf222e>pass</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>def</span> __iter__(self):
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>yield</span> <span style=color:#e6db74>b</span><span style=color:#e6db74>&#39;Hello App&#39;</span>
+</span></span><span style=display:flex><span>    <span style=color:#cf222e>def</span> __iter__<span style=color:#1f2328>(</span><span style=color:#6a737d>self</span><span style=color:#1f2328>):</span>
+</span></span><span style=display:flex><span>        <span style=color:#cf222e>yield</span> <span style=color:#0a3069>b</span><span style=color:#0a3069>&#39;Hello App&#39;</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>AppObj</span>:
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>def</span> __call__(self, env, start_response):
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> [<span style=color:#e6db74>b</span><span style=color:#e6db74>&#39;Hello AppObj&#39;</span>]
+</span></span><span style=display:flex><span><span style=color:#cf222e>class</span> <span style=color:#1f2328>AppObj</span><span style=color:#1f2328>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#cf222e>def</span> __call__<span style=color:#1f2328>(</span><span style=color:#6a737d>self</span><span style=color:#1f2328>,</span> env<span style=color:#1f2328>,</span> start_response<span style=color:#1f2328>):</span>
+</span></span><span style=display:flex><span>        <span style=color:#cf222e>return</span> <span style=color:#1f2328>[</span><span style=color:#0a3069>b</span><span style=color:#0a3069>&#39;Hello AppObj&#39;</span><span style=color:#1f2328>]</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>appObj <span style=color:#f92672>=</span> ApplicationObj()
-</span></span></code></pre></div><h2 id=pastedeploy>PasteDeploy</h2><p>PasteDeploy是一套发现和配置WSGI应用的系统。它根据指定的配置文件动态生成入口点和组织WSGI application间的逻辑关系。简单来说，就是可以将各种资源（静态、应用服务）整合起来，作为一个整体对外提供服务。配置文件使用ini格式，定义多个section片段组合。</p><blockquote><p>This tool provides code to load WSGI applications and servers from URIs. These URIs can refer to Python eggs for INI-style configuration files <a href=https://docs.pylonsproject.org/projects/pastedeploy/en/latest/index.html>https://docs.pylonsproject.org/projects/pastedeploy/en/latest/index.html</a></p></blockquote><p>常用片段类型有</p><ul><li><code>app</code> WSGI application</li><li><code>composite</code> 多个应用组合，可以根据规则进行请求转发</li><li><code>filter</code> WSGI middleware，如鉴权、限流</li><li><code>pipeline</code> 按照顺序执行一系列的middleware和应用</li></ul><p>执行时以命名为<code>main</code>的的片段为入口</p><pre tabindex=0><code># paste.ini
+</span></span><span style=display:flex><span>appObj <span style=color:#0550ae>=</span> ApplicationObj<span style=color:#1f2328>()</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=pastedeploy>PasteDeploy</h2><p>PasteDeploy是一套发现和配置WSGI应用的系统。它根据指定的配置文件动态生成入口点和组织WSGI application间的逻辑关系。简单来说，就是可以将各种资源（静态、应用服务）整合起来，作为一个整体对外提供服务。配置文件使用ini格式，定义多个section片段组合。</p><blockquote><p>This tool provides code to load WSGI applications and servers from URIs. These URIs can refer to Python eggs for INI-style configuration files <a href=https://docs.pylonsproject.org/projects/pastedeploy/en/latest/index.html>https://docs.pylonsproject.org/projects/pastedeploy/en/latest/index.html</a></p></blockquote><p>常用片段类型有</p><ul><li><code>app</code> WSGI application</li><li><code>composite</code> 多个应用组合，可以根据规则进行请求转发</li><li><code>filter</code> WSGI middleware，如鉴权、限流</li><li><code>pipeline</code> 按照顺序执行一系列的middleware和应用</li></ul><p>执行时以命名为<code>main</code>的的片段为入口</p><pre tabindex=0><code># paste.ini
 [composite:main]
 use = egg:Paste#urlmap
 / = home
@@ -82,24 +150,41 @@ document_root = %(here)s/static
 
 [app:hello]
 paste.app_factory = hello.app:app_factory
-</code></pre><p>创建应用</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#75715e># hello/app.py</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>app</span>(env, start_response):
-</span></span><span style=display:flex><span>    start_response(<span style=color:#e6db74>&#39;200 OK&#39;</span>, [(<span style=color:#e6db74>&#39;Content-Type&#39;</span>, <span style=color:#e6db74>&#39;text/html&#39;</span>)])
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> [<span style=color:#e6db74>b</span><span style=color:#e6db74>&#39;Hello app&#39;</span>]
+</code></pre><p>创建应用</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#57606a># hello/app.py</span>
+</span></span><span style=display:flex><span><span style=color:#cf222e>def</span> <span style=color:#6639ba>app</span><span style=color:#1f2328>(</span>env<span style=color:#1f2328>,</span> start_response<span style=color:#1f2328>):</span>
+</span></span><span style=display:flex><span>    start_response<span style=color:#1f2328>(</span><span style=color:#0a3069>&#39;200 OK&#39;</span><span style=color:#1f2328>,</span> <span style=color:#1f2328>[(</span><span style=color:#0a3069>&#39;Content-Type&#39;</span><span style=color:#1f2328>,</span> <span style=color:#0a3069>&#39;text/html&#39;</span><span style=color:#1f2328>)])</span>
+</span></span><span style=display:flex><span>    <span style=color:#cf222e>return</span> <span style=color:#1f2328>[</span><span style=color:#0a3069>b</span><span style=color:#0a3069>&#39;Hello app&#39;</span><span style=color:#1f2328>]</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>app_factory</span>(global_config, <span style=color:#f92672>**</span>local_conf):
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> app
-</span></span></code></pre></div><p>使用gunicorn加载启动</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ pip install Paste PasteDeploy
+</span></span><span style=display:flex><span><span style=color:#cf222e>def</span> <span style=color:#6639ba>app_factory</span><span style=color:#1f2328>(</span>global_config<span style=color:#1f2328>,</span> <span style=color:#0550ae>**</span>local_conf<span style=color:#1f2328>):</span>
+</span></span><span style=display:flex><span>    <span style=color:#cf222e>return</span> app
+</span></span></code></pre></td></tr></table></div></div><p>使用gunicorn加载启动</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ pip install Paste PasteDeploy
 </span></span><span style=display:flex><span>$ gunicorn --paste paste.ini -b :8080
-</span></span></code></pre></div><h1 id=常用工具>常用工具</h1><h2 id=pbr>pbr</h2><p><a href=https://docs.openstack.org/pbr/>pbr</a>是 setuptools 的辅助工具，最初是为 OpenStack 开发，将内容提取到setup.cfg中。好处是</p><ul><li>从git中获取Version、AUTHORS and ChangeLog信息</li><li>读取requirements.txt，生成setup函数需要的依赖，统一管理</li><li>读取README文件，生成long_description描述</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#75715e>#!/usr/bin/env python</span>
+</span></span></code></pre></td></tr></table></div></div><h1 id=常用工具>常用工具</h1><h2 id=pbr>pbr</h2><p><a href=https://docs.openstack.org/pbr/>pbr</a>是 setuptools 的辅助工具，最初是为 OpenStack 开发，将内容提取到setup.cfg中。好处是</p><ul><li>从git中获取Version、AUTHORS and ChangeLog信息</li><li>读取requirements.txt，生成setup函数需要的依赖，统一管理</li><li>读取README文件，生成long_description描述</li></ul><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#57606a>#!/usr/bin/env python</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#f92672>from</span> setuptools <span style=color:#f92672>import</span> setup
+</span></span><span style=display:flex><span><span style=color:#cf222e>from</span> <span style=color:#24292e>setuptools</span> <span style=color:#cf222e>import</span> setup
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>setup(
-</span></span><span style=display:flex><span>    setup_requires<span style=color:#f92672>=</span>[<span style=color:#e6db74>&#39;pbr&#39;</span>],
-</span></span><span style=display:flex><span>    pbr<span style=color:#f92672>=</span><span style=color:#66d9ef>True</span>,
-</span></span><span style=display:flex><span>)
-</span></span></code></pre></div><pre tabindex=0><code># setup.cfg
+</span></span><span style=display:flex><span>setup<span style=color:#1f2328>(</span>
+</span></span><span style=display:flex><span>    setup_requires<span style=color:#0550ae>=</span><span style=color:#1f2328>[</span><span style=color:#0a3069>&#39;pbr&#39;</span><span style=color:#1f2328>],</span>
+</span></span><span style=display:flex><span>    pbr<span style=color:#0550ae>=</span><span style=color:#cf222e>True</span><span style=color:#1f2328>,</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>)</span>
+</span></span></code></pre></td></tr></table></div></div><pre tabindex=0><code># setup.cfg
 [metadata]
 name = hello
 description_file = README
@@ -107,55 +192,95 @@ description_file = README
 [files]
 packages =
     hello
-</code></pre><h2 id=osloconfig>oslo.config</h2><p><a href=https://docs.openstack.org/oslo.config/>oslo.config</a> 作为OpenStack的通用组件，用于管理配置，在每一个项目中都有用到。</p><ul><li>使用ini文件管理配置信息</li><li>执行时通过 config-file 读取配置信息</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#75715e># conf.py</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>from</span> oslo_config <span style=color:#f92672>import</span> cfg
-</span></span><span style=display:flex><span><span style=color:#f92672>import</span> sys
+</code></pre><h2 id=osloconfig>oslo.config</h2><p><a href=https://docs.openstack.org/oslo.config/>oslo.config</a> 作为OpenStack的通用组件，用于管理配置，在每一个项目中都有用到。</p><ul><li>使用ini文件管理配置信息</li><li>执行时通过 config-file 读取配置信息</li></ul><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#57606a># conf.py</span>
+</span></span><span style=display:flex><span><span style=color:#cf222e>from</span> <span style=color:#24292e>oslo_config</span> <span style=color:#cf222e>import</span> cfg
+</span></span><span style=display:flex><span><span style=color:#cf222e>import</span> <span style=color:#24292e>sys</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>opts <span style=color:#f92672>=</span> [
-</span></span><span style=display:flex><span>    cfg<span style=color:#f92672>.</span>StrOpt(<span style=color:#e6db74>&#39;ip&#39;</span>, default<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;127.0.0.1&#39;</span>, help<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;Ip address&#39;</span>),
-</span></span><span style=display:flex><span>    cfg<span style=color:#f92672>.</span>IntOpt(<span style=color:#e6db74>&#39;port&#39;</span>, default<span style=color:#f92672>=</span><span style=color:#ae81ff>9090</span>)
-</span></span><span style=display:flex><span>]
+</span></span><span style=display:flex><span>opts <span style=color:#0550ae>=</span> <span style=color:#1f2328>[</span>
+</span></span><span style=display:flex><span>    cfg<span style=color:#0550ae>.</span>StrOpt<span style=color:#1f2328>(</span><span style=color:#0a3069>&#39;ip&#39;</span><span style=color:#1f2328>,</span> default<span style=color:#0550ae>=</span><span style=color:#0a3069>&#39;127.0.0.1&#39;</span><span style=color:#1f2328>,</span> help<span style=color:#0550ae>=</span><span style=color:#0a3069>&#39;Ip address&#39;</span><span style=color:#1f2328>),</span>
+</span></span><span style=display:flex><span>    cfg<span style=color:#0550ae>.</span>IntOpt<span style=color:#1f2328>(</span><span style=color:#0a3069>&#39;port&#39;</span><span style=color:#1f2328>,</span> default<span style=color:#0550ae>=</span><span style=color:#0550ae>9090</span><span style=color:#1f2328>)</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>]</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>cfg<span style=color:#f92672>.</span>CONF<span style=color:#f92672>.</span>register_cli_opts(opts)    <span style=color:#75715e># 注册CLI参数</span>
-</span></span><span style=display:flex><span>cfg<span style=color:#f92672>.</span>CONF(args<span style=color:#f92672>=</span>sys<span style=color:#f92672>.</span>argv[<span style=color:#ae81ff>1</span>:])         <span style=color:#75715e># 接收CLI和配置文件参数</span>
+</span></span><span style=display:flex><span>cfg<span style=color:#0550ae>.</span>CONF<span style=color:#0550ae>.</span>register_cli_opts<span style=color:#1f2328>(</span>opts<span style=color:#1f2328>)</span>    <span style=color:#57606a># 注册CLI参数</span>
+</span></span><span style=display:flex><span>cfg<span style=color:#0550ae>.</span>CONF<span style=color:#1f2328>(</span>args<span style=color:#0550ae>=</span>sys<span style=color:#0550ae>.</span>argv<span style=color:#1f2328>[</span><span style=color:#0550ae>1</span><span style=color:#1f2328>:])</span>         <span style=color:#57606a># 接收CLI和配置文件参数</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>print(cfg<span style=color:#f92672>.</span>CONF<span style=color:#f92672>.</span>ip, cfg<span style=color:#f92672>.</span>CONF<span style=color:#f92672>.</span>port)
-</span></span></code></pre></div><pre tabindex=0><code># conf.ini
+</span></span><span style=display:flex><span><span style=color:#6639ba>print</span><span style=color:#1f2328>(</span>cfg<span style=color:#0550ae>.</span>CONF<span style=color:#0550ae>.</span>ip<span style=color:#1f2328>,</span> cfg<span style=color:#0550ae>.</span>CONF<span style=color:#0550ae>.</span>port<span style=color:#1f2328>)</span>
+</span></span></code></pre></td></tr></table></div></div><pre tabindex=0><code># conf.ini
 [DEFAULT]
 ip=0.0.0.0
-</code></pre><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ python conf.py <span style=color:#75715e># 代码配置</span>
-</span></span><span style=display:flex><span>127.0.0.1 <span style=color:#ae81ff>9090</span>
+</code></pre><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ python conf.py <span style=color:#57606a># 代码配置</span>
+</span></span><span style=display:flex><span>127.0.0.1 <span style=color:#0550ae>9090</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>$ python conf.py --config-file conf.ini <span style=color:#75715e># 配置文件 &gt; 代码配置</span>
-</span></span><span style=display:flex><span>0.0.0.0 <span style=color:#ae81ff>9090</span>
+</span></span><span style=display:flex><span>$ python conf.py --config-file conf.ini <span style=color:#57606a># 配置文件 &gt; 代码配置</span>
+</span></span><span style=display:flex><span>0.0.0.0 <span style=color:#0550ae>9090</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>$ python conf.py --config-file conf.ini --port<span style=color:#f92672>=</span><span style=color:#ae81ff>8080</span> <span style=color:#75715e># CLI参数 &gt; 配置文件</span>
-</span></span><span style=display:flex><span>0.0.0.0 <span style=color:#ae81ff>8080</span>
-</span></span></code></pre></div><h2 id=ansible>Ansible</h2><p><a href=https://github.com/ansible/ansible>ansible</a> 分布式自动化运维工具，RedHat出品，通过ssh分发命令到集群进行批量配置、部署、执行。
+</span></span><span style=display:flex><span>$ python conf.py --config-file conf.ini --port<span style=color:#0550ae>=</span><span style=color:#0550ae>8080</span> <span style=color:#57606a># CLI参数 &gt; 配置文件</span>
+</span></span><span style=display:flex><span>0.0.0.0 <span style=color:#0550ae>8080</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=ansible>Ansible</h2><p><a href=https://github.com/ansible/ansible>ansible</a> 分布式自动化运维工具，RedHat出品，通过ssh分发命令到集群进行批量配置、部署、执行。
 <img src=images/ansible.jpg alt></p><ul><li>将控制节点的 <code>~/.ssh/id_rsa.pub</code> 添加到 服务节点的 <code>~/.ssh/authorized_keys</code> 文件中</li><li>将被管理节点的<code>ip</code>分组添加到<code>hosts</code>文件中</li></ul><pre tabindex=0><code># hosts
 [local]
 127.0.0.1
-</code></pre><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ ansible -i hosts all -m ping <span style=color:#75715e># 向所有节点发送 ping 命令</span>
-</span></span><span style=display:flex><span>127.0.0.1 | SUCCESS <span style=color:#f92672>=</span>&gt; <span style=color:#f92672>{</span>
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;ansible_facts&#34;</span>: <span style=color:#f92672>{</span>
-</span></span><span style=display:flex><span>        <span style=color:#e6db74>&#34;discovered_interpreter_python&#34;</span>: <span style=color:#e6db74>&#34;/usr/bin/python3&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>,
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;changed&#34;</span>: false,
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;ping&#34;</span>: <span style=color:#e6db74>&#34;pong&#34;</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</code></pre><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ ansible -i hosts all -m ping <span style=color:#57606a># 向所有节点发送 ping 命令</span>
+</span></span><span style=display:flex><span>127.0.0.1 <span style=color:#1f2328>|</span> <span style=color:#953800>SUCCESS</span> <span style=color:#0550ae>=</span>&gt; <span style=color:#0550ae>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#0a3069>&#34;ansible_facts&#34;</span>: <span style=color:#0550ae>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#0a3069>&#34;discovered_interpreter_python&#34;</span>: <span style=color:#0a3069>&#34;/usr/bin/python3&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#0550ae>}</span>,
+</span></span><span style=display:flex><span>    <span style=color:#0a3069>&#34;changed&#34;</span>: false,
+</span></span><span style=display:flex><span>    <span style=color:#0a3069>&#34;ping&#34;</span>: <span style=color:#0a3069>&#34;pong&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>}</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>$ ansible -i hosts local -a <span style=color:#e6db74>&#34;uname -a&#34;</span> <span style=color:#75715e># 向local分组的节点发送 uname 命令</span>
-</span></span><span style=display:flex><span>127.0.0.1 | CHANGED | rc<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span> &gt;&gt;
-</span></span><span style=display:flex><span>Darwin C02D418TML87 22.3.0 Darwin Kernel Version 22.3.0: Mon Jan <span style=color:#ae81ff>30</span> 20:42:11 PST 2023; root:xnu-8792.81.3~2/RELEASE_X86_64 x86_64
-</span></span></code></pre></div><h2 id=sqlalchemy>SQLAlchemy</h2><p><a href=https://www.sqlalchemy.org/>https://www.sqlalchemy.org/</a> Python世界中最有名的ORM框架，另一个是著名框架Django内嵌的ORM.</p><h2 id=flask>Flask</h2><p><a href=https://flask-zh.readthedocs.io/>flask</a> 相对于“大而全”的Django而言，是“小而美”的轻量级Web框架</p><ul><li>使用<a href=https://werkzeug.palletsprojects.com/>Werkzeug</a>作为WSGI工具库</li><li>使用Jinja作为模板引擎</li><li>轻巧、简洁，极易通过扩展集成各种外部资源，比如SQLAlchemy</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#f92672>from</span> flask <span style=color:#f92672>import</span> Flask
+</span></span><span style=display:flex><span>$ ansible -i hosts <span style=color:#6639ba>local</span> -a <span style=color:#0a3069>&#34;uname -a&#34;</span> <span style=color:#57606a># 向local分组的节点发送 uname 命令</span>
+</span></span><span style=display:flex><span>127.0.0.1 <span style=color:#1f2328>|</span> CHANGED <span style=color:#1f2328>|</span> <span style=color:#953800>rc</span><span style=color:#0550ae>=</span><span style=color:#0550ae>0</span> &gt;&gt;
+</span></span><span style=display:flex><span>Darwin C02D418TML87 22.3.0 Darwin Kernel Version 22.3.0: Mon Jan <span style=color:#0550ae>30</span> 20:42:11 PST 2023<span style=color:#1f2328>;</span> root:xnu-8792.81.3~2/RELEASE_X86_64 x86_64
+</span></span></code></pre></td></tr></table></div></div><h2 id=sqlalchemy>SQLAlchemy</h2><p><a href=https://www.sqlalchemy.org/>https://www.sqlalchemy.org/</a> Python世界中最有名的ORM框架，另一个是著名框架Django内嵌的ORM.</p><h2 id=flask>Flask</h2><p><a href=https://flask-zh.readthedocs.io/>flask</a> 相对于“大而全”的Django而言，是“小而美”的轻量级Web框架</p><ul><li>使用<a href=https://werkzeug.palletsprojects.com/>Werkzeug</a>作为WSGI工具库</li><li>使用Jinja作为模板引擎</li><li>轻巧、简洁，极易通过扩展集成各种外部资源，比如SQLAlchemy</li></ul><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#cf222e>from</span> <span style=color:#24292e>flask</span> <span style=color:#cf222e>import</span> Flask
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>app <span style=color:#f92672>=</span> Flask(__name__)
+</span></span><span style=display:flex><span>app <span style=color:#0550ae>=</span> Flask<span style=color:#1f2328>(</span>__name__<span style=color:#1f2328>)</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#a6e22e>@app.route</span>(<span style=color:#e6db74>&#34;/&#34;</span>)
-</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>hello</span>():
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;&lt;p&gt;Hello, Flask!&lt;/p&gt;&#34;</span>
-</span></span></code></pre></div><pre tabindex=0><code>$ gunicorn demo:app
+</span></span><span style=display:flex><span><span style=color:#0550ae>@app.route</span><span style=color:#1f2328>(</span><span style=color:#0a3069>&#34;/&#34;</span><span style=color:#1f2328>)</span>
+</span></span><span style=display:flex><span><span style=color:#cf222e>def</span> <span style=color:#6639ba>hello</span><span style=color:#1f2328>():</span>
+</span></span><span style=display:flex><span>    <span style=color:#cf222e>return</span> <span style=color:#0a3069>&#34;&lt;p&gt;Hello, Flask!&lt;/p&gt;&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><pre tabindex=0><code>$ gunicorn demo:app
 
 # 或使用flask自带的命令工具, 使用debug开发模式，支持热部署
 $ flask --app demo --debug run
-</code></pre><h1 id=参考>参考</h1><ul><li><a href=https://web.archive.org/web/20200227202149/https://zetcode.com/articles/packageinpython/>Writing a Package in Python</a></li><li><a href=https://wheel.readthedocs.io/en/stable/story.html>The Story of Wheel</a> The Egg format was introduced by setuptools in 2004, whereas the Wheel format was introduced by PEP 427 in 2012.</li></ul></main><footer><hr>© <a href=https://github.com/firebat>firebat</a> 2015 &ndash; 2025</footer></body></html>
+</code></pre><h1 id=参考>参考</h1><ul><li><a href=https://web.archive.org/web/20200227202149/https://zetcode.com/articles/packageinpython/>Writing a Package in Python</a></li><li><a href=https://wheel.readthedocs.io/en/stable/story.html>The Story of Wheel</a> The Egg format was introduced by setuptools in 2004, whereas the Wheel format was introduced by PEP 427 in 2012.</li></ul></main><footer><link rel=stylesheet href=//cdn.jsdelivr.net/npm/katex/dist/katex.min.css><script src=//cdn.jsdelivr.net/npm/@xiee/utils/js/math-code.min.js defer></script><script src=//cdn.jsdelivr.net/npm/katex/dist/katex.min.js defer></script><script src=//cdn.jsdelivr.net/npm/katex/dist/contrib/auto-render.min.js defer></script><script src=//cdn.jsdelivr.net/npm/@xiee/utils/js/render-katex.js defer></script><script src=//cdn.jsdelivr.net/npm/@xiee/utils/js/center-img.min.js defer></script><hr>© 2015 &ndash; 2025 <a href=https://github.com/firebat>firebat</a></footer></body></html>

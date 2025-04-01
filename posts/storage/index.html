@@ -1,5 +1,5 @@
 <!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>存储的发展 | firebat</title>
-<link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/tags/>Tags</a></li><li><a href=/about>About</a></li><li><a href=/index.xml>Subscribe</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>存储的发展</span></h1><h2 class=date>2016/12/07</h2></div><main><h2 id=文件系统>文件系统</h2><h3 id=professor-eggerts-dumb-file-system-1974>Professor Eggert&rsquo;s Dumb File System (~1974)</h3><p>Dr.Eggert在本科期间为了“改进UNIX”，创建了他的第一个文件系统。
+<link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/tags/>Tags</a></li><li><a href=/index.xml>Subscribe</a></li><li><a href=/about>About</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>存储的发展</span></h1><h2 class=date>2016/12/07</h2></div><main><h2 id=文件系统>文件系统</h2><h3 id=professor-eggerts-dumb-file-system-1974>Professor Eggert&rsquo;s Dumb File System (~1974)</h3><p>Dr.Eggert在本科期间为了“改进UNIX”，创建了他的第一个文件系统。
 <img src=./images/eggertfs.png alt=img></p><ul><li>每个扇区占用512字节</li><li>第一个扇区分成16份，用于存放文件目录</li><li>每个目录条目包含文件名、起始位置、文件大小</li></ul><p>实际上确实有几种文件系统是参照这种方案实现的，比如<a href=https://en.wikipedia.org/wiki/RT-11>RT-11</a>，广泛用于实时操作系统。</p><h3 id=fat---file-allocation-table-1977>FAT - File Allocation Table (~1977)</h3><p>为了减少碎片化问题，引入了FAT文件分配表
 <img src=./images/fat.png alt=img></p><ul><li>保留地址0块，用于引导扇区</li><li>保留地址1块，用于超级块，包含文件系统信息、版本号、根目录位置等</li><li>每个目录条目包含文件名、扩展名、第一个块地址、文件大小、标志位等信息，目录也是文件</li><li>链表结构，顺序访问慢（可通过碎片整理优化）</li></ul><h3 id=unix-file-system-1973>Unix File System (~1973)</h3><p><img src=./images/ufs.png alt=img></p><ul><li>引入inode管理文件索引(index node)</li><li>树形结构</li></ul><h3 id=berkeley-fast-file-system-1980-41b>Berkeley Fast File System (~1980 4.1b)</h3><p><img src=./images/bffs.png alt=img></p><ul><li>增加一个块位图，标记数据块是否空闲</li></ul><h2 id=network-file-system>Network File System</h2><p>网络文件系统, 一种使用于分散式文件系统的协定，由Sun公司开发，于1984年向外公布。允许远程主机通过网络挂载文件系统，并像它们是本地挂载的文件系统一样与它们进行交互。
 <img src=./images/NAS.gif alt=img></p><h3 id=moosefs>MooseFS</h3><p>具有容错性的网络分布式文件系统。它把数据分散存放在多个物理服务器上，而呈现给用户的则是一个统一的资源。</p><ul><li>Master server - a single machine managing the whole filesystem, storing metadata for every file.</li><li>Chunk servers - any number of commodity servers storing files data and synchronizing it among themselves.</li><li>Client - any number of machines using <code>mfsmount</code> process to communicate with the managing server and with chunkservers.</li></ul><p><img src=./images/mfs_write.png alt=img>
@@ -7,46 +7,93 @@
 <img src=./images/lsm.png alt></p><ul><li>Memtable 内存表，有序，可采用红黑树、跳表，写满时冻结</li><li>SSTable 有序字符串表，采用键值对结构，不可变</li><li>Compaction 当SSTable写满时，合并压缩，同时删除旧数据</li><li>WAL 确保数据安全可靠</li><li>磁盘顺序写，性能极好，适用于数据有明显冷热区分的日志场景</li><li>查询扩散，可通过BloomFilter过滤优化</li></ul><h3 id=bitcask>Bitcask</h3><p>源自Riak, 一个使用Erlang实现的KV存储引擎</p><ul><li>LSM简化版，仅追加写，无压缩合并</li><li>更新时，通过对比时间戳，更新key索引指向新记录
 <img src=./images/bitcask.jpg alt=img></li></ul><h3 id=merkle-tree>Merkle Tree</h3><p>多叉树，父节点的Hash值由子节点计算生成，可快速发现集群中的故障节点。
 <img src=./images/Hash_Tree.svg.png alt=img></p><p>也用于比特币计算
-<img src=./images/en-blockchain-overview.svg alt></p><h3 id=beansdb-2009>BeansDB (2009)</h3><p>豆瓣开源的的分布式存储系统，基于Amazon Dynamo的简化实现。</p><ul><li>索引采用Merkle Tree</li><li>底层使用Bitcask存储数据</li><li>Key通过Fnv1a计算定位，根据前缀定位目标Bucket，数据写入，向上更新索引树</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ telnet 127.0.0.1 <span style=color:#ae81ff>7900</span>
+<img src=./images/en-blockchain-overview.svg alt></p><h3 id=beansdb-2009>BeansDB (2009)</h3><p>豆瓣开源的的分布式存储系统，基于Amazon Dynamo的简化实现。</p><ul><li>索引采用Merkle Tree</li><li>底层使用Bitcask存储数据</li><li>Key通过Fnv1a计算定位，根据前缀定位目标Bucket，数据写入，向上更新索引树</li></ul><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ telnet 127.0.0.1 <span style=color:#0550ae>7900</span>
 </span></span><span style=display:flex><span>get @
-</span></span><span style=display:flex><span>VALUE @ <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>170</span>
-</span></span><span style=display:flex><span>0/ <span style=color:#ae81ff>43141</span> <span style=color:#ae81ff>9514</span>
-</span></span><span style=display:flex><span>1/ <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>0</span>
-</span></span><span style=display:flex><span>2/ <span style=color:#ae81ff>42462</span> <span style=color:#ae81ff>2</span>
-</span></span><span style=display:flex><span>3/ <span style=color:#ae81ff>39177</span> <span style=color:#ae81ff>2</span>
-</span></span><span style=display:flex><span>4/ <span style=color:#ae81ff>37044</span> <span style=color:#ae81ff>1</span>
-</span></span><span style=display:flex><span>5/ <span style=color:#ae81ff>44330</span> <span style=color:#ae81ff>3</span>
-</span></span><span style=display:flex><span>6/ <span style=color:#ae81ff>45589</span> <span style=color:#ae81ff>3</span>
-</span></span><span style=display:flex><span>7/ <span style=color:#ae81ff>28358</span> <span style=color:#ae81ff>3</span>
-</span></span><span style=display:flex><span>8/ <span style=color:#ae81ff>17224</span> <span style=color:#ae81ff>3</span>
-</span></span><span style=display:flex><span>9/ <span style=color:#ae81ff>5155</span> <span style=color:#ae81ff>3</span>
-</span></span><span style=display:flex><span>a/ <span style=color:#ae81ff>53006</span> <span style=color:#ae81ff>1</span>
-</span></span><span style=display:flex><span>b/ <span style=color:#ae81ff>27133</span> <span style=color:#ae81ff>4</span>
-</span></span><span style=display:flex><span>c/ <span style=color:#ae81ff>26906</span> <span style=color:#ae81ff>3</span>
-</span></span><span style=display:flex><span>d/ <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>0</span>
-</span></span><span style=display:flex><span>e/ <span style=color:#ae81ff>29129</span> <span style=color:#ae81ff>4</span>
-</span></span><span style=display:flex><span>f/ <span style=color:#ae81ff>56710</span> <span style=color:#ae81ff>2</span>
+</span></span><span style=display:flex><span>VALUE @ <span style=color:#0550ae>0</span> <span style=color:#0550ae>170</span>
+</span></span><span style=display:flex><span>0/ <span style=color:#0550ae>43141</span> <span style=color:#0550ae>9514</span>
+</span></span><span style=display:flex><span>1/ <span style=color:#0550ae>0</span> <span style=color:#0550ae>0</span>
+</span></span><span style=display:flex><span>2/ <span style=color:#0550ae>42462</span> <span style=color:#0550ae>2</span>
+</span></span><span style=display:flex><span>3/ <span style=color:#0550ae>39177</span> <span style=color:#0550ae>2</span>
+</span></span><span style=display:flex><span>4/ <span style=color:#0550ae>37044</span> <span style=color:#0550ae>1</span>
+</span></span><span style=display:flex><span>5/ <span style=color:#0550ae>44330</span> <span style=color:#0550ae>3</span>
+</span></span><span style=display:flex><span>6/ <span style=color:#0550ae>45589</span> <span style=color:#0550ae>3</span>
+</span></span><span style=display:flex><span>7/ <span style=color:#0550ae>28358</span> <span style=color:#0550ae>3</span>
+</span></span><span style=display:flex><span>8/ <span style=color:#0550ae>17224</span> <span style=color:#0550ae>3</span>
+</span></span><span style=display:flex><span>9/ <span style=color:#0550ae>5155</span> <span style=color:#0550ae>3</span>
+</span></span><span style=display:flex><span>a/ <span style=color:#0550ae>53006</span> <span style=color:#0550ae>1</span>
+</span></span><span style=display:flex><span>b/ <span style=color:#0550ae>27133</span> <span style=color:#0550ae>4</span>
+</span></span><span style=display:flex><span>c/ <span style=color:#0550ae>26906</span> <span style=color:#0550ae>3</span>
+</span></span><span style=display:flex><span>d/ <span style=color:#0550ae>0</span> <span style=color:#0550ae>0</span>
+</span></span><span style=display:flex><span>e/ <span style=color:#0550ae>29129</span> <span style=color:#0550ae>4</span>
+</span></span><span style=display:flex><span>f/ <span style=color:#0550ae>56710</span> <span style=color:#0550ae>2</span>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>get @42
-</span></span><span style=display:flex><span>VALUE @42 <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>50</span>
-</span></span><span style=display:flex><span>/pay/ucardlogo/1509/2a/1b1fdecfdb5d31.jpg <span style=color:#ae81ff>12806</span> <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>VALUE @42 <span style=color:#0550ae>0</span> <span style=color:#0550ae>50</span>
+</span></span><span style=display:flex><span>/pay/ucardlogo/1509/2a/1b1fdecfdb5d31.jpg <span style=color:#0550ae>12806</span> <span style=color:#0550ae>1</span>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>get ?/pay/ucardlogo/1509/2a/1b1fdecfdb5d31.jpg
-</span></span><span style=display:flex><span>VALUE ?/pay/ucardlogo/1509/2a/1b1fdecfdb5d31.jpg <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>25</span>
-</span></span><span style=display:flex><span><span style=color:#ae81ff>1</span> <span style=color:#ae81ff>12806</span> <span style=color:#ae81ff>1</span> <span style=color:#ae81ff>2853</span> <span style=color:#ae81ff>1442285794</span>
-</span></span></code></pre></div><p><img src=./images/beansdb.png alt=img></p><ul><li>面向10M以内文件, 如图片, 音频 (默认最高50M,可以改代码)</li><li>RAID10 数据存3份</li><li>使用ngx_memc</li><li>rsync同步大文件, sync.py同步小对象</li><li>适用于数百T数据, 数十亿文件</li></ul><h3 id=swift>Swift</h3><p>OpenStack Object Storage（Swift）前身是 Rackspace Cloud Files 项目，于 2010 年贡献给 OpenStack 社区，是 OpenStack 最早的两个项目之一。Swift 可在比较便宜的通用硬件上构筑具有极强可扩展性和数据持久性的存储系统，支持多租户，通过 RESTful API 提供对容器（Container）和对象的 CRUD 操作。</p><p><img src=./images/swift_all.png alt=img></p><ul><li>Proxy Server 对外提供对象服务API, 查找服务地址并转发用户请求</li><li>Account Server 提供账户元数据和统计信息，并维护所含容器列表的服务</li><li>Container Server 提供容器元数据和统计信息，并维护所含对象列表的服务</li><li>Object Server 提供对象元数据和内容服务，对象以文件的形式存储在文件系统</li><li>Replicator 可选 检测本地分区副本和远程副本是否一致, Push更新副本，删除文件</li><li>Updater 可选 高负载时，将更新请求插入队列，之后进行异步更新</li><li>Auditor 可选 检查对象，容器和账户的完整性，发现比特级进行隔离, 并同步副本</li><li>Account Reaper 可选 账户清理服务，删除容器和对象数据</li><li>Authentication Server 验证用户身份</li><li>Cache Server 可选 缓存认证Token, 账户容器的存在信息, 采用Memcached.</li></ul><h3 id=映射关系>映射关系</h3><p><img src=./images/swift.png alt=img></p><ul><li>有Account、Container、Object三层服务组成</li><li>通过MD5计算，根据前缀定位到物理节点</li><li>物理节点通过后缀划分目录存放数据</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ tree /srv/node/sdb -L <span style=color:#ae81ff>5</span>
+</span></span><span style=display:flex><span>VALUE ?/pay/ucardlogo/1509/2a/1b1fdecfdb5d31.jpg <span style=color:#0550ae>0</span> <span style=color:#0550ae>25</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>1</span> <span style=color:#0550ae>12806</span> <span style=color:#0550ae>1</span> <span style=color:#0550ae>2853</span> <span style=color:#0550ae>1442285794</span>
+</span></span></code></pre></td></tr></table></div></div><p><img src=./images/beansdb.png alt=img></p><ul><li>面向10M以内文件, 如图片, 音频 (默认最高50M,可以改代码)</li><li>RAID10 数据存3份</li><li>使用ngx_memc</li><li>rsync同步大文件, sync.py同步小对象</li><li>适用于数百T数据, 数十亿文件</li></ul><h3 id=swift>Swift</h3><p>OpenStack Object Storage（Swift）前身是 Rackspace Cloud Files 项目，于 2010 年贡献给 OpenStack 社区，是 OpenStack 最早的两个项目之一。Swift 可在比较便宜的通用硬件上构筑具有极强可扩展性和数据持久性的存储系统，支持多租户，通过 RESTful API 提供对容器（Container）和对象的 CRUD 操作。</p><p><img src=./images/swift_all.png alt=img></p><ul><li>Proxy Server 对外提供对象服务API, 查找服务地址并转发用户请求</li><li>Account Server 提供账户元数据和统计信息，并维护所含容器列表的服务</li><li>Container Server 提供容器元数据和统计信息，并维护所含对象列表的服务</li><li>Object Server 提供对象元数据和内容服务，对象以文件的形式存储在文件系统</li><li>Replicator 可选 检测本地分区副本和远程副本是否一致, Push更新副本，删除文件</li><li>Updater 可选 高负载时，将更新请求插入队列，之后进行异步更新</li><li>Auditor 可选 检查对象，容器和账户的完整性，发现比特级进行隔离, 并同步副本</li><li>Account Reaper 可选 账户清理服务，删除容器和对象数据</li><li>Authentication Server 验证用户身份</li><li>Cache Server 可选 缓存认证Token, 账户容器的存在信息, 采用Memcached.</li></ul><h3 id=映射关系>映射关系</h3><p><img src=./images/swift.png alt=img></p><ul><li>有Account、Container、Object三层服务组成</li><li>通过MD5计算，根据前缀定位到物理节点</li><li>物理节点通过后缀划分目录存放数据</li></ul><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ tree /srv/node/sdb -L <span style=color:#0550ae>5</span>
 </span></span><span style=display:flex><span>├── accounts
-</span></span><span style=display:flex><span>│   ├── <span style=color:#ae81ff>4422</span>
+</span></span><span style=display:flex><span>│   ├── <span style=color:#0550ae>4422</span>
 </span></span><span style=display:flex><span>│   │   └── d84
 </span></span><span style=display:flex><span>│   │       └── 8a32648058cf2185fab166279963fd84
 </span></span><span style=display:flex><span>│   │           ├── 8a32648058cf2185fab166279963fd84.db
 </span></span><span style=display:flex><span>│   │           └── 8a32648058cf2185fab166279963fd84.db.pending
-</span></span><span style=display:flex><span>│   └── <span style=color:#ae81ff>632</span>
+</span></span><span style=display:flex><span>│   └── <span style=color:#0550ae>632</span>
 </span></span><span style=display:flex><span>│       └── 84a
 </span></span><span style=display:flex><span>│           └── 13c312c524cb52e59041e34e9c4f384a
-</span></span><span style=display:flex><span>├── containers <span style=color:#f92672>(</span>同上<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>├── containers <span style=color:#0550ae>(</span>同上<span style=color:#0550ae>)</span>
 </span></span><span style=display:flex><span>├── objects
-</span></span><span style=display:flex><span>│  ├── <span style=color:#ae81ff>1000</span>
+</span></span><span style=display:flex><span>│  ├── <span style=color:#0550ae>1000</span>
 </span></span><span style=display:flex><span>│  │   ├── 6a5
 </span></span><span style=display:flex><span>│  │   │   └── 1f462ba176864aa5f5c35e28b533b6a5
 </span></span><span style=display:flex><span>│  │   │       └── 1473149348.59743.data
@@ -54,19 +101,60 @@
 </span></span><span style=display:flex><span>│  │   │   └── 1f42bcc1bcf1ec440d5d5aec24ddaaba
 </span></span><span style=display:flex><span>│  │   │       └── 1464159081.76922.ts
 </span></span><span style=display:flex><span>└── tmp
-</span></span></code></pre></div><p>索引结构</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ swift-ring-builder object.builder
-</span></span><span style=display:flex><span>object.builder, build version <span style=color:#ae81ff>6</span>
-</span></span><span style=display:flex><span><span style=color:#ae81ff>8192</span> partitions, 2.000000 replicas, <span style=color:#ae81ff>1</span> regions, <span style=color:#ae81ff>3</span> zones, <span style=color:#ae81ff>6</span> devices, 0.02 balance, 0.00 dispersion
-</span></span><span style=display:flex><span>The minimum number of hours before a partition can be reassigned is <span style=color:#ae81ff>1</span>
-</span></span><span style=display:flex><span>The overload factor is 0.00% <span style=color:#f92672>(</span>0.000000<span style=color:#f92672>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>索引结构</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ swift-ring-builder object.builder
+</span></span><span style=display:flex><span>object.builder, build version <span style=color:#0550ae>6</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>8192</span> partitions, 2.000000 replicas, <span style=color:#0550ae>1</span> regions, <span style=color:#0550ae>3</span> zones, <span style=color:#0550ae>6</span> devices, 0.02 balance, 0.00 dispersion
+</span></span><span style=display:flex><span>The minimum number of hours before a partition can be reassigned is <span style=color:#0550ae>1</span>
+</span></span><span style=display:flex><span>The overload factor is 0.00% <span style=color:#0550ae>(</span>0.000000<span style=color:#0550ae>)</span>
 </span></span><span style=display:flex><span>Devices:    id  region  zone      ip address  port  replication ip  replication port      name weight partitions balance meta
-</span></span><span style=display:flex><span>             <span style=color:#ae81ff>0</span>       <span style=color:#ae81ff>1</span>     <span style=color:#ae81ff>1</span>     10.86.41.96  <span style=color:#ae81ff>6000</span>     10.86.41.96              <span style=color:#ae81ff>6000</span>        d1   1.00       <span style=color:#ae81ff>2731</span>    0.01 
-</span></span><span style=display:flex><span>             <span style=color:#ae81ff>1</span>       <span style=color:#ae81ff>1</span>     <span style=color:#ae81ff>1</span>     10.86.41.96  <span style=color:#ae81ff>6000</span>     10.86.41.96              <span style=color:#ae81ff>6000</span>        d2   1.00       <span style=color:#ae81ff>2731</span>    0.01 
-</span></span><span style=display:flex><span>             <span style=color:#ae81ff>2</span>       <span style=color:#ae81ff>1</span>     <span style=color:#ae81ff>2</span>    10.86.35.155  <span style=color:#ae81ff>6000</span>    10.86.35.155              <span style=color:#ae81ff>6000</span>        d1   1.00       <span style=color:#ae81ff>2730</span>   -0.02 
-</span></span><span style=display:flex><span>             <span style=color:#ae81ff>3</span>       <span style=color:#ae81ff>1</span>     <span style=color:#ae81ff>2</span>    10.86.35.155  <span style=color:#ae81ff>6000</span>    10.86.35.155              <span style=color:#ae81ff>6000</span>        d2   1.00       <span style=color:#ae81ff>2730</span>   -0.02 
-</span></span><span style=display:flex><span>             <span style=color:#ae81ff>4</span>       <span style=color:#ae81ff>1</span>     <span style=color:#ae81ff>3</span>    10.86.35.169  <span style=color:#ae81ff>6000</span>    10.86.35.169              <span style=color:#ae81ff>6000</span>        d1   1.00       <span style=color:#ae81ff>2731</span>    0.01 
-</span></span><span style=display:flex><span>             <span style=color:#ae81ff>5</span>       <span style=color:#ae81ff>1</span>     <span style=color:#ae81ff>3</span>    10.86.35.169  <span style=color:#ae81ff>6000</span>    10.86.35.169              <span style=color:#ae81ff>6000</span>        d2   1.00       <span style=color:#ae81ff>2731</span>    0.01 
-</span></span></code></pre></div><h3></h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ swift-get-nodes /etc/swift/object.ring.gz AUTH_test testdt /no/joss-logo.png
+</span></span><span style=display:flex><span>             <span style=color:#0550ae>0</span>       <span style=color:#0550ae>1</span>     <span style=color:#0550ae>1</span>     10.86.41.96  <span style=color:#0550ae>6000</span>     10.86.41.96              <span style=color:#0550ae>6000</span>        d1   1.00       <span style=color:#0550ae>2731</span>    0.01 
+</span></span><span style=display:flex><span>             <span style=color:#0550ae>1</span>       <span style=color:#0550ae>1</span>     <span style=color:#0550ae>1</span>     10.86.41.96  <span style=color:#0550ae>6000</span>     10.86.41.96              <span style=color:#0550ae>6000</span>        d2   1.00       <span style=color:#0550ae>2731</span>    0.01 
+</span></span><span style=display:flex><span>             <span style=color:#0550ae>2</span>       <span style=color:#0550ae>1</span>     <span style=color:#0550ae>2</span>    10.86.35.155  <span style=color:#0550ae>6000</span>    10.86.35.155              <span style=color:#0550ae>6000</span>        d1   1.00       <span style=color:#0550ae>2730</span>   -0.02 
+</span></span><span style=display:flex><span>             <span style=color:#0550ae>3</span>       <span style=color:#0550ae>1</span>     <span style=color:#0550ae>2</span>    10.86.35.155  <span style=color:#0550ae>6000</span>    10.86.35.155              <span style=color:#0550ae>6000</span>        d2   1.00       <span style=color:#0550ae>2730</span>   -0.02 
+</span></span><span style=display:flex><span>             <span style=color:#0550ae>4</span>       <span style=color:#0550ae>1</span>     <span style=color:#0550ae>3</span>    10.86.35.169  <span style=color:#0550ae>6000</span>    10.86.35.169              <span style=color:#0550ae>6000</span>        d1   1.00       <span style=color:#0550ae>2731</span>    0.01 
+</span></span><span style=display:flex><span>             <span style=color:#0550ae>5</span>       <span style=color:#0550ae>1</span>     <span style=color:#0550ae>3</span>    10.86.35.169  <span style=color:#0550ae>6000</span>    10.86.35.169              <span style=color:#0550ae>6000</span>        d2   1.00       <span style=color:#0550ae>2731</span>    0.01 
+</span></span></code></pre></td></tr></table></div></div><h3></h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ swift-get-nodes /etc/swift/object.ring.gz AUTH_test testdt /no/joss-logo.png
 </span></span><span style=display:flex><span>Account  AUTH_test
 </span></span><span style=display:flex><span>Containertestdt
 </span></span><span style=display:flex><span>Object   /no/joss-logo.png
@@ -76,120 +164,215 @@
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>Server:Port Device10.86.35.155:6000 d1
 </span></span><span style=display:flex><span>Server:Port Device10.86.41.96:6000 d2
-</span></span><span style=display:flex><span>Server:Port Device10.86.35.169:6000 d1 <span style=color:#f92672>[</span>Handoff<span style=color:#f92672>]</span>
-</span></span><span style=display:flex><span>Server:Port Device10.86.41.96:6000 d1 <span style=color:#f92672>[</span>Handoff<span style=color:#f92672>]</span>
+</span></span><span style=display:flex><span>Server:Port Device10.86.35.169:6000 d1 <span style=color:#0550ae>[</span>Handoff<span style=color:#0550ae>]</span>
+</span></span><span style=display:flex><span>Server:Port Device10.86.41.96:6000 d1 <span style=color:#0550ae>[</span>Handoff<span style=color:#0550ae>]</span>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>curl -I -XHEAD <span style=color:#e6db74>&#34;http://10.86.35.155:6000/d1/1778/AUTH_test/testdt//no/joss-logo.png&#34;</span>
-</span></span><span style=display:flex><span>curl -I -XHEAD <span style=color:#e6db74>&#34;http://10.86.41.96:6000/d2/1778/AUTH_test/testdt//no/joss-logo.png&#34;</span>
-</span></span><span style=display:flex><span>curl -I -XHEAD <span style=color:#e6db74>&#34;http://10.86.35.169:6000/d1/1778/AUTH_test/testdt//no/joss-logo.png&#34;</span> <span style=color:#75715e># [Handoff]</span>
-</span></span><span style=display:flex><span>curl -I -XHEAD <span style=color:#e6db74>&#34;http://10.86.41.96:6000/d1/1778/AUTH_test/testdt//no/joss-logo.png&#34;</span> <span style=color:#75715e># [Handoff]</span>
+</span></span><span style=display:flex><span>curl -I -XHEAD <span style=color:#0a3069>&#34;http://10.86.35.155:6000/d1/1778/AUTH_test/testdt//no/joss-logo.png&#34;</span>
+</span></span><span style=display:flex><span>curl -I -XHEAD <span style=color:#0a3069>&#34;http://10.86.41.96:6000/d2/1778/AUTH_test/testdt//no/joss-logo.png&#34;</span>
+</span></span><span style=display:flex><span>curl -I -XHEAD <span style=color:#0a3069>&#34;http://10.86.35.169:6000/d1/1778/AUTH_test/testdt//no/joss-logo.png&#34;</span> <span style=color:#57606a># [Handoff]</span>
+</span></span><span style=display:flex><span>curl -I -XHEAD <span style=color:#0a3069>&#34;http://10.86.41.96:6000/d1/1778/AUTH_test/testdt//no/joss-logo.png&#34;</span> <span style=color:#57606a># [Handoff]</span>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>Use your own device location of servers:
-</span></span><span style=display:flex><span>such as <span style=color:#e6db74>&#34;export DEVICE=/srv/node&#34;</span>
-</span></span><span style=display:flex><span>ssh 10.86.35.155 <span style=color:#e6db74>&#34;ls -lah </span><span style=color:#e6db74>${</span>DEVICE<span style=color:#66d9ef>:-</span>/srv/node*<span style=color:#e6db74>}</span><span style=color:#e6db74>/d1/objects/1778/f67/3793f1105a148c4a1f180a83a7289f67&#34;</span>
-</span></span><span style=display:flex><span>ssh 10.86.41.96 <span style=color:#e6db74>&#34;ls -lah </span><span style=color:#e6db74>${</span>DEVICE<span style=color:#66d9ef>:-</span>/srv/node*<span style=color:#e6db74>}</span><span style=color:#e6db74>/d2/objects/1778/f67/3793f1105a148c4a1f180a83a7289f67&#34;</span>
-</span></span><span style=display:flex><span>ssh 10.86.35.169 <span style=color:#e6db74>&#34;ls -lah </span><span style=color:#e6db74>${</span>DEVICE<span style=color:#66d9ef>:-</span>/srv/node*<span style=color:#e6db74>}</span><span style=color:#e6db74>/d1/objects/1778/f67/3793f1105a148c4a1f180a83a7289f67&#34;</span> <span style=color:#75715e># [Handoff]</span>
-</span></span><span style=display:flex><span>ssh 10.86.41.96 <span style=color:#e6db74>&#34;ls -lah </span><span style=color:#e6db74>${</span>DEVICE<span style=color:#66d9ef>:-</span>/srv/node*<span style=color:#e6db74>}</span><span style=color:#e6db74>/d1/objects/1778/f67/3793f1105a148c4a1f180a83a7289f67&#34;</span> <span style=color:#75715e># [Handoff]</span>
+</span></span><span style=display:flex><span>such as <span style=color:#0a3069>&#34;export DEVICE=/srv/node&#34;</span>
+</span></span><span style=display:flex><span>ssh 10.86.35.155 <span style=color:#0a3069>&#34;ls -lah </span><span style=color:#0a3069>${</span><span style=color:#953800>DEVICE</span><span style=color:#cf222e>:-</span><span style=color:#1f2328>/srv/node*</span><span style=color:#0a3069>}</span><span style=color:#0a3069>/d1/objects/1778/f67/3793f1105a148c4a1f180a83a7289f67&#34;</span>
+</span></span><span style=display:flex><span>ssh 10.86.41.96 <span style=color:#0a3069>&#34;ls -lah </span><span style=color:#0a3069>${</span><span style=color:#953800>DEVICE</span><span style=color:#cf222e>:-</span><span style=color:#1f2328>/srv/node*</span><span style=color:#0a3069>}</span><span style=color:#0a3069>/d2/objects/1778/f67/3793f1105a148c4a1f180a83a7289f67&#34;</span>
+</span></span><span style=display:flex><span>ssh 10.86.35.169 <span style=color:#0a3069>&#34;ls -lah </span><span style=color:#0a3069>${</span><span style=color:#953800>DEVICE</span><span style=color:#cf222e>:-</span><span style=color:#1f2328>/srv/node*</span><span style=color:#0a3069>}</span><span style=color:#0a3069>/d1/objects/1778/f67/3793f1105a148c4a1f180a83a7289f67&#34;</span> <span style=color:#57606a># [Handoff]</span>
+</span></span><span style=display:flex><span>ssh 10.86.41.96 <span style=color:#0a3069>&#34;ls -lah </span><span style=color:#0a3069>${</span><span style=color:#953800>DEVICE</span><span style=color:#cf222e>:-</span><span style=color:#1f2328>/srv/node*</span><span style=color:#0a3069>}</span><span style=color:#0a3069>/d1/objects/1778/f67/3793f1105a148c4a1f180a83a7289f67&#34;</span> <span style=color:#57606a># [Handoff]</span>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>$ ls /srv/node/d2/objects/1778/f67/3793f1105a148c4a1f180a83a7289f67/
 </span></span><span style=display:flex><span>1470970382.20003.data
-</span></span></code></pre></div><h3></h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>
+</span></span></code></pre></td></tr></table></div></div><h3></h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>
 </span></span><span style=display:flex><span>$ swift-recon object -d  -l -r
-</span></span><span style=display:flex><span><span style=color:#f92672>===============================================================================</span>
-</span></span><span style=display:flex><span>--&gt; Starting reconnaissance on <span style=color:#ae81ff>3</span> hosts
-</span></span><span style=display:flex><span><span style=color:#f92672>===============================================================================</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>[</span>2016-10-19 15:54:25<span style=color:#f92672>]</span> Checking on replication
-</span></span><span style=display:flex><span><span style=color:#f92672>[</span>replication_failure<span style=color:#f92672>]</span> low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: <span style=color:#ae81ff>1</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>[</span>replication_success<span style=color:#f92672>]</span> low: 5408, high: 5408, avg: 5408.0, total: 5408, Failed: 0.0%, no_result: 0, reported: <span style=color:#ae81ff>1</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>[</span>replication_time<span style=color:#f92672>]</span> low: 0, high: 0, avg: 0.3, total: 0, Failed: 66.7%, no_result: 2, reported: <span style=color:#ae81ff>1</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>[</span>replication_attempted<span style=color:#f92672>]</span> low: 5408, high: 5408, avg: 5408.0, total: 5408, Failed: 0.0%, no_result: 0, reported: <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>===============================================================================</span>
+</span></span><span style=display:flex><span>--&gt; Starting reconnaissance on <span style=color:#0550ae>3</span> <span style=color:#953800>hosts</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>===============================================================================</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>[</span>2016-10-19 15:54:25<span style=color:#0550ae>]</span> Checking on replication
+</span></span><span style=display:flex><span><span style=color:#0550ae>[</span>replication_failure<span style=color:#0550ae>]</span> low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: <span style=color:#0550ae>1</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>[</span>replication_success<span style=color:#0550ae>]</span> low: 5408, high: 5408, avg: 5408.0, total: 5408, Failed: 0.0%, no_result: 0, reported: <span style=color:#0550ae>1</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>[</span>replication_time<span style=color:#0550ae>]</span> low: 0, high: 0, avg: 0.3, total: 0, Failed: 66.7%, no_result: 2, reported: <span style=color:#0550ae>1</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>[</span>replication_attempted<span style=color:#0550ae>]</span> low: 5408, high: 5408, avg: 5408.0, total: 5408, Failed: 0.0%, no_result: 0, reported: <span style=color:#0550ae>1</span>
 </span></span><span style=display:flex><span>Oldest completion was NEVER by 10.86.35.169:6000.
-</span></span><span style=display:flex><span>Most recent completion was 2016-10-19 07:43:02 <span style=color:#f92672>(</span><span style=color:#ae81ff>11</span> minutes ago<span style=color:#f92672>)</span> by 10.86.41.96:6000.
-</span></span><span style=display:flex><span><span style=color:#f92672>===============================================================================</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>[</span>2016-10-19 15:51:09<span style=color:#f92672>]</span> Checking load averages
-</span></span><span style=display:flex><span><span style=color:#f92672>[</span>5m_load_avg<span style=color:#f92672>]</span> low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: <span style=color:#ae81ff>3</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>[</span>15m_load_avg<span style=color:#f92672>]</span> low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: <span style=color:#ae81ff>3</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>[</span>1m_load_avg<span style=color:#f92672>]</span> low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: 3
-</span></span><span style=display:flex><span><span style=color:#f92672>===============================================================================</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>[</span>2016-10-19 15:51:09<span style=color:#f92672>]</span> Checking disk usage now
+</span></span><span style=display:flex><span>Most recent completion was 2016-10-19 07:43:02 <span style=color:#0550ae>(</span><span style=color:#0550ae>11</span> minutes ago<span style=color:#0550ae>)</span> by 10.86.41.96:6000.
+</span></span><span style=display:flex><span><span style=color:#0550ae>===============================================================================</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>[</span>2016-10-19 15:51:09<span style=color:#0550ae>]</span> Checking load averages
+</span></span><span style=display:flex><span><span style=color:#0550ae>[</span>5m_load_avg<span style=color:#0550ae>]</span> low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: <span style=color:#0550ae>3</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>[</span>15m_load_avg<span style=color:#0550ae>]</span> low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: <span style=color:#0550ae>3</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>[</span>1m_load_avg<span style=color:#0550ae>]</span> low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: <span style=color:#953800>3</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>===============================================================================</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>[</span>2016-10-19 15:51:09<span style=color:#0550ae>]</span> Checking disk usage now
 </span></span><span style=display:flex><span>Distribution Graph:
-</span></span><span style=display:flex><span> 15%    <span style=color:#ae81ff>1</span> **********************************
-</span></span><span style=display:flex><span> 17%    <span style=color:#ae81ff>1</span> **********************************
-</span></span><span style=display:flex><span> 18%    <span style=color:#ae81ff>1</span> **********************************
-</span></span><span style=display:flex><span> 19%    <span style=color:#ae81ff>2</span> *********************************************************************
-</span></span><span style=display:flex><span> 20%    <span style=color:#ae81ff>1</span> **********************************
-</span></span><span style=display:flex><span>Disk usage: space used: <span style=color:#ae81ff>22106923008</span> of <span style=color:#ae81ff>119937073152</span>
-</span></span><span style=display:flex><span>Disk usage: space free: <span style=color:#ae81ff>97830150144</span> of <span style=color:#ae81ff>119937073152</span>
+</span></span><span style=display:flex><span> 15%    <span style=color:#0550ae>1</span> **********************************
+</span></span><span style=display:flex><span> 17%    <span style=color:#0550ae>1</span> **********************************
+</span></span><span style=display:flex><span> 18%    <span style=color:#0550ae>1</span> **********************************
+</span></span><span style=display:flex><span> 19%    <span style=color:#0550ae>2</span> *********************************************************************
+</span></span><span style=display:flex><span> 20%    <span style=color:#0550ae>1</span> **********************************
+</span></span><span style=display:flex><span>Disk usage: space used: <span style=color:#0550ae>22106923008</span> of <span style=color:#0550ae>119937073152</span>
+</span></span><span style=display:flex><span>Disk usage: space free: <span style=color:#0550ae>97830150144</span> of <span style=color:#0550ae>119937073152</span>
 </span></span><span style=display:flex><span>Disk usage: lowest: 15.46%, highest: 20.05%, avg: 18.4321014571%
-</span></span><span style=display:flex><span><span style=color:#f92672>===============================================================================</span>
-</span></span></code></pre></div><ul><li>通用存储方案, No RAID</li><li>多存储策略</li><li>大文件切分并发上传</li><li>对象超时机制</li><li>单容器200w记录无压力</li><li>rsync带宽限制</li><li>recon/informant监控</li><li>调整 /etc/rsyslog.d/10-swift.conf</li></ul><h3 id=haystack>Haystack</h3><p>Facebook的海量图片存储系统</p><ul><li>总量260B, 20P, 增量1M 60T/W, 峰值550K/S</li><li>每张图4种尺寸, 分别存3份</li><li>三种服务 Cache, Directory, Store</li><li>两种元信息, Application 生成URL用 / Filesystem 读取文件用</li></ul><p><strong>演化过程</strong>
+</span></span><span style=display:flex><span><span style=color:#0550ae>===============================================================================</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li>通用存储方案, No RAID</li><li>多存储策略</li><li>大文件切分并发上传</li><li>对象超时机制</li><li>单容器200w记录无压力</li><li>rsync带宽限制</li><li>recon/informant监控</li><li>调整 /etc/rsyslog.d/10-swift.conf</li></ul><h3 id=haystack>Haystack</h3><p>Facebook的海量图片存储系统</p><ul><li>总量260B, 20P, 增量1M 60T/W, 峰值550K/S</li><li>每张图4种尺寸, 分别存3份</li><li>三种服务 Cache, Directory, Store</li><li>两种元信息, Application 生成URL用 / Filesystem 读取文件用</li></ul><p><strong>演化过程</strong>
 <img src=./images/fb_nfs.jpg alt=img></p><ul><li>POSIX读文件效率低</li><li>缓存文件句柄, 修改内核增加open by filehandle方法减少IO</li><li>社交网络长尾效应</li><li>冗余元数据(文件权限, 所属用户)浪费空间</li></ul><p><strong>HayStack</strong>
-<img src=./images/haystack.jpg alt=img></p><ul><li>URL结构 <code>http://&lt;cdn>/&lt;Cache>/&lt;machine id>/&lt;logical volume, photo></code></li><li>CDN 用 logical volume, photo 查缓存, 命中则返回，否则走Cache机</li><li>Cache 同上, 否则走Store机</li><li>Machine 同上, 否则返回错误</li></ul><h3 id=store服务>Store服务</h3><ul><li>挂载物理卷(<code>/hay/haystack/&lt;logical valume id></code>) 作为存储基本单元, 如: 100个100G的物理卷提供10T存储量,系统级用xfs</li><li>小文件合并成文件块，通过offset和size 直接定位读取</li><li>异步追加 元信息 到索引文件，加速启动, 运行时全量加载到内存 (由于是异步操作，可能和数据块不一致，启动时需要做对比</li></ul><h3 id=directory服务>Directory服务</h3><p>本质上是一个映射表, 用数据库保存信息，提供一个PHP接口</p><ul><li>维护逻辑卷到物理卷的映射</li><li>判断请求转发到Store还是CDN</li><li>负载均衡</li><li>维护Store状态, 是否空闲/只读</li><li>为了便于维护, Store可写与容量有关; 扩容时无需文件迁移</li></ul><h3 id=cache服务>Cache服务</h3><ul><li>缓存文件, 相当于CDN</li><li>新上传文件直接缓存, 减少Store读写并发</li></ul><h3 id=needle结构>Needle结构</h3><p><img src=./images/needle.jpg alt=img></p><ul><li>cookie 创建时生成, 后续的访问签名</li><li>key 图片编号</li><li>alternate key 图片规格</li><li>padding 8字节对齐</li></ul><h3 id=needle索引>Needle索引</h3><p><img src=./images/needle_index.png alt=img></p><p>两级映射 <code>needle.key => (needle.alternate key => meta)</code></p><h3 id=开源实现>开源实现</h3><ul><li><a href=https://github.com/seaweedfs/seaweedfs>SeaweedFS</a> 参照Haystack的分布式存储实现</li><li><a href=https://github.com/Terry-Mao/bfs>bfs</a>Bilibili基于Haystack的小文件存储系统</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ go get github.com/chrislusf/seaweedfs/weed
+<img src=./images/haystack.jpg alt=img></p><ul><li>URL结构 <code>http://&lt;cdn>/&lt;Cache>/&lt;machine id>/&lt;logical volume, photo></code></li><li>CDN 用 logical volume, photo 查缓存, 命中则返回，否则走Cache机</li><li>Cache 同上, 否则走Store机</li><li>Machine 同上, 否则返回错误</li></ul><h3 id=store服务>Store服务</h3><ul><li>挂载物理卷(<code>/hay/haystack/&lt;logical valume id></code>) 作为存储基本单元, 如: 100个100G的物理卷提供10T存储量,系统级用xfs</li><li>小文件合并成文件块，通过offset和size 直接定位读取</li><li>异步追加 元信息 到索引文件，加速启动, 运行时全量加载到内存 (由于是异步操作，可能和数据块不一致，启动时需要做对比</li></ul><h3 id=directory服务>Directory服务</h3><p>本质上是一个映射表, 用数据库保存信息，提供一个PHP接口</p><ul><li>维护逻辑卷到物理卷的映射</li><li>判断请求转发到Store还是CDN</li><li>负载均衡</li><li>维护Store状态, 是否空闲/只读</li><li>为了便于维护, Store可写与容量有关; 扩容时无需文件迁移</li></ul><h3 id=cache服务>Cache服务</h3><ul><li>缓存文件, 相当于CDN</li><li>新上传文件直接缓存, 减少Store读写并发</li></ul><h3 id=needle结构>Needle结构</h3><p><img src=./images/needle.jpg alt=img></p><ul><li>cookie 创建时生成, 后续的访问签名</li><li>key 图片编号</li><li>alternate key 图片规格</li><li>padding 8字节对齐</li></ul><h3 id=needle索引>Needle索引</h3><p><img src=./images/needle_index.png alt=img></p><p>两级映射 <code>needle.key => (needle.alternate key => meta)</code></p><h3 id=开源实现>开源实现</h3><ul><li><a href=https://github.com/seaweedfs/seaweedfs>SeaweedFS</a> 参照Haystack的分布式存储实现</li><li><a href=https://github.com/Terry-Mao/bfs>bfs</a>Bilibili基于Haystack的小文件存储系统</li></ul><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ go get github.com/chrislusf/seaweedfs/weed
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>$ weed -master
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>$ weed volume -dir<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;./data1&#34;</span> -mserver<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;localhost:9333&#34;</span> -port<span style=color:#f92672>=</span><span style=color:#ae81ff>8080</span>
-</span></span><span style=display:flex><span>$ weed volume -dir<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;./data2&#34;</span> -mserver<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;localhost:9333&#34;</span> -port<span style=color:#f92672>=</span><span style=color:#ae81ff>8081</span>
+</span></span><span style=display:flex><span>$ weed volume -dir<span style=color:#0550ae>=</span><span style=color:#0a3069>&#34;./data1&#34;</span> -mserver<span style=color:#0550ae>=</span><span style=color:#0a3069>&#34;localhost:9333&#34;</span> -port<span style=color:#0550ae>=</span><span style=color:#0550ae>8080</span>
+</span></span><span style=display:flex><span>$ weed volume -dir<span style=color:#0550ae>=</span><span style=color:#0a3069>&#34;./data2&#34;</span> -mserver<span style=color:#0550ae>=</span><span style=color:#0a3069>&#34;localhost:9333&#34;</span> -port<span style=color:#0550ae>=</span><span style=color:#0550ae>8081</span>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>$ curl -X POST http://127.0.0.1:9333/dir/assign
-</span></span><span style=display:flex><span><span style=color:#f92672>{</span><span style=color:#e6db74>&#34;fid&#34;</span>:<span style=color:#e6db74>&#34;8,01995db7d7&#34;</span>,<span style=color:#e6db74>&#34;url&#34;</span>:<span style=color:#e6db74>&#34;127.0.0.1:8080&#34;</span>,<span style=color:#e6db74>&#34;publicUrl&#34;</span>:<span style=color:#e6db74>&#34;127.0.0.1:8080&#34;</span>,<span style=color:#e6db74>&#34;count&#34;</span>:1<span style=color:#f92672>}</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>{</span><span style=color:#e6db74>&#34;fid&#34;</span>:<span style=color:#e6db74>&#34;9,02af1b78ce&#34;</span>,<span style=color:#e6db74>&#34;url&#34;</span>:<span style=color:#e6db74>&#34;127.0.0.1:8080&#34;</span>,<span style=color:#e6db74>&#34;publicUrl&#34;</span>:<span style=color:#e6db74>&#34;127.0.0.1:8080&#34;</span>,<span style=color:#e6db74>&#34;count&#34;</span>:1<span style=color:#f92672>}</span>
-</span></span><span style=display:flex><span>$ curl -X PUT -F file<span style=color:#f92672>=</span>@v6.pdf http://127.0.0.1:8080/8,01995db7d7
-</span></span><span style=display:flex><span><span style=color:#f92672>{</span><span style=color:#e6db74>&#34;name&#34;</span>:<span style=color:#e6db74>&#34;v6.pdf&#34;</span>,<span style=color:#e6db74>&#34;size&#34;</span>:189495<span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>{</span><span style=color:#0a3069>&#34;fid&#34;</span>:<span style=color:#0a3069>&#34;8,01995db7d7&#34;</span>,<span style=color:#0a3069>&#34;url&#34;</span>:<span style=color:#0a3069>&#34;127.0.0.1:8080&#34;</span>,<span style=color:#0a3069>&#34;publicUrl&#34;</span>:<span style=color:#0a3069>&#34;127.0.0.1:8080&#34;</span>,<span style=color:#0a3069>&#34;count&#34;</span>:1<span style=color:#0550ae>}</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>{</span><span style=color:#0a3069>&#34;fid&#34;</span>:<span style=color:#0a3069>&#34;9,02af1b78ce&#34;</span>,<span style=color:#0a3069>&#34;url&#34;</span>:<span style=color:#0a3069>&#34;127.0.0.1:8080&#34;</span>,<span style=color:#0a3069>&#34;publicUrl&#34;</span>:<span style=color:#0a3069>&#34;127.0.0.1:8080&#34;</span>,<span style=color:#0a3069>&#34;count&#34;</span>:1<span style=color:#0550ae>}</span>
+</span></span><span style=display:flex><span>$ curl -X PUT -F <span style=color:#953800>file</span><span style=color:#0550ae>=</span>@v6.pdf http://127.0.0.1:8080/8,01995db7d7
+</span></span><span style=display:flex><span><span style=color:#0550ae>{</span><span style=color:#0a3069>&#34;name&#34;</span>:<span style=color:#0a3069>&#34;v6.pdf&#34;</span>,<span style=color:#0a3069>&#34;size&#34;</span>:189495<span style=color:#0550ae>}</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>$ curl http://localhost:9333/dir/lookup?volumeId<span style=color:#f92672>=</span><span style=color:#ae81ff>8</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>{</span><span style=color:#e6db74>&#34;volumeId&#34;</span>:<span style=color:#e6db74>&#34;8&#34;</span>,<span style=color:#e6db74>&#34;locations&#34;</span>:<span style=color:#f92672>[{</span><span style=color:#e6db74>&#34;url&#34;</span>:<span style=color:#e6db74>&#34;127.0.0.1:8080&#34;</span>,<span style=color:#e6db74>&#34;publicUrl&#34;</span>:<span style=color:#e6db74>&#34;127.0.0.1:8080&#34;</span><span style=color:#f92672>}]}</span>
+</span></span><span style=display:flex><span>$ curl http://localhost:9333/dir/lookup?volumeId<span style=color:#0550ae>=</span><span style=color:#0550ae>8</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>{</span><span style=color:#0a3069>&#34;volumeId&#34;</span>:<span style=color:#0a3069>&#34;8&#34;</span>,<span style=color:#0a3069>&#34;locations&#34;</span>:<span style=color:#0550ae>[{</span><span style=color:#0a3069>&#34;url&#34;</span>:<span style=color:#0a3069>&#34;127.0.0.1:8080&#34;</span>,<span style=color:#0a3069>&#34;publicUrl&#34;</span>:<span style=color:#0a3069>&#34;127.0.0.1:8080&#34;</span><span style=color:#0550ae>}]}</span>
 </span></span><span style=display:flex><span>$ curl -I http://127.0.0.1:8080/8,01995db7d7
-</span></span><span style=display:flex><span>HTTP/1.1 <span style=color:#ae81ff>200</span> OK
+</span></span><span style=display:flex><span>HTTP/1.1 <span style=color:#0550ae>200</span> OK
 </span></span><span style=display:flex><span>Accept-Ranges: bytes
-</span></span><span style=display:flex><span>Content-Disposition: inline; filename<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;v6.pdf&#34;</span>
-</span></span><span style=display:flex><span>Content-Length: <span style=color:#ae81ff>235616</span>
+</span></span><span style=display:flex><span>Content-Disposition: inline<span style=color:#1f2328>;</span> <span style=color:#953800>filename</span><span style=color:#0550ae>=</span><span style=color:#0a3069>&#34;v6.pdf&#34;</span>
+</span></span><span style=display:flex><span>Content-Length: <span style=color:#0550ae>235616</span>
 </span></span><span style=display:flex><span>Content-Type: application/pdf
-</span></span></code></pre></div><h2 id=nginx-proxy>Nginx Proxy</h2><p>通过lua路由请求</p><h3></h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ cat nginx/conf/vhost/vh_beansdb.conf
+</span></span></code></pre></td></tr></table></div></div><h2 id=nginx-proxy>Nginx Proxy</h2><p>通过lua路由请求</p><h3></h3><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ cat nginx/conf/vhost/vh_beansdb.conf
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    upstream beansdb_0_b <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    upstream beansdb_0_b <span style=color:#0550ae>{</span>
 </span></span><span style=display:flex><span>        ...
-</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#0550ae>}</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    location / <span style=color:#f92672>{</span>
-</span></span><span style=display:flex><span>        set $memc_key $uri;
-</span></span><span style=display:flex><span>        set_by_lua_file $server <span style=color:#e6db74>&#39;conf/vhost/vh_beansdb_fnv1a.lua&#39;</span>;
-</span></span><span style=display:flex><span>        memc_pass $server;
-</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    location / <span style=color:#0550ae>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#6639ba>set</span> <span style=color:#953800>$memc_key</span> <span style=color:#953800>$uri</span><span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span>        set_by_lua_file <span style=color:#953800>$server</span> <span style=color:#0a3069>&#39;conf/vhost/vh_beansdb_fnv1a.lua&#39;</span><span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span>        memc_pass <span style=color:#953800>$server</span><span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#0550ae>}</span>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>$ cat nginx/conf/vhost/vh_beansdb_fnv1a.lua
-</span></span><span style=display:flex><span>require <span style=color:#e6db74>&#34;libhash&#34;</span>
+</span></span><span style=display:flex><span>require <span style=color:#0a3069>&#34;libhash&#34;</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>buckets <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>
-</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,
-</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,
-</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_0_b&#34;</span>,
-</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;beansdb_c_f&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_c_f&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_c_f&#34;</span>,  <span style=color:#e6db74>&#34;beansdb_c_f&#34;</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
-</span></span><span style=display:flex><span>local bucket_size <span style=color:#f92672>=</span> 268435456; -- <span style=color:#ae81ff>1</span> &lt;&lt; <span style=color:#ae81ff>32</span> / bucket_count;
-</span></span><span style=display:flex><span>local hash <span style=color:#f92672>=</span> libhash.fnv1a<span style=color:#f92672>(</span>ngx.var.memc_key, string.len<span style=color:#f92672>(</span>ngx.var.memc_key<span style=color:#f92672>))</span>;
-</span></span><span style=display:flex><span>local bucket <span style=color:#f92672>=</span> math.floor<span style=color:#f92672>(</span>hash / bucket_size<span style=color:#f92672>)</span>;
-</span></span><span style=display:flex><span><span style=color:#66d9ef>return</span> buckets<span style=color:#f92672>[</span>bucket+1<span style=color:#f92672>]</span>;
-</span></span></code></pre></div><h2 id=图片处理配置>图片处理配置</h2><p>通过<a href=https://github.com/firebat/ngx-gm-filter>ngx-gm-filter</a>插件实时处理图片</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>server <span style=color:#f92672>{</span>
-</span></span><span style=display:flex><span>    gm_buffer 10M;
+</span></span><span style=display:flex><span><span style=color:#953800>buckets</span> <span style=color:#0550ae>=</span> <span style=color:#0550ae>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#0a3069>&#34;beansdb_0_b&#34;</span>,  <span style=color:#0a3069>&#34;beansdb_0_b&#34;</span>,  <span style=color:#0a3069>&#34;beansdb_0_b&#34;</span>,  <span style=color:#0a3069>&#34;beansdb_0_b&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#0a3069>&#34;beansdb_0_b&#34;</span>,  <span style=color:#0a3069>&#34;beansdb_0_b&#34;</span>,  <span style=color:#0a3069>&#34;beansdb_0_b&#34;</span>,  <span style=color:#0a3069>&#34;beansdb_0_b&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#0a3069>&#34;beansdb_0_b&#34;</span>,  <span style=color:#0a3069>&#34;beansdb_0_b&#34;</span>,  <span style=color:#0a3069>&#34;beansdb_0_b&#34;</span>,  <span style=color:#0a3069>&#34;beansdb_0_b&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#0a3069>&#34;beansdb_c_f&#34;</span>,  <span style=color:#0a3069>&#34;beansdb_c_f&#34;</span>,  <span style=color:#0a3069>&#34;beansdb_c_f&#34;</span>,  <span style=color:#0a3069>&#34;beansdb_c_f&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>}</span>
+</span></span><span style=display:flex><span><span style=color:#6639ba>local</span> <span style=color:#953800>bucket_size</span> <span style=color:#0550ae>=</span> 268435456<span style=color:#1f2328>;</span> -- <span style=color:#0550ae>1</span> &lt;&lt; <span style=color:#0550ae>32</span> / bucket_count<span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span><span style=color:#6639ba>local</span> <span style=color:#6639ba>hash</span> <span style=color:#0550ae>=</span> libhash.fnv1a<span style=color:#0550ae>(</span>ngx.var.memc_key, string.len<span style=color:#0550ae>(</span>ngx.var.memc_key<span style=color:#0550ae>))</span><span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span><span style=color:#6639ba>local</span> <span style=color:#953800>bucket</span> <span style=color:#0550ae>=</span> math.floor<span style=color:#0550ae>(</span><span style=color:#6639ba>hash</span> / bucket_size<span style=color:#0550ae>)</span><span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span><span style=color:#cf222e>return</span> buckets<span style=color:#0550ae>[</span>bucket+1<span style=color:#0550ae>]</span><span style=color:#1f2328>;</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=图片处理配置>图片处理配置</h2><p>通过<a href=https://github.com/firebat/ngx-gm-filter>ngx-gm-filter</a>插件实时处理图片</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>server <span style=color:#0550ae>{</span>
+</span></span><span style=display:flex><span>    gm_buffer 10M<span style=color:#1f2328>;</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    location /gm <span style=color:#f92672>{</span>
-</span></span><span style=display:flex><span>         alias imgs;
+</span></span><span style=display:flex><span>    location /gm <span style=color:#0550ae>{</span>
+</span></span><span style=display:flex><span>         <span style=color:#6639ba>alias</span> imgs<span style=color:#1f2328>;</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>         set $resize 400x300&gt;;
-</span></span><span style=display:flex><span>         set $rotate 180;
+</span></span><span style=display:flex><span>         <span style=color:#6639ba>set</span> <span style=color:#953800>$resize</span> 400x300&gt;<span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span>         <span style=color:#6639ba>set</span> <span style=color:#953800>$rotate</span> 180<span style=color:#1f2328>;</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>         gm strip;
-</span></span><span style=display:flex><span>         gm auto-orient;
+</span></span><span style=display:flex><span>         gm strip<span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span>         gm auto-orient<span style=color:#1f2328>;</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>         gm resize $resize;
-</span></span><span style=display:flex><span>         gm rotate $rotate;
-</span></span><span style=display:flex><span>         gm quality 85;
+</span></span><span style=display:flex><span>         gm resize <span style=color:#953800>$resize</span><span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span>         gm rotate <span style=color:#953800>$rotate</span><span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span>         gm quality 85<span style=color:#1f2328>;</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>         gm gravity SouthEast;
-</span></span><span style=display:flex><span>         gm composite -geometry +10+10 -image <span style=color:#e6db74>&#39;/your/watermark/file&#39;</span> -min-width 100;
-</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
-</span></span></code></pre></div><h2 id=总结>总结</h2><ul><li>对症下药</li><li>工具链很重要</li><li>抄是一门艺术</li><li>RTFSC</li></ul><p>Thank You</p><h2 id=参考>参考</h2><ul><li><a href=https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/bigtable-osdi06.pdf>Bigtable: A Distributed Storage System for Structured Data</a></li><li><a href=https://riak.com/assets/bitcask-intro.pdf>Bitcask - A Log-Structured Hash Table for Fast Key/Value Data</a></li><li><a href=https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf>Finding a needle in Haystack: Facebooks photo storage</a></li><li><a href=https://eprint.iacr.org/2021/340.pdf>Merkle Trees Optimized for Stateless Clients in Bitcoin</a></li></ul></main><footer><hr>© <a href=https://github.com/firebat>firebat</a> 2015 &ndash; 2025</footer></body></html>
+</span></span><span style=display:flex><span>         gm gravity SouthEast<span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span>         gm composite -geometry +10+10 -image <span style=color:#0a3069>&#39;/your/watermark/file&#39;</span> -min-width 100<span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#0550ae>}</span>
+</span></span><span style=display:flex><span><span style=color:#0550ae>}</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=总结>总结</h2><ul><li>对症下药</li><li>工具链很重要</li><li>抄是一门艺术</li><li>RTFSC</li></ul><p>Thank You</p><h2 id=参考>参考</h2><ul><li><a href=https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/bigtable-osdi06.pdf>Bigtable: A Distributed Storage System for Structured Data</a></li><li><a href=https://riak.com/assets/bitcask-intro.pdf>Bitcask - A Log-Structured Hash Table for Fast Key/Value Data</a></li><li><a href=https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf>Finding a needle in Haystack: Facebooks photo storage</a></li><li><a href=https://eprint.iacr.org/2021/340.pdf>Merkle Trees Optimized for Stateless Clients in Bitcoin</a></li></ul></main><footer><link rel=stylesheet href=//cdn.jsdelivr.net/npm/katex/dist/katex.min.css><script src=//cdn.jsdelivr.net/npm/@xiee/utils/js/math-code.min.js defer></script><script src=//cdn.jsdelivr.net/npm/katex/dist/katex.min.js defer></script><script src=//cdn.jsdelivr.net/npm/katex/dist/contrib/auto-render.min.js defer></script><script src=//cdn.jsdelivr.net/npm/@xiee/utils/js/render-katex.js defer></script><script src=//cdn.jsdelivr.net/npm/@xiee/utils/js/center-img.min.js defer></script><hr>© 2015 &ndash; 2025 <a href=https://github.com/firebat>firebat</a></footer></body></html>

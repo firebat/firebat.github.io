@@ -10,11 +10,21 @@
 &lt;p>创建一个独立隔绝的虚拟环境，用来安装工程所需的依赖包&lt;/p>
 &lt;blockquote>
 &lt;p>&lt;code>virtualenv&lt;/code> is a tool to create isolated Python environments. Since Python 3.3, a subset of it has been integrated into the standard library under the venv module &lt;a href="https://virtualenv.pypa.io/en/latest/">https://virtualenv.pypa.io/en/latest/&lt;/a>&lt;/p>&lt;/blockquote>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>python3 -m venv venv
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>source venv/bin/activate
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>python3 -m venv venv
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6639ba">source&lt;/span> venv/bin/activate
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>which python
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>deactivate
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="依赖管理">依赖管理&lt;/h1>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="依赖管理">依赖管理&lt;/h1>
 &lt;h2 id="pip">pip&lt;/h2>
 &lt;p>包管理工具，用于安装、卸载、检查依赖。可通过&lt;code>freeze&lt;/code>将依赖关系导出到文件，后通过&lt;code>install -r&lt;/code>恢复&lt;/p>
 &lt;blockquote>

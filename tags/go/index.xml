@@ -78,296 +78,628 @@ continue for import return var
  complex real(实部) imag(虚部)
  panic recover
 &lt;/code>&lt;/pre>&lt;h1 id="包">包&lt;/h1>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">package&lt;/span> &lt;span style="color:#a6e22e">包名&lt;/span>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">package&lt;/span> &lt;span style="color:#1f2328">包名&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> (
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#a6e22e">别名&lt;/span>] &lt;span style="color:#a6e22e">包名&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">_&lt;/span> &lt;span style="color:#a6e22e">包名&lt;/span> &lt;span style="color:#75715e">// 触发init() 如: 注册驱动&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="常量">常量&lt;/h1>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">常量名&lt;/span> &lt;span style="color:#a6e22e">常量类型&lt;/span> = &lt;span style="color:#a6e22e">表达式&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> &lt;span style="color:#a6e22e">PI&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> = &lt;span style="color:#ae81ff">3.14159&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">const&lt;/span> (
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// 批量定义&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="变量">变量&lt;/h1>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">变量名&lt;/span> &lt;span style="color:#a6e22e">类型&lt;/span> = &lt;span style="color:#a6e22e">表达式&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">name&lt;/span> &lt;span style="color:#66d9ef">string&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;alice&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">name&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;alice&amp;#34;&lt;/span> &lt;span style="color:#75715e">// 类型自动识别&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">name&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;alice&amp;#34;&lt;/span> &lt;span style="color:#75715e">// 函数内简写&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">import&lt;/span> &lt;span style="color:#1f2328">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">[&lt;/span>&lt;span style="color:#1f2328">别名&lt;/span>&lt;span style="color:#1f2328">]&lt;/span> &lt;span style="color:#1f2328">包名&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">_&lt;/span> &lt;span style="color:#1f2328">包名&lt;/span> &lt;span style="color:#57606a">// 触发init() 如: 注册驱动&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="常量">常量&lt;/h1>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">const&lt;/span> &lt;span style="color:#1f2328">常量名&lt;/span> &lt;span style="color:#1f2328">常量类型&lt;/span> &lt;span style="color:#1f2328">=&lt;/span> &lt;span style="color:#1f2328">表达式&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">const&lt;/span> &lt;span style="color:#1f2328">PI&lt;/span> &lt;span style="color:#cf222e">int&lt;/span> &lt;span style="color:#1f2328">=&lt;/span> &lt;span style="color:#0550ae">3.14159&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">const&lt;/span> &lt;span style="color:#1f2328">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#57606a">// 批量定义&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="变量">变量&lt;/h1>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">var&lt;/span> &lt;span style="color:#1f2328">变量名&lt;/span> &lt;span style="color:#1f2328">类型&lt;/span> &lt;span style="color:#1f2328">=&lt;/span> &lt;span style="color:#1f2328">表达式&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">var&lt;/span> &lt;span style="color:#1f2328">name&lt;/span> &lt;span style="color:#cf222e">string&lt;/span> &lt;span style="color:#1f2328">=&lt;/span> &lt;span style="color:#0a3069">&amp;#34;alice&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">var&lt;/span> &lt;span style="color:#1f2328">name&lt;/span> &lt;span style="color:#1f2328">=&lt;/span> &lt;span style="color:#0a3069">&amp;#34;alice&amp;#34;&lt;/span> &lt;span style="color:#57606a">// 类型自动识别&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">name&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#0a3069">&amp;#34;alice&amp;#34;&lt;/span> &lt;span style="color:#57606a">// 函数内简写&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> (
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// 批量定义&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="数组切片哈希">数组切片哈希&lt;/h1>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">var&lt;/span> &lt;span style="color:#1f2328">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#57606a">// 批量定义&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="数组切片哈希">数组切片哈希&lt;/h1>
 &lt;ul>
 &lt;li>数组，定长&lt;/li>
 &lt;li>切片，变长，通过data、len、cap 定义一个数据空间&lt;/li>
 &lt;li>哈希，无序&lt;/li>
 &lt;/ul>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">数组&lt;/span> [&lt;span style="color:#a6e22e">长度&lt;/span>]&lt;span style="color:#a6e22e">类型&lt;/span> 
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">array&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> [&lt;span style="color:#ae81ff">2&lt;/span>]&lt;span style="color:#66d9ef">int&lt;/span>{&lt;span style="color:#ae81ff">1&lt;/span>,&lt;span style="color:#ae81ff">2&lt;/span>}
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">array&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> [&lt;span style="color:#f92672">...&lt;/span>]&lt;span style="color:#66d9ef">int&lt;/span>{&lt;span style="color:#ae81ff">1&lt;/span>,&lt;span style="color:#ae81ff">2&lt;/span>,&lt;span style="color:#ae81ff">3&lt;/span>} &lt;span style="color:#75715e">// ... 自适应长度&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>len(&lt;span style="color:#a6e22e">array&lt;/span>) &lt;span style="color:#75715e">// 长度&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">i&lt;/span>, &lt;span style="color:#a6e22e">value&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">range&lt;/span> &lt;span style="color:#a6e22e">array&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">var&lt;/span> &lt;span style="color:#1f2328">数组&lt;/span> &lt;span style="color:#1f2328">[&lt;/span>&lt;span style="color:#1f2328">长度&lt;/span>&lt;span style="color:#1f2328">]&lt;/span>&lt;span style="color:#1f2328">类型&lt;/span> 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">array&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#1f2328">[&lt;/span>&lt;span style="color:#0550ae">2&lt;/span>&lt;span style="color:#1f2328">]&lt;/span>&lt;span style="color:#cf222e">int&lt;/span>&lt;span style="color:#1f2328">{&lt;/span>&lt;span style="color:#0550ae">1&lt;/span>&lt;span style="color:#1f2328">,&lt;/span>&lt;span style="color:#0550ae">2&lt;/span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">array&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#1f2328">[&lt;/span>&lt;span style="color:#0550ae">...&lt;/span>&lt;span style="color:#1f2328">]&lt;/span>&lt;span style="color:#cf222e">int&lt;/span>&lt;span style="color:#1f2328">{&lt;/span>&lt;span style="color:#0550ae">1&lt;/span>&lt;span style="color:#1f2328">,&lt;/span>&lt;span style="color:#0550ae">2&lt;/span>&lt;span style="color:#1f2328">,&lt;/span>&lt;span style="color:#0550ae">3&lt;/span>&lt;span style="color:#1f2328">}&lt;/span> &lt;span style="color:#57606a">// ... 自适应长度&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6639ba">len&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">array&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#57606a">// 长度&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">for&lt;/span> &lt;span style="color:#1f2328">i&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">value&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#cf222e">range&lt;/span> &lt;span style="color:#1f2328">array&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">切片&lt;/span> []&lt;span style="color:#a6e22e">类型&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">slice&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> make([]&lt;span style="color:#a6e22e">T&lt;/span>, &lt;span style="color:#a6e22e">len&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">slice&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> make([]&lt;span style="color:#a6e22e">T&lt;/span>, &lt;span style="color:#a6e22e">len&lt;/span>, &lt;span style="color:#a6e22e">cap&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">slice&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> []&lt;span style="color:#66d9ef">string&lt;/span>{
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Red&amp;#34;&lt;/span>,
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Green&amp;#34;&lt;/span>,
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Blue&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>len(&lt;span style="color:#a6e22e">slice&lt;/span>) &lt;span style="color:#75715e">// 长度&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cap(&lt;span style="color:#a6e22e">slice&lt;/span>) &lt;span style="color:#75715e">// 容量&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>append(&lt;span style="color:#a6e22e">slice&lt;/span>, &lt;span style="color:#a6e22e">value&lt;/span>) &lt;span style="color:#75715e">// 自动扩容&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">i&lt;/span>, &lt;span style="color:#a6e22e">value&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">range&lt;/span> &lt;span style="color:#a6e22e">slice&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">var&lt;/span> &lt;span style="color:#1f2328">切片&lt;/span> &lt;span style="color:#1f2328">[]&lt;/span>&lt;span style="color:#1f2328">类型&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">slice&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#6639ba">make&lt;/span>&lt;span style="color:#1f2328">([]&lt;/span>&lt;span style="color:#1f2328">T&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">len&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">slice&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#6639ba">make&lt;/span>&lt;span style="color:#1f2328">([]&lt;/span>&lt;span style="color:#1f2328">T&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">len&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">cap&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">slice&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#1f2328">[]&lt;/span>&lt;span style="color:#cf222e">string&lt;/span>&lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#0a3069">&amp;#34;Red&amp;#34;&lt;/span>&lt;span style="color:#1f2328">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#0a3069">&amp;#34;Green&amp;#34;&lt;/span>&lt;span style="color:#1f2328">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#0a3069">&amp;#34;Blue&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6639ba">len&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">slice&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#57606a">// 长度&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6639ba">cap&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">slice&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#57606a">// 容量&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6639ba">append&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">slice&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">value&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#57606a">// 自动扩容&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">for&lt;/span> &lt;span style="color:#1f2328">i&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">value&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#cf222e">range&lt;/span> &lt;span style="color:#1f2328">slice&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">哈希&lt;/span> &lt;span style="color:#66d9ef">map&lt;/span>[&lt;span style="color:#a6e22e">键类型&lt;/span>]&lt;span style="color:#a6e22e">值类型&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">map&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> make(&lt;span style="color:#66d9ef">map&lt;/span>[&lt;span style="color:#66d9ef">string&lt;/span>]&lt;span style="color:#66d9ef">int&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">map&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">map&lt;/span>[&lt;span style="color:#66d9ef">string&lt;/span>]&lt;span style="color:#66d9ef">int&lt;/span>{
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Red&amp;#34;&lt;/span>: &lt;span style="color:#ae81ff">0&lt;/span>,
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Green&amp;#34;&lt;/span>: &lt;span style="color:#ae81ff">1&lt;/span>,
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Blue&amp;#34;&lt;/span>: &lt;span style="color:#ae81ff">2&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>delete(&lt;span style="color:#66d9ef">map&lt;/span>, &lt;span style="color:#a6e22e">key&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">key&lt;/span>, &lt;span style="color:#a6e22e">value&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">range&lt;/span> &lt;span style="color:#66d9ef">map&lt;/span> { &lt;span style="color:#75715e">// 迭代遍历&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="定义类型">定义类型&lt;/h1>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">类型名&lt;/span> &lt;span style="color:#a6e22e">底层类型&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">Celsius&lt;/span> &lt;span style="color:#a6e22e">float6&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">var&lt;/span> &lt;span style="color:#1f2328">哈希&lt;/span> &lt;span style="color:#cf222e">map&lt;/span>&lt;span style="color:#1f2328">[&lt;/span>&lt;span style="color:#1f2328">键类型&lt;/span>&lt;span style="color:#1f2328">]&lt;/span>&lt;span style="color:#1f2328">值类型&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">map&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#6639ba">make&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#cf222e">map&lt;/span>&lt;span style="color:#1f2328">[&lt;/span>&lt;span style="color:#cf222e">string&lt;/span>&lt;span style="color:#1f2328">]&lt;/span>&lt;span style="color:#cf222e">int&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">map&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#cf222e">map&lt;/span>&lt;span style="color:#1f2328">[&lt;/span>&lt;span style="color:#cf222e">string&lt;/span>&lt;span style="color:#1f2328">]&lt;/span>&lt;span style="color:#cf222e">int&lt;/span>&lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#0a3069">&amp;#34;Red&amp;#34;&lt;/span>&lt;span style="color:#1f2328">:&lt;/span> &lt;span style="color:#0550ae">0&lt;/span>&lt;span style="color:#1f2328">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#0a3069">&amp;#34;Green&amp;#34;&lt;/span>&lt;span style="color:#1f2328">:&lt;/span> &lt;span style="color:#0550ae">1&lt;/span>&lt;span style="color:#1f2328">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#0a3069">&amp;#34;Blue&amp;#34;&lt;/span>&lt;span style="color:#1f2328">:&lt;/span> &lt;span style="color:#0550ae">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6639ba">delete&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#cf222e">map&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">key&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">for&lt;/span> &lt;span style="color:#1f2328">key&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">value&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#cf222e">range&lt;/span> &lt;span style="color:#cf222e">map&lt;/span> &lt;span style="color:#1f2328">{&lt;/span> &lt;span style="color:#57606a">// 迭代遍历&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="定义类型">定义类型&lt;/h1>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">type&lt;/span> &lt;span style="color:#1f2328">类型名&lt;/span> &lt;span style="color:#1f2328">底层类型&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">type&lt;/span> &lt;span style="color:#1f2328">Celsius&lt;/span> &lt;span style="color:#1f2328">float6&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">Point&lt;/span> &lt;span style="color:#66d9ef">struct&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">X&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Y&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">type&lt;/span> &lt;span style="color:#1f2328">Point&lt;/span> &lt;span style="color:#cf222e">struct&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">X&lt;/span> &lt;span style="color:#cf222e">int&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">Y&lt;/span> &lt;span style="color:#cf222e">int&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">Circle&lt;/span> &lt;span style="color:#66d9ef">struct&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Point&lt;/span> &lt;span style="color:#75715e">// 匿名嵌入，类似继承&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Radius&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">type&lt;/span> &lt;span style="color:#1f2328">Circle&lt;/span> &lt;span style="color:#cf222e">struct&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">Point&lt;/span> &lt;span style="color:#57606a">// 匿名嵌入，类似继承&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">Radius&lt;/span> &lt;span style="color:#cf222e">int&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">Node&lt;/span> &lt;span style="color:#66d9ef">struct&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Value&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span>,
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Next&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">Node&lt;/span> &lt;span style="color:#75715e">// 同类型指针&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="make和new">make和new&lt;/h1>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">type&lt;/span> &lt;span style="color:#1f2328">Node&lt;/span> &lt;span style="color:#cf222e">struct&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">Value&lt;/span> &lt;span style="color:#cf222e">int&lt;/span>&lt;span style="color:#1f2328">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">Next&lt;/span> &lt;span style="color:#0550ae">*&lt;/span>&lt;span style="color:#1f2328">Node&lt;/span> &lt;span style="color:#57606a">// 同类型指针&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="make和new">make和new&lt;/h1>
 &lt;ul>
 &lt;li>make 初始化内置类型(仅&lt;code>slice/hash/channel&lt;/code>) ，返回引用&lt;/li>
 &lt;li>new 根据类型分配内存，返回指针&lt;/li>
 &lt;li>若分不清，可统一用 &lt;code>Type{}&lt;/code> 和 &lt;code>&amp;amp;Type{}&lt;/code> 方式&lt;/li>
 &lt;/ul>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> make(&lt;span style="color:#a6e22e">t&lt;/span> &lt;span style="color:#a6e22e">Type&lt;/span>, &lt;span style="color:#a6e22e">size&lt;/span> &lt;span style="color:#f92672">...&lt;/span>&lt;span style="color:#a6e22e">IntegerType&lt;/span>) &lt;span style="color:#a6e22e">Type&lt;/span>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">func&lt;/span> &lt;span style="color:#6639ba">make&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">t&lt;/span> &lt;span style="color:#1f2328">Type&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">size&lt;/span> &lt;span style="color:#0550ae">...&lt;/span>&lt;span style="color:#1f2328">IntegerType&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#1f2328">Type&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> new(&lt;span style="color:#a6e22e">Type&lt;/span>) &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">Type&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">func&lt;/span> &lt;span style="color:#6639ba">new&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">Type&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#0550ae">*&lt;/span>&lt;span style="color:#1f2328">Type&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">默认空值&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&amp;#34;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span> &lt;span style="color:#66d9ef">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">默认空值&lt;/span> &lt;span style="color:#0a3069">&amp;#34;&amp;#34;&lt;/span> &lt;span style="color:#0550ae">0&lt;/span> &lt;span style="color:#cf222e">nil&lt;/span> &lt;span style="color:#cf222e">false&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;amp;&lt;/span>&lt;span style="color:#a6e22e">变量&lt;/span> &lt;span style="color:#960050;background-color:#1e0010">#&lt;/span> &lt;span style="color:#a6e22e">取地址&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">指针&lt;/span> &lt;span style="color:#960050;background-color:#1e0010">#&lt;/span> &lt;span style="color:#a6e22e">取变量&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="类型转换">类型转换&lt;/h1>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// 显示转换&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">目标变量&lt;/span> = &lt;span style="color:#a6e22e">目标类型&lt;/span>(&lt;span style="color:#a6e22e">源变量&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">s&lt;/span> = :int64(&lt;span style="color:#a6e22e">x&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#0550ae">&amp;amp;&lt;/span>&lt;span style="color:#1f2328">变量&lt;/span> &lt;span style="color:#f6f8fa;background-color:#82071e">#&lt;/span> &lt;span style="color:#1f2328">取地址&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#0550ae">*&lt;/span>&lt;span style="color:#1f2328">指针&lt;/span> &lt;span style="color:#f6f8fa;background-color:#82071e">#&lt;/span> &lt;span style="color:#1f2328">取变量&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="类型转换">类型转换&lt;/h1>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#57606a">// 显示转换&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">var&lt;/span> &lt;span style="color:#1f2328">目标变量&lt;/span> &lt;span style="color:#1f2328">=&lt;/span> &lt;span style="color:#1f2328">目标类型&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">源变量&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">s&lt;/span> &lt;span style="color:#1f2328">=&lt;/span> &lt;span style="color:#1f2328">:&lt;/span>&lt;span style="color:#6639ba">int64&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">x&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// 断言转换&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">目标变量&lt;/span> = &lt;span style="color:#a6e22e">源变量&lt;/span>.(&lt;span style="color:#a6e22e">目标类型&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">s&lt;/span>, &lt;span style="color:#a6e22e">ok&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">x&lt;/span>.(&lt;span style="color:#a6e22e">T&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#57606a">// 断言转换&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">var&lt;/span> &lt;span style="color:#1f2328">目标变量&lt;/span> &lt;span style="color:#1f2328">=&lt;/span> &lt;span style="color:#1f2328">源变量&lt;/span>&lt;span style="color:#1f2328">.(&lt;/span>&lt;span style="color:#1f2328">目标类型&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">s&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">ok&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#1f2328">x&lt;/span>&lt;span style="color:#1f2328">.(&lt;/span>&lt;span style="color:#1f2328">T&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// 识别转换&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">switch&lt;/span> &lt;span style="color:#a6e22e">目标变量&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">源变量&lt;/span>.(&lt;span style="color:#66d9ef">type&lt;/span>) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span>: &lt;span style="color:#75715e">// nil&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#66d9ef">bool&lt;/span>: &lt;span style="color:#75715e">// 数据类型&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#66d9ef">func&lt;/span>(&lt;span style="color:#66d9ef">int&lt;/span>) &lt;span style="color:#66d9ef">float64&lt;/span>: &lt;span style="color:#75715e">// 函数类型&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">default&lt;/span>: &lt;span style="color:#75715e">// 未知类型&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#57606a">// 识别转换&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">switch&lt;/span> &lt;span style="color:#1f2328">目标变量&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#1f2328">源变量&lt;/span>&lt;span style="color:#1f2328">.(&lt;/span>&lt;span style="color:#cf222e">type&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">case&lt;/span> &lt;span style="color:#cf222e">nil&lt;/span>&lt;span style="color:#1f2328">:&lt;/span> &lt;span style="color:#57606a">// nil&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">case&lt;/span> &lt;span style="color:#cf222e">bool&lt;/span>&lt;span style="color:#1f2328">:&lt;/span> &lt;span style="color:#57606a">// 数据类型&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">case&lt;/span> &lt;span style="color:#cf222e">func&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#cf222e">int&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#cf222e">float64&lt;/span>&lt;span style="color:#1f2328">:&lt;/span> &lt;span style="color:#57606a">// 函数类型&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">default&lt;/span>&lt;span style="color:#1f2328">:&lt;/span> &lt;span style="color:#57606a">// 未知类型&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// 强制转换&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">目标变量&lt;/span> = &lt;span style="color:#f92672">*&lt;/span>(&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">目标类型&lt;/span>)(&lt;span style="color:#a6e22e">unsafe&lt;/span>.&lt;span style="color:#a6e22e">Pointer&lt;/span>(&lt;span style="color:#f92672">&amp;amp;&lt;/span>&lt;span style="color:#a6e22e">源变量&lt;/span>))
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="函数">函数&lt;/h1>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#57606a">// 强制转换&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">var&lt;/span> &lt;span style="color:#1f2328">目标变量&lt;/span> &lt;span style="color:#1f2328">=&lt;/span> &lt;span style="color:#0550ae">*&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#0550ae">*&lt;/span>&lt;span style="color:#1f2328">目标类型&lt;/span>&lt;span style="color:#1f2328">)(&lt;/span>&lt;span style="color:#1f2328">unsafe&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">Pointer&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#0550ae">&amp;amp;&lt;/span>&lt;span style="color:#1f2328">源变量&lt;/span>&lt;span style="color:#1f2328">))&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="函数">函数&lt;/h1>
 &lt;ul>
 &lt;li>一等公民，可闭包、可作为参数、返回值传递&lt;/li>
 &lt;li>支持多返回值&lt;/li>
 &lt;li>没有重载和默认值&lt;/li>
 &lt;/ul>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">函数名&lt;/span>(&lt;span style="color:#a6e22e">参数列表&lt;/span>) (&lt;span style="color:#a6e22e">返回列表&lt;/span>) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">func&lt;/span> &lt;span style="color:#1f2328">函数名&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">参数列表&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">返回列表&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">Upper&lt;/span>(&lt;span style="color:#a6e22e">s&lt;/span> &lt;span style="color:#66d9ef">string&lt;/span>) &lt;span style="color:#75715e">// 函数声明&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">Upper&lt;/span> = &lt;span style="color:#66d9ef">func&lt;/span>(&lt;span style="color:#a6e22e">s&lt;/span> &lt;span style="color:#66d9ef">string&lt;/span>) { &lt;span style="color:#75715e">// 函数赋值&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">var&lt;/span> &lt;span style="color:#6639ba">Upper&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">s&lt;/span> &lt;span style="color:#cf222e">string&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#57606a">// 函数声明&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">Upper&lt;/span> &lt;span style="color:#1f2328">=&lt;/span> &lt;span style="color:#cf222e">func&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">s&lt;/span> &lt;span style="color:#cf222e">string&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#1f2328">{&lt;/span> &lt;span style="color:#57606a">// 函数赋值&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> () { &lt;span style="color:#75715e">// 立即执行匿名函数&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">func&lt;/span> &lt;span style="color:#1f2328">()&lt;/span> &lt;span style="color:#1f2328">{&lt;/span> &lt;span style="color:#57606a">// 立即执行匿名函数&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}()&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">sum&lt;/span>(&lt;span style="color:#a6e22e">vals&lt;/span> &lt;span style="color:#f92672">...&lt;/span>&lt;span style="color:#66d9ef">int&lt;/span>) &lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#75715e">// 可变参数&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="error">Error&lt;/h1>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">func&lt;/span> &lt;span style="color:#6639ba">sum&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">vals&lt;/span> &lt;span style="color:#0550ae">...&lt;/span>&lt;span style="color:#cf222e">int&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#cf222e">int&lt;/span> &lt;span style="color:#57606a">// 可变参数&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="error">Error&lt;/h1>
 &lt;ul>
 &lt;li>通常作为函数最后一个返回值&lt;/li>
 &lt;li>与异常思路略有不同，异常默认返回，需处理则catch；Error默认继续，需处理则if&lt;/li>
 &lt;/ul>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">MustDoSomething&lt;/span>() (&lt;span style="color:#66d9ef">any&lt;/span>, &lt;span style="color:#66d9ef">error&lt;/span>) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">...&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span>, &lt;span style="color:#a6e22e">errors&lt;/span>.&lt;span style="color:#a6e22e">New&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;Error happened&amp;#34;&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">func&lt;/span> &lt;span style="color:#6639ba">MustDoSomething&lt;/span>&lt;span style="color:#1f2328">()&lt;/span> &lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#cf222e">any&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#cf222e">error&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#0550ae">...&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">return&lt;/span> &lt;span style="color:#cf222e">nil&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">errors&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">New&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#0a3069">&amp;#34;Error happened&amp;#34;&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">#&lt;/span> &lt;span style="color:#a6e22e">自定义错误&lt;/span> &lt;span style="color:#a6e22e">带编码&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">CodeError&lt;/span> &lt;span style="color:#66d9ef">struct&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Code&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#e6db74">`json:&amp;#34;code&amp;#34;`&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Message&lt;/span> &lt;span style="color:#66d9ef">string&lt;/span> &lt;span style="color:#e6db74">`json:&amp;#34;message&amp;#34;`&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f6f8fa;background-color:#82071e">#&lt;/span> &lt;span style="color:#1f2328">自定义错误&lt;/span> &lt;span style="color:#1f2328">带编码&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">type&lt;/span> &lt;span style="color:#1f2328">CodeError&lt;/span> &lt;span style="color:#cf222e">struct&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">Code&lt;/span> &lt;span style="color:#cf222e">int&lt;/span> &lt;span style="color:#0a3069">`json:&amp;#34;code&amp;#34;`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">Message&lt;/span> &lt;span style="color:#cf222e">string&lt;/span> &lt;span style="color:#0a3069">`json:&amp;#34;message&amp;#34;`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> (&lt;span style="color:#a6e22e">c&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">CodeError&lt;/span>) &lt;span style="color:#a6e22e">Error&lt;/span>() &lt;span style="color:#66d9ef">string&lt;/span> { &lt;span style="color:#75715e">// 含有Error()方法的结构均可作为error使用&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">c&lt;/span>.&lt;span style="color:#a6e22e">Message&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="context">Context&lt;/h1>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">func&lt;/span> &lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">c&lt;/span> &lt;span style="color:#0550ae">*&lt;/span>&lt;span style="color:#1f2328">CodeError&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#6639ba">Error&lt;/span>&lt;span style="color:#1f2328">()&lt;/span> &lt;span style="color:#cf222e">string&lt;/span> &lt;span style="color:#1f2328">{&lt;/span> &lt;span style="color:#57606a">// 含有Error()方法的结构均可作为error使用&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">return&lt;/span> &lt;span style="color:#1f2328">c&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#1f2328">Message&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="context">Context&lt;/h1>
 &lt;ul>
 &lt;li>调用链上下文管理，通常作为函数第一个参数&lt;/li>
 &lt;/ul>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">ctx&lt;/span> &lt;span style="color:#f92672">:=&lt;/span>&lt;span style="color:#a6e22e">context&lt;/span>.&lt;span style="color:#a6e22e">Background&lt;/span>()
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">ctx&lt;/span> = &lt;span style="color:#a6e22e">context&lt;/span>.&lt;span style="color:#a6e22e">WithValue&lt;/span>(&lt;span style="color:#a6e22e">parent&lt;/span>, &lt;span style="color:#a6e22e">key&lt;/span>, &lt;span style="color:#a6e22e">value&lt;/span>) &lt;span style="color:#75715e">// 装饰器模式，内部是个链，性能不好&lt;/span>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">ctx&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span>&lt;span style="color:#1f2328">context&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">Background&lt;/span>&lt;span style="color:#1f2328">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">ctx&lt;/span> &lt;span style="color:#1f2328">=&lt;/span> &lt;span style="color:#1f2328">context&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">WithValue&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">parent&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">key&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">value&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#57606a">// 装饰器模式，内部是个链，性能不好&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">GetUser&lt;/span>(&lt;span style="color:#a6e22e">ctx&lt;/span> &lt;span style="color:#a6e22e">context&lt;/span>.&lt;span style="color:#a6e22e">Context&lt;/span>, &lt;span style="color:#a6e22e">name&lt;/span> &lt;span style="color:#66d9ef">string&lt;/span>)(&lt;span style="color:#a6e22e">UserInfo&lt;/span>, &lt;span style="color:#66d9ef">error&lt;/span>) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">value&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">ctx&lt;/span>.&lt;span style="color:#a6e22e">Value&lt;/span>(&lt;span style="color:#a6e22e">key&lt;/span>) 
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="panic">Panic&lt;/h1>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">func&lt;/span> &lt;span style="color:#6639ba">GetUser&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">ctx&lt;/span> &lt;span style="color:#1f2328">context&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#1f2328">Context&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">name&lt;/span> &lt;span style="color:#cf222e">string&lt;/span>&lt;span style="color:#1f2328">)(&lt;/span>&lt;span style="color:#1f2328">UserInfo&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#cf222e">error&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">value&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#1f2328">ctx&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">Value&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">key&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="panic">Panic&lt;/h1>
 &lt;ul>
 &lt;li>严重错误、无法恢复时使用，否则使用error机制 &lt;code>if err != nil&lt;/code>&lt;/li>
 &lt;li>立即中断程序运行，执行对应的延时函数（defer机制）&lt;/li>
 &lt;/ul>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">MustCompile&lt;/span>(&lt;span style="color:#a6e22e">expr&lt;/span> &lt;span style="color:#66d9ef">string&lt;/span>) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">re&lt;/span>, &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">Compile&lt;/span>(&lt;span style="color:#a6e22e">expr&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> panic(&lt;span style="color:#a6e22e">err&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">re&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="defer">Defer&lt;/h1>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">func&lt;/span> &lt;span style="color:#6639ba">MustCompile&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">expr&lt;/span> &lt;span style="color:#cf222e">string&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">re&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">err&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#6639ba">Compile&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">expr&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">if&lt;/span> &lt;span style="color:#1f2328">err&lt;/span> &lt;span style="color:#0550ae">!=&lt;/span> &lt;span style="color:#cf222e">nil&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6639ba">panic&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">err&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">return&lt;/span> &lt;span style="color:#1f2328">re&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="defer">Defer&lt;/h1>
 &lt;ul>
 &lt;li>延时处理函数，函数执行后、内存释放前执行&lt;/li>
 &lt;li>可以写多个，先入后出&lt;/li>
 &lt;li>&lt;code>os.Exit&lt;/code>、&lt;code>log.Fatal&lt;/code> 会导致&lt;code>Defer&lt;/code>函数不执行，慎用&lt;/li>
 &lt;/ul>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">ReadFile&lt;/span>(&lt;span style="color:#a6e22e">filename&lt;/span> &lt;span style="color:#66d9ef">string&lt;/span>) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">f&lt;/span>, &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">os&lt;/span>.&lt;span style="color:#a6e22e">Open&lt;/span>(&lt;span style="color:#a6e22e">filename&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span>, &lt;span style="color:#a6e22e">err&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">defer&lt;/span> &lt;span style="color:#a6e22e">f&lt;/span>.&lt;span style="color:#a6e22e">Close&lt;/span>()
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">ReadAll&lt;/span>(&lt;span style="color:#a6e22e">f&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="recover">Recover&lt;/h1>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">func&lt;/span> &lt;span style="color:#6639ba">ReadFile&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">filename&lt;/span> &lt;span style="color:#cf222e">string&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">f&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">err&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#1f2328">os&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">Open&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">filename&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">if&lt;/span> &lt;span style="color:#1f2328">err&lt;/span> &lt;span style="color:#0550ae">!=&lt;/span> &lt;span style="color:#cf222e">nil&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">return&lt;/span> &lt;span style="color:#cf222e">nil&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">err&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">defer&lt;/span> &lt;span style="color:#1f2328">f&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">Close&lt;/span>&lt;span style="color:#1f2328">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">return&lt;/span> &lt;span style="color:#6639ba">ReadAll&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">f&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="recover">Recover&lt;/h1>
 &lt;ul>
 &lt;li>试图恢复panic&lt;/li>
 &lt;/ul>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">defer&lt;/span> &lt;span style="color:#66d9ef">func&lt;/span>() {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">switch&lt;/span> &lt;span style="color:#a6e22e">p&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> recover(); &lt;span style="color:#a6e22e">p&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span>: &lt;span style="color:#960050;background-color:#1e0010">#&lt;/span> &lt;span style="color:#a6e22e">no&lt;/span> &lt;span style="color:#a6e22e">panic&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#e6db74">&amp;#34;x&amp;#34;&lt;/span>: &lt;span style="color:#960050;background-color:#1e0010">#&lt;/span> &lt;span style="color:#a6e22e">expected&lt;/span> &lt;span style="color:#a6e22e">panic&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">default&lt;/span>: &lt;span style="color:#960050;background-color:#1e0010">#&lt;/span> &lt;span style="color:#a6e22e">keep&lt;/span> &lt;span style="color:#a6e22e">going&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> panic(&lt;span style="color:#a6e22e">p&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}()
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">defer&lt;/span> &lt;span style="color:#cf222e">func&lt;/span>&lt;span style="color:#1f2328">()&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">switch&lt;/span> &lt;span style="color:#1f2328">p&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#6639ba">recover&lt;/span>&lt;span style="color:#1f2328">();&lt;/span> &lt;span style="color:#1f2328">p&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">case&lt;/span> &lt;span style="color:#cf222e">nil&lt;/span>&lt;span style="color:#1f2328">:&lt;/span> &lt;span style="color:#f6f8fa;background-color:#82071e">#&lt;/span> &lt;span style="color:#1f2328">no&lt;/span> &lt;span style="color:#1f2328">panic&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">case&lt;/span> &lt;span style="color:#0a3069">&amp;#34;x&amp;#34;&lt;/span>&lt;span style="color:#1f2328">:&lt;/span> &lt;span style="color:#f6f8fa;background-color:#82071e">#&lt;/span> &lt;span style="color:#1f2328">expected&lt;/span> &lt;span style="color:#1f2328">panic&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">default&lt;/span>&lt;span style="color:#1f2328">:&lt;/span> &lt;span style="color:#f6f8fa;background-color:#82071e">#&lt;/span> &lt;span style="color:#1f2328">keep&lt;/span> &lt;span style="color:#1f2328">going&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6639ba">panic&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">p&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}()&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>panic(&lt;span style="color:#e6db74">&amp;#34;x&amp;#34;&lt;/span>)
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="方法-method">方法 Method&lt;/h1>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6639ba">panic&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#0a3069">&amp;#34;x&amp;#34;&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="方法-method">方法 Method&lt;/h1>
 &lt;ul>
 &lt;li>绑定类型与函数，面向对象编程&lt;/li>
 &lt;li>接收器通常用指针（引用传递），否则为副本（值传递）&lt;/li>
 &lt;li>接收器变量名为类型首字母小写&lt;/li>
 &lt;/ul>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> (&lt;span style="color:#a6e22e">p&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">Point&lt;/span>) &lt;span style="color:#a6e22e">ScaleBy&lt;/span>(&lt;span style="color:#a6e22e">factor&lt;/span> &lt;span style="color:#66d9ef">float64&lt;/span>) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">p&lt;/span>.&lt;span style="color:#a6e22e">X&lt;/span> &lt;span style="color:#f92672">*=&lt;/span> &lt;span style="color:#a6e22e">factor&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">p&lt;/span>.&lt;span style="color:#a6e22e">Y&lt;/span> &lt;span style="color:#f92672">*=&lt;/span> &lt;span style="color:#a6e22e">factor&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">func&lt;/span> &lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">p&lt;/span> &lt;span style="color:#0550ae">*&lt;/span>&lt;span style="color:#1f2328">Point&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#6639ba">ScaleBy&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">factor&lt;/span> &lt;span style="color:#cf222e">float64&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">p&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#1f2328">X&lt;/span> &lt;span style="color:#0550ae">*=&lt;/span> &lt;span style="color:#1f2328">factor&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">p&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#1f2328">Y&lt;/span> &lt;span style="color:#0550ae">*=&lt;/span> &lt;span style="color:#1f2328">factor&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">p&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#f92672">&amp;amp;&lt;/span>&lt;span style="color:#a6e22e">Point&lt;/span>{&lt;span style="color:#ae81ff">1&lt;/span>,&lt;span style="color:#ae81ff">2&lt;/span>}
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">p&lt;/span>.&lt;span style="color:#a6e22e">ScaleBy&lt;/span>(&lt;span style="color:#ae81ff">2&lt;/span>)
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="接口-interface">接口 Interface&lt;/h1>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">p&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#0550ae">&amp;amp;&lt;/span>&lt;span style="color:#1f2328">Point&lt;/span>&lt;span style="color:#1f2328">{&lt;/span>&lt;span style="color:#0550ae">1&lt;/span>&lt;span style="color:#1f2328">,&lt;/span>&lt;span style="color:#0550ae">2&lt;/span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">p&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">ScaleBy&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#0550ae">2&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="接口-interface">接口 Interface&lt;/h1>
 &lt;ul>
 &lt;li>以行为定类型，面向行为编程&lt;/li>
 &lt;li>任意类型&lt;code>interface {}&lt;/code> 1.18版本后内建&lt;code>type any interface{}&lt;/code>&lt;/li>
 &lt;/ul>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">package&lt;/span> &lt;span style="color:#a6e22e">io&lt;/span>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">package&lt;/span> &lt;span style="color:#1f2328">io&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">Reader&lt;/span> &lt;span style="color:#66d9ef">interface&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Read&lt;/span>(&lt;span style="color:#a6e22e">p&lt;/span> []&lt;span style="color:#66d9ef">byte&lt;/span>)(&lt;span style="color:#a6e22e">n&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span>, &lt;span style="color:#a6e22e">e&lt;/span> &lt;span style="color:#66d9ef">error&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">Writer&lt;/span> &lt;span style="color:#66d9ef">interface&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Write&lt;/span>(&lt;span style="color:#a6e22e">p&lt;/span> []&lt;span style="color:#66d9ef">byte&lt;/span>) (&lt;span style="color:#a6e22e">n&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span>, &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#66d9ef">error&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">Closer&lt;/span> &lt;span style="color:#66d9ef">interface&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Close&lt;/span>() &lt;span style="color:#66d9ef">error&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">type&lt;/span> &lt;span style="color:#1f2328">Reader&lt;/span> &lt;span style="color:#cf222e">interface&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6639ba">Read&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">p&lt;/span> &lt;span style="color:#1f2328">[]&lt;/span>&lt;span style="color:#cf222e">byte&lt;/span>&lt;span style="color:#1f2328">)(&lt;/span>&lt;span style="color:#1f2328">n&lt;/span> &lt;span style="color:#cf222e">int&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">e&lt;/span> &lt;span style="color:#cf222e">error&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">type&lt;/span> &lt;span style="color:#1f2328">Writer&lt;/span> &lt;span style="color:#cf222e">interface&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6639ba">Write&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">p&lt;/span> &lt;span style="color:#1f2328">[]&lt;/span>&lt;span style="color:#cf222e">byte&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">n&lt;/span> &lt;span style="color:#cf222e">int&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">err&lt;/span> &lt;span style="color:#cf222e">error&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">type&lt;/span> &lt;span style="color:#1f2328">Closer&lt;/span> &lt;span style="color:#cf222e">interface&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6639ba">Close&lt;/span>&lt;span style="color:#1f2328">()&lt;/span> &lt;span style="color:#cf222e">error&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">ReadWriter&lt;/span> &lt;span style="color:#66d9ef">interface&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Reader&lt;/span> &lt;span style="color:#75715e">// 内嵌继承&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Writer&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">type&lt;/span> &lt;span style="color:#1f2328">ReadWriter&lt;/span> &lt;span style="color:#cf222e">interface&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">Reader&lt;/span> &lt;span style="color:#57606a">// 内嵌继承&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">Writer&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">ByteCounter&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> (&lt;span style="color:#a6e22e">b&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">ByteCounter&lt;/span>) &lt;span style="color:#a6e22e">Write&lt;/span>(&lt;span style="color:#a6e22e">p&lt;/span> []&lt;span style="color:#66d9ef">byte&lt;/span>)(&lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#66d9ef">error&lt;/span>) { &lt;span style="color:#75715e">// 满足约定即可使用&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">...&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="范型">范型&lt;/h1>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">type&lt;/span> &lt;span style="color:#1f2328">ByteCounter&lt;/span> &lt;span style="color:#cf222e">int&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">func&lt;/span> &lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">b&lt;/span> &lt;span style="color:#0550ae">*&lt;/span>&lt;span style="color:#1f2328">ByteCounter&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#6639ba">Write&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">p&lt;/span> &lt;span style="color:#1f2328">[]&lt;/span>&lt;span style="color:#cf222e">byte&lt;/span>&lt;span style="color:#1f2328">)(&lt;/span>&lt;span style="color:#cf222e">int&lt;/span> &lt;span style="color:#cf222e">error&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#1f2328">{&lt;/span> &lt;span style="color:#57606a">// 满足约定即可使用&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#0550ae">...&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="范型">范型&lt;/h1>
 &lt;ul>
 &lt;li>同类数据，逻辑复用&lt;/li>
 &lt;/ul>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">RestDTO&lt;/span> [&lt;span style="color:#a6e22e">T&lt;/span> &lt;span style="color:#66d9ef">any&lt;/span>] &lt;span style="color:#66d9ef">struct&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Code&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> &lt;span style="color:#e6db74">`json:&amp;#34;code&amp;#34;`&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Message&lt;/span> &lt;span style="color:#66d9ef">string&lt;/span> &lt;span style="color:#e6db74">`json:&amp;#34;message&amp;#34;`&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Data&lt;/span> &lt;span style="color:#a6e22e">T&lt;/span> &lt;span style="color:#e6db74">`json:&amp;#34;data&amp;#34;`&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">type&lt;/span> &lt;span style="color:#1f2328">RestDTO&lt;/span> &lt;span style="color:#1f2328">[&lt;/span>&lt;span style="color:#1f2328">T&lt;/span> &lt;span style="color:#cf222e">any&lt;/span>&lt;span style="color:#1f2328">]&lt;/span> &lt;span style="color:#cf222e">struct&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">Code&lt;/span> &lt;span style="color:#cf222e">int&lt;/span> &lt;span style="color:#0a3069">`json:&amp;#34;code&amp;#34;`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">Message&lt;/span> &lt;span style="color:#cf222e">string&lt;/span> &lt;span style="color:#0a3069">`json:&amp;#34;message&amp;#34;`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">Data&lt;/span> &lt;span style="color:#1f2328">T&lt;/span> &lt;span style="color:#0a3069">`json:&amp;#34;data&amp;#34;`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">type&lt;/span> &lt;span style="color:#a6e22e">IdProvider&lt;/span> [&lt;span style="color:#a6e22e">T&lt;/span> &lt;span style="color:#66d9ef">int&lt;/span> | &lt;span style="color:#66d9ef">string&lt;/span>] &lt;span style="color:#66d9ef">interface&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">Next&lt;/span>() &lt;span style="color:#a6e22e">T&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="并发">并发&lt;/h1>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">type&lt;/span> &lt;span style="color:#1f2328">IdProvider&lt;/span> &lt;span style="color:#1f2328">[&lt;/span>&lt;span style="color:#1f2328">T&lt;/span> &lt;span style="color:#cf222e">int&lt;/span> &lt;span style="color:#1f2328">|&lt;/span> &lt;span style="color:#cf222e">string&lt;/span>&lt;span style="color:#1f2328">]&lt;/span> &lt;span style="color:#cf222e">interface&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6639ba">Next&lt;/span>&lt;span style="color:#1f2328">()&lt;/span> &lt;span style="color:#1f2328">T&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="并发">并发&lt;/h1>
 &lt;ul>
 &lt;li>&lt;code>goroutine&lt;/code> 协程并发执行，没有唯一标识（即无法实现ThreadLocal，需要Context机制）&lt;/li>
 &lt;li>&lt;code>channel&lt;/code> 协程间通信&lt;/li>
 &lt;/ul>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">done&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> make(&lt;span style="color:#66d9ef">chan&lt;/span> &lt;span style="color:#66d9ef">string&lt;/span>, [&lt;span style="color:#a6e22e">缓冲大小&lt;/span>])
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">done&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#6639ba">make&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#cf222e">chan&lt;/span> &lt;span style="color:#cf222e">string&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">[&lt;/span>&lt;span style="color:#1f2328">缓冲大小&lt;/span>&lt;span style="color:#1f2328">])&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">go&lt;/span> &lt;span style="color:#66d9ef">func&lt;/span>() { &lt;span style="color:#75715e">// 并发执行&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">time&lt;/span>.&lt;span style="color:#a6e22e">Sleep&lt;/span>(&lt;span style="color:#ae81ff">3000&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">done&lt;/span> &lt;span style="color:#f92672">&amp;lt;-&lt;/span> &lt;span style="color:#e6db74">&amp;#34;done&amp;#34;&lt;/span> &lt;span style="color:#75715e">// 发送信息&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">go&lt;/span> &lt;span style="color:#cf222e">func&lt;/span>&lt;span style="color:#1f2328">()&lt;/span> &lt;span style="color:#1f2328">{&lt;/span> &lt;span style="color:#57606a">// 并发执行&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">time&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">Sleep&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#0550ae">3000&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">done&lt;/span> &lt;span style="color:#0550ae">&amp;lt;-&lt;/span> &lt;span style="color:#0a3069">&amp;#34;done&amp;#34;&lt;/span> &lt;span style="color:#57606a">// 发送信息&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}()&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;lt;-&lt;/span>&lt;span style="color:#a6e22e">done&lt;/span> &lt;span style="color:#75715e">// 阻塞等待&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>close(&lt;span style="color:#a6e22e">done&lt;/span>)
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="多路复用">多路复用&lt;/h1>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">done&lt;/span> = make(&lt;span style="color:#66d9ef">chan&lt;/span> &lt;span style="color:#66d9ef">struct&lt;/span>{})
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#0550ae">&amp;lt;-&lt;/span>&lt;span style="color:#1f2328">done&lt;/span> &lt;span style="color:#57606a">// 阻塞等待&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#6639ba">close&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">done&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="多路复用">多路复用&lt;/h1>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">var&lt;/span> &lt;span style="color:#1f2328">done&lt;/span> &lt;span style="color:#1f2328">=&lt;/span> &lt;span style="color:#6639ba">make&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#cf222e">chan&lt;/span> &lt;span style="color:#cf222e">struct&lt;/span>&lt;span style="color:#1f2328">{})&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">cancelled&lt;/span>() &lt;span style="color:#66d9ef">bool&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">select&lt;/span> { &lt;span style="color:#75715e">// Select 多路复用&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">case&lt;/span> &lt;span style="color:#f92672">&amp;lt;-&lt;/span>&lt;span style="color:#a6e22e">done&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#66d9ef">true&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">default&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#66d9ef">false&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="懒处理">懒处理&lt;/h1>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">func&lt;/span> &lt;span style="color:#6639ba">cancelled&lt;/span>&lt;span style="color:#1f2328">()&lt;/span> &lt;span style="color:#cf222e">bool&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">select&lt;/span> &lt;span style="color:#1f2328">{&lt;/span> &lt;span style="color:#57606a">// Select 多路复用&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">case&lt;/span> &lt;span style="color:#0550ae">&amp;lt;-&lt;/span>&lt;span style="color:#1f2328">done&lt;/span>&lt;span style="color:#1f2328">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">return&lt;/span> &lt;span style="color:#cf222e">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">default&lt;/span>&lt;span style="color:#1f2328">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">return&lt;/span> &lt;span style="color:#cf222e">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="懒处理">懒处理&lt;/h1>
 &lt;ul>
 &lt;li>仅执行一次，单例模式常用&lt;/li>
 &lt;/ul>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">var&lt;/span> (
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">once&lt;/span> &lt;span style="color:#a6e22e">sync&lt;/span>.&lt;span style="color:#a6e22e">Once&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">instance&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">Type&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">var&lt;/span> &lt;span style="color:#1f2328">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">once&lt;/span> &lt;span style="color:#1f2328">sync&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#1f2328">Once&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">instance&lt;/span> &lt;span style="color:#0550ae">*&lt;/span>&lt;span style="color:#1f2328">Type&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">)&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">GetInstance&lt;/span>() &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">Type&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">once&lt;/span>.&lt;span style="color:#a6e22e">Do&lt;/span>(&lt;span style="color:#66d9ef">func&lt;/span>() {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">instance&lt;/span> = &lt;span style="color:#f92672">&amp;amp;&lt;/span>&lt;span style="color:#a6e22e">Type&lt;/span>{}
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> })
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">func&lt;/span> &lt;span style="color:#6639ba">GetInstance&lt;/span>&lt;span style="color:#1f2328">()&lt;/span> &lt;span style="color:#0550ae">*&lt;/span>&lt;span style="color:#1f2328">Type&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">once&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">Do&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#cf222e">func&lt;/span>&lt;span style="color:#1f2328">()&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">instance&lt;/span> &lt;span style="color:#1f2328">=&lt;/span> &lt;span style="color:#0550ae">&amp;amp;&lt;/span>&lt;span style="color:#1f2328">Type&lt;/span>&lt;span style="color:#1f2328">{}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">})&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> &lt;span style="color:#a6e22e">instance&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="互斥锁">互斥锁&lt;/h1>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">return&lt;/span> &lt;span style="color:#1f2328">instance&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="互斥锁">互斥锁&lt;/h1>
 &lt;pre tabindex="0">&lt;code>mu := sync.Mutex // 不可重入
 
 func() {
@@ -376,61 +708,135 @@ func() {
  ...
 }
 &lt;/code>&lt;/pre>&lt;h1 id="读写锁">读写锁&lt;/h1>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">mu&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">sync&lt;/span>.&lt;span style="color:#a6e22e">RWMutex&lt;/span>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">mu&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#1f2328">sync&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#1f2328">RWMutex&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">mu&lt;/span>.&lt;span style="color:#a6e22e">RLock&lt;/span>()
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">defer&lt;/span> &lt;span style="color:#a6e22e">mu&lt;/span>.&lt;span style="color:#a6e22e">RUnlock&lt;/span>()
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="反射">反射&lt;/h1>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> &lt;span style="color:#a6e22e">reflect&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">mu&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">RLock&lt;/span>&lt;span style="color:#1f2328">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">defer&lt;/span> &lt;span style="color:#1f2328">mu&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">RUnlock&lt;/span>&lt;span style="color:#1f2328">()&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="反射">反射&lt;/h1>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">import&lt;/span> &lt;span style="color:#1f2328">reflect&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">t&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">reflect&lt;/span>.&lt;span style="color:#a6e22e">TypeOf&lt;/span>(&lt;span style="color:#a6e22e">i&lt;/span>) &lt;span style="color:#75715e">// 类型元信息&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">v&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">reflect&lt;/span>.&lt;span style="color:#a6e22e">ValueOf&lt;/span>(&lt;span style="color:#a6e22e">i&lt;/span>) &lt;span style="color:#75715e">// 实际数值&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">t&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#1f2328">reflect&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">TypeOf&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">i&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#57606a">// 类型元信息&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">v&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#1f2328">reflect&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">ValueOf&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">i&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#57606a">// 实际数值&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">tag&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">t&lt;/span>.&lt;span style="color:#a6e22e">Elem&lt;/span>().&lt;span style="color:#a6e22e">Field&lt;/span>(&lt;span style="color:#ae81ff">0&lt;/span>).&lt;span style="color:#a6e22e">Tag&lt;/span> &lt;span style="color:#75715e">// 获取标签 如`json:name`&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">val&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">v&lt;/span>.&lt;span style="color:#a6e22e">Elem&lt;/span>().&lt;span style="color:#a6e22e">Field&lt;/span>(&lt;span style="color:#ae81ff">0&lt;/span>).&lt;span style="color:#a6e22e">String&lt;/span>() &lt;span style="color:#75715e">// 获取字段值&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="测试">测试&lt;/h1>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">tag&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#1f2328">t&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">Elem&lt;/span>&lt;span style="color:#1f2328">().&lt;/span>&lt;span style="color:#6639ba">Field&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#0550ae">0&lt;/span>&lt;span style="color:#1f2328">).&lt;/span>&lt;span style="color:#1f2328">Tag&lt;/span> &lt;span style="color:#57606a">// 获取标签 如`json:name`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">val&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#1f2328">v&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">Elem&lt;/span>&lt;span style="color:#1f2328">().&lt;/span>&lt;span style="color:#6639ba">Field&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#0550ae">0&lt;/span>&lt;span style="color:#1f2328">).&lt;/span>&lt;span style="color:#6639ba">String&lt;/span>&lt;span style="color:#1f2328">()&lt;/span> &lt;span style="color:#57606a">// 获取字段值&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="测试">测试&lt;/h1>
 &lt;ul>
 &lt;li>与源文件同包，以&lt;code>_test.go&lt;/code>结尾&lt;/li>
 &lt;li>功能测试以Test开头&lt;/li>
 &lt;li>基准测试以Benchmark开头，默认进行功能测试，可通过&lt;code>-run=NONE&lt;/code>禁止&lt;/li>
 &lt;/ul>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ go test &lt;span style="color:#f92672">[&lt;/span>package&lt;span style="color:#f92672">]&lt;/span>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ go &lt;span style="color:#6639ba">test&lt;/span> &lt;span style="color:#0550ae">[&lt;/span>package&lt;span style="color:#0550ae">]&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -v 输出测试函数与时间
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -run&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&amp;#34;&lt;/span> 测试名（正则匹配）
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -run&lt;span style="color:#0550ae">=&lt;/span>&lt;span style="color:#0a3069">&amp;#34;&amp;#34;&lt;/span> 测试名（正则匹配）
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -bench&lt;span style="color:#f92672">=&lt;/span>测试名（正则匹配）
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -bench&lt;span style="color:#0550ae">=&lt;/span>测试名（正则匹配）
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -benchmem 统计内存分配
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> 
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -coverprofile&lt;span style="color:#f92672">=&lt;/span>cover.out 覆盖率分析
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -cpuprofile&lt;span style="color:#f92672">=&lt;/span>cpu.out
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -blockprofile&lt;span style="color:#f92672">=&lt;/span>block.out
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -memprofile&lt;span style="color:#f92672">=&lt;/span>mem.out
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -coverprofile&lt;span style="color:#0550ae">=&lt;/span>cover.out 覆盖率分析
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -cpuprofile&lt;span style="color:#0550ae">=&lt;/span>cpu.out
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -blockprofile&lt;span style="color:#0550ae">=&lt;/span>block.out
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> -memprofile&lt;span style="color:#0550ae">=&lt;/span>mem.out
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ go tool cover -html&lt;span style="color:#f92672">=&lt;/span>覆盖率文件
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> &lt;span style="color:#e6db74">&amp;#34;testing&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ go tool cover -html&lt;span style="color:#0550ae">=&lt;/span>覆盖率文件
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">import&lt;/span> &lt;span style="color:#0a3069">&amp;#34;testing&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// 功能测试&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">TestName&lt;/span>(&lt;span style="color:#a6e22e">t&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">testing&lt;/span>.&lt;span style="color:#a6e22e">T&lt;/span>) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">tests&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> []&lt;span style="color:#66d9ef">struct&lt;/span> { &lt;span style="color:#75715e">// Case表&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">input&lt;/span> &lt;span style="color:#a6e22e">输入类型&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">want&lt;/span> &lt;span style="color:#a6e22e">结果类型&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }{
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {&lt;span style="color:#a6e22e">case1&lt;/span>, &lt;span style="color:#a6e22e">want1&lt;/span>},
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">...&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#57606a">// 功能测试&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">func&lt;/span> &lt;span style="color:#6639ba">TestName&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">t&lt;/span> &lt;span style="color:#0550ae">*&lt;/span>&lt;span style="color:#1f2328">testing&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#1f2328">T&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">tests&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#1f2328">[]&lt;/span>&lt;span style="color:#cf222e">struct&lt;/span> &lt;span style="color:#1f2328">{&lt;/span> &lt;span style="color:#57606a">// Case表&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">input&lt;/span> &lt;span style="color:#1f2328">输入类型&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">want&lt;/span> &lt;span style="color:#1f2328">结果类型&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">}{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">{&lt;/span>&lt;span style="color:#1f2328">case1&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">want1&lt;/span>&lt;span style="color:#1f2328">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#0550ae">...&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> 
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">_&lt;/span>, &lt;span style="color:#a6e22e">test&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">range&lt;/span> &lt;span style="color:#a6e22e">tests&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">got&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">xxx&lt;/span>(&lt;span style="color:#a6e22e">input&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">got&lt;/span> &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#a6e22e">test&lt;/span>.&lt;span style="color:#a6e22e">want&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">t&lt;/span>.&lt;span style="color:#a6e22e">Errorf&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;.....&amp;#34;&lt;/span>)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">for&lt;/span> &lt;span style="color:#1f2328">_&lt;/span>&lt;span style="color:#1f2328">,&lt;/span> &lt;span style="color:#1f2328">test&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#cf222e">range&lt;/span> &lt;span style="color:#1f2328">tests&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">got&lt;/span> &lt;span style="color:#0550ae">:=&lt;/span> &lt;span style="color:#6639ba">xxx&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">input&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">if&lt;/span> &lt;span style="color:#1f2328">got&lt;/span> &lt;span style="color:#0550ae">!=&lt;/span> &lt;span style="color:#1f2328">test&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#1f2328">want&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">t&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#6639ba">Errorf&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#0a3069">&amp;#34;.....&amp;#34;&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// 性能测试&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">BenchmarkName&lt;/span>(&lt;span style="color:#a6e22e">b&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">testing&lt;/span>.&lt;span style="color:#a6e22e">B&lt;/span>) {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">i&lt;/span>&lt;span style="color:#f92672">:=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>; &lt;span style="color:#a6e22e">i&lt;/span>&amp;lt;&lt;span style="color:#a6e22e">b&lt;/span>.&lt;span style="color:#a6e22e">N&lt;/span>; &lt;span style="color:#a6e22e">i&lt;/span>&lt;span style="color:#f92672">++&lt;/span> {
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">//&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item></channel></rss>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#57606a">// 性能测试&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">func&lt;/span> &lt;span style="color:#6639ba">BenchmarkName&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#1f2328">b&lt;/span> &lt;span style="color:#0550ae">*&lt;/span>&lt;span style="color:#1f2328">testing&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#1f2328">B&lt;/span>&lt;span style="color:#1f2328">)&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">for&lt;/span> &lt;span style="color:#1f2328">i&lt;/span>&lt;span style="color:#0550ae">:=&lt;/span>&lt;span style="color:#0550ae">0&lt;/span>&lt;span style="color:#1f2328">;&lt;/span> &lt;span style="color:#1f2328">i&lt;/span>&lt;span style="color:#1f2328">&amp;lt;&lt;/span>&lt;span style="color:#1f2328">b&lt;/span>&lt;span style="color:#1f2328">.&lt;/span>&lt;span style="color:#1f2328">N&lt;/span>&lt;span style="color:#1f2328">;&lt;/span> &lt;span style="color:#1f2328">i&lt;/span>&lt;span style="color:#0550ae">++&lt;/span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#57606a">//&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item></channel></rss>

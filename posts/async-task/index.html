@@ -1,83 +1,164 @@
 <!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>异步任务队列 | firebat</title>
-<link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/tags/>Tags</a></li><li><a href=/about>About</a></li><li><a href=/index.xml>Subscribe</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>异步任务队列</span></h1><h2 class=date>2022/04/19</h2></div><main><p>在我们介绍更复杂的调度管理问题之前，先了解一种基本的异步任务执行方案。</p><h2 id=场景>场景</h2><p>业务系统构建过程中，为了实现逻辑复用，面临大量的计算组装问题。如:</p><ul><li>数仓、复杂计算任务执行调度</li><li>风控、营销类的策略管理</li><li>数据核查规则管理</li><li>多仿真验证</li></ul><p>这些场景在执行时，按调用方式可以分为:</p><ul><li>同步组装，可以支持事务，包括节点、上下游、输入输出、常量变量定义等（择日细讲）</li><li>异步组装，适用支持复杂流程管理，包括任务队列、优先级、回调事件等</li></ul><h2 id=结构定义>结构定义</h2><p>通过app区分，使服务可以为多个应用使用</p><h3 id=任务队列>任务队列</h3><ul><li>app 应用标识</li><li>queueId 队列标识</li><li>queueType 队列类型, 并行=parallel, 串行=serial</li><li>priority 优先级, 最小=0</li><li>status 队列状态, 非激活=inactive, 激活中=active</li></ul><h3 id=任务消息>任务消息</h3><ul><li>app 应用标识</li><li>queueId 所属队列</li><li>messageId 消息标识</li><li>status 任务状态, 待执行=wait, 处理中=processing, 处理完成=completed</li><li>taskClassName 任务类名</li><li>parameter 任务参数</li><li>stopQueueOnError 执行出错时，是否停止队列</li><li>sendTime 客户发起时间</li><li>receiveTime 服务接收时间</li><li>acceptTime 分派时间</li><li>startTime 开始执行时间</li><li>nodeId 执行节点</li></ul><h2 id=调度目标>调度目标</h2><p>找到最优先需要执行的任务</p><ul><li>队列状态=激活中</li><li>任务状态=待执行</li><li>若为串型队列，只允许其中一个任务执行</li><li>队列优先级最高</li><li>创建时间最早</li></ul><h3 id=单并行队列>单并行队列</h3><p>每个app拥有一个并行队列(<code>parallel_task_queue</code>)和多个串型队列(自定义)</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span><span style=color:#66d9ef>select</span>
-</span></span><span style=display:flex><span>    t.message_id,
-</span></span><span style=display:flex><span>    t.queue_id
-</span></span><span style=display:flex><span><span style=color:#66d9ef>from</span> task_info t
-</span></span><span style=display:flex><span><span style=color:#66d9ef>join</span> queue_info q <span style=color:#66d9ef>on</span> q.queue_id <span style=color:#f92672>=</span> t.queue_id <span style=color:#66d9ef>and</span> q.status <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;active&#39;</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>where</span> t.status <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;wait&#39;</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>and</span> <span style=color:#66d9ef>not</span> <span style=color:#66d9ef>exists</span> (
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>select</span> <span style=color:#ae81ff>1</span> <span style=color:#66d9ef>from</span> task_info i
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>where</span> i.status <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;processing&#39;</span>
-</span></span><span style=display:flex><span>      <span style=color:#66d9ef>and</span> i.queue_id <span style=color:#f92672>=</span> t.queue_id
-</span></span><span style=display:flex><span>      <span style=color:#66d9ef>and</span> i.queue_id <span style=color:#f92672>&lt;&gt;</span> <span style=color:#e6db74>&#39;parallel_task_queue&#39;</span>
-</span></span><span style=display:flex><span>)
-</span></span><span style=display:flex><span><span style=color:#66d9ef>order</span> <span style=color:#66d9ef>by</span> q.priority <span style=color:#66d9ef>desc</span>, t.receive_time, t.id;
-</span></span></code></pre></div><h3 id=多并行队列>多并行队列</h3><p>这里给出多并行队列的筛选方法，实际上单个并行队列足够满足大多数场景。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span><span style=color:#66d9ef>select</span>
-</span></span><span style=display:flex><span>    t.message_id,
-</span></span><span style=display:flex><span>    t.queue_id
-</span></span><span style=display:flex><span><span style=color:#66d9ef>from</span> task_info t
-</span></span><span style=display:flex><span><span style=color:#66d9ef>join</span> (
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>select</span>
-</span></span><span style=display:flex><span>        q.queue_id,
-</span></span><span style=display:flex><span>        q.queue_type,
-</span></span><span style=display:flex><span>        q.status,
-</span></span><span style=display:flex><span>        q.priority,
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>count</span>(t.message_id),
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>case</span> q.queue_type <span style=color:#66d9ef>when</span> <span style=color:#e6db74>&#39;parallel&#39;</span> <span style=color:#66d9ef>then</span> <span style=color:#66d9ef>count</span>(t.message_id) <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span> <span style=color:#66d9ef>else</span> <span style=color:#66d9ef>true</span> <span style=color:#66d9ef>end</span> <span style=color:#66d9ef>as</span> available
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>from</span> queue_info q
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>left</span> <span style=color:#66d9ef>join</span> task_info t <span style=color:#66d9ef>on</span> t.queue_id <span style=color:#f92672>=</span> q.queue_id <span style=color:#66d9ef>and</span> t.status <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;processing&#39;</span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>group</span> <span style=color:#66d9ef>by</span> q.queue_id
-</span></span><span style=display:flex><span>) q <span style=color:#66d9ef>on</span> t.queue_id <span style=color:#f92672>=</span> q.queue_id
-</span></span><span style=display:flex><span><span style=color:#66d9ef>where</span> t.status <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;wait&#39;</span>
-</span></span><span style=display:flex><span>  <span style=color:#66d9ef>and</span> q.available
-</span></span><span style=display:flex><span><span style=color:#66d9ef>order</span> <span style=color:#66d9ef>by</span> q.priority <span style=color:#66d9ef>desc</span>, t.receive_time, t.id <span style=color:#66d9ef>limit</span> <span style=color:#ae81ff>1</span>;
-</span></span></code></pre></div><h2 id=服务结构>服务结构</h2><ul><li>定义Task逻辑</li><li>客户端通过TaskManager提交任务到队列</li><li>服务端通过上述SQL选取待执行的任务</li><li>执行端通过TaskReceiver接收任务</li><li>执行端通过TaskRunner管理线程执行</li></ul><h3 id=任务定义>任务定义</h3><p>系统（客户端）通过实现Task接口，描述待执行的业务逻辑。可在回调方法中继续发起其他任务，实现逻辑编排。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Task</span> {
-</span></span><span style=display:flex><span>    setParameter(Map)
-</span></span><span style=display:flex><span>    taskAccepted(TaskEvent)
-</span></span><span style=display:flex><span>    taskStarted(TaskEvent)
-</span></span><span style=display:flex><span>    taskCompleted(TaskEvent)
-</span></span><span style=display:flex><span>    taskRejected(TaskEvent)
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h3 id=任务管理>任务管理</h3><p>客户端通过TaskManager实现队列和任务管理。</p><ul><li>active 是否激活</li><li>reentry 任务释放后，是否重入队列</li><li>stop 任务释放后，是否暂停队列执行</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>TaskManager</span> {
-</span></span><span style=display:flex><span>    setParallelizedTaskQueueActive(active)
-</span></span><span style=display:flex><span>    addParallelizedTask(taskClassName, parameter)
-</span></span><span style=display:flex><span>    releaseRunningParallelizedTask(messageId, reentry, stop)
-</span></span><span style=display:flex><span>    removeParallelizedTask(messageId)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    addSerializedTaskQueue(queueId, active)
-</span></span><span style=display:flex><span>    removeSerializedTaskQueue(queueId)
-</span></span><span style=display:flex><span>    setSerializedTaskQueueActive(active)
-</span></span><span style=display:flex><span>    addSerializedTask(queueId, taskClassName, parameter, stopOnError)
-</span></span><span style=display:flex><span>    releaseRunningSerializedTask(messageId, reentry, stop)
-</span></span><span style=display:flex><span>    removeSerializedTask(messageId)
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h3 id=任务接收>任务接收</h3><p>执行端通过TaskReceiver接收服务中心的调度结果，获取最优先需要执行的任务</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>TaskReceiver</span> {
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    decideRunTask()
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    acceptProcessingParallelizedTask(messageId, acceptedTime)
-</span></span><span style=display:flex><span>    startProcessingParallelizedTask(messageId, startTime)
-</span></span><span style=display:flex><span>    reentryParallelizedTask(messageId)
-</span></span><span style=display:flex><span>    finishParallelizedTask(messageId)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    acceptProcessingSerializedTask(messageId, acceptedTime)
-</span></span><span style=display:flex><span>    startProcessingSerializedTask(messageId, startTime)
-</span></span><span style=display:flex><span>    reentrySerializedTask(messageId)
-</span></span><span style=display:flex><span>    finishSerializedTask(messageId)
-</span></span><span style=display:flex><span>    reentrySerializedTask(messageId)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    attachNodeToTask(messageId, node)
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h3 id=任务执行>任务执行</h3><p>执行端通过TaskRunner管理执行线程</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>TaskRunner</span> <span style=color:#66d9ef>extends</span> Runnable {
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    startRunner()
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>	stopRunner()
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    isRunning()
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    releaseTask(messageId)
-</span></span><span style=display:flex><span>	
-</span></span><span style=display:flex><span>    release()
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>执行端处理流程</p><ul><li>服务是否运行</li><li>线程是否空闲</li><li>获取节点信息</li><li>是否有待执行任务</li><li>创建任务</li><li>绑定节点</li><li>启动任务</li></ul><h2 id=参考>参考</h2><ul><li><a href=https://document.intra-mart.jp/library/iap/public/im_asynchronous/im_asynchronous_specification/texts/overview/index.html>IntraMart Accel Platform 异步规范</a></li></ul></main><footer><hr>© <a href=https://github.com/firebat>firebat</a> 2015 &ndash; 2025</footer></body></html>
+<link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/tags/>Tags</a></li><li><a href=/index.xml>Subscribe</a></li><li><a href=/about>About</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>异步任务队列</span></h1><h2 class=date>2022/04/19</h2></div><main><p>在我们介绍更复杂的调度管理问题之前，先了解一种基本的异步任务执行方案。</p><h2 id=场景>场景</h2><p>业务系统构建过程中，为了实现逻辑复用，面临大量的计算组装问题。如:</p><ul><li>数仓、复杂计算任务执行调度</li><li>风控、营销类的策略管理</li><li>数据核查规则管理</li><li>多仿真验证</li></ul><p>这些场景在执行时，按调用方式可以分为:</p><ul><li>同步组装，可以支持事务，包括节点、上下游、输入输出、常量变量定义等（择日细讲）</li><li>异步组装，适用支持复杂流程管理，包括任务队列、优先级、回调事件等</li></ul><h2 id=结构定义>结构定义</h2><p>通过app区分，使服务可以为多个应用使用</p><h3 id=任务队列>任务队列</h3><ul><li>app 应用标识</li><li>queueId 队列标识</li><li>queueType 队列类型, 并行=parallel, 串行=serial</li><li>priority 优先级, 最小=0</li><li>status 队列状态, 非激活=inactive, 激活中=active</li></ul><h3 id=任务消息>任务消息</h3><ul><li>app 应用标识</li><li>queueId 所属队列</li><li>messageId 消息标识</li><li>status 任务状态, 待执行=wait, 处理中=processing, 处理完成=completed</li><li>taskClassName 任务类名</li><li>parameter 任务参数</li><li>stopQueueOnError 执行出错时，是否停止队列</li><li>sendTime 客户发起时间</li><li>receiveTime 服务接收时间</li><li>acceptTime 分派时间</li><li>startTime 开始执行时间</li><li>nodeId 执行节点</li></ul><h2 id=调度目标>调度目标</h2><p>找到最优先需要执行的任务</p><ul><li>队列状态=激活中</li><li>任务状态=待执行</li><li>若为串型队列，只允许其中一个任务执行</li><li>队列优先级最高</li><li>创建时间最早</li></ul><h3 id=单并行队列>单并行队列</h3><p>每个app拥有一个并行队列(<code>parallel_task_queue</code>)和多个串型队列(自定义)</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span><span style=color:#cf222e>select</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>t<span style=color:#1f2328>.</span>message_id<span style=color:#1f2328>,</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>t<span style=color:#1f2328>.</span>queue_id<span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff></span><span style=color:#cf222e>from</span><span style=color:#fff> </span>task_info<span style=color:#fff> </span>t<span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff></span><span style=color:#cf222e>join</span><span style=color:#fff> </span>queue_info<span style=color:#fff> </span>q<span style=color:#fff> </span><span style=color:#cf222e>on</span><span style=color:#fff> </span>q<span style=color:#1f2328>.</span>queue_id<span style=color:#fff> </span><span style=color:#0550ae>=</span><span style=color:#fff> </span>t<span style=color:#1f2328>.</span>queue_id<span style=color:#fff> </span><span style=color:#cf222e>and</span><span style=color:#fff> </span>q<span style=color:#1f2328>.</span>status<span style=color:#fff> </span><span style=color:#0550ae>=</span><span style=color:#fff> </span><span style=color:#0a3069>&#39;active&#39;</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff></span><span style=color:#cf222e>where</span><span style=color:#fff> </span>t<span style=color:#1f2328>.</span>status<span style=color:#fff> </span><span style=color:#0550ae>=</span><span style=color:#fff> </span><span style=color:#0a3069>&#39;wait&#39;</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff></span><span style=color:#cf222e>and</span><span style=color:#fff> </span><span style=color:#cf222e>not</span><span style=color:#fff> </span><span style=color:#cf222e>exists</span><span style=color:#fff> </span><span style=color:#1f2328>(</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span><span style=color:#cf222e>select</span><span style=color:#fff> </span><span style=color:#0550ae>1</span><span style=color:#fff> </span><span style=color:#cf222e>from</span><span style=color:#fff> </span>task_info<span style=color:#fff> </span>i<span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span><span style=color:#cf222e>where</span><span style=color:#fff> </span>i<span style=color:#1f2328>.</span>status<span style=color:#fff> </span><span style=color:#0550ae>=</span><span style=color:#fff> </span><span style=color:#0a3069>&#39;processing&#39;</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>      </span><span style=color:#cf222e>and</span><span style=color:#fff> </span>i<span style=color:#1f2328>.</span>queue_id<span style=color:#fff> </span><span style=color:#0550ae>=</span><span style=color:#fff> </span>t<span style=color:#1f2328>.</span>queue_id<span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>      </span><span style=color:#cf222e>and</span><span style=color:#fff> </span>i<span style=color:#1f2328>.</span>queue_id<span style=color:#fff> </span><span style=color:#0550ae>&lt;&gt;</span><span style=color:#fff> </span><span style=color:#0a3069>&#39;parallel_task_queue&#39;</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff></span><span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff></span><span style=color:#cf222e>order</span><span style=color:#fff> </span><span style=color:#cf222e>by</span><span style=color:#fff> </span>q<span style=color:#1f2328>.</span>priority<span style=color:#fff> </span><span style=color:#cf222e>desc</span><span style=color:#1f2328>,</span><span style=color:#fff> </span>t<span style=color:#1f2328>.</span>receive_time<span style=color:#1f2328>,</span><span style=color:#fff> </span>t<span style=color:#1f2328>.</span>id<span style=color:#1f2328>;</span><span style=color:#fff>
+</span></span></span></code></pre></td></tr></table></div></div><h3 id=多并行队列>多并行队列</h3><p>这里给出多并行队列的筛选方法，实际上单个并行队列足够满足大多数场景。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span><span style=color:#cf222e>select</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>t<span style=color:#1f2328>.</span>message_id<span style=color:#1f2328>,</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>t<span style=color:#1f2328>.</span>queue_id<span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff></span><span style=color:#cf222e>from</span><span style=color:#fff> </span>task_info<span style=color:#fff> </span>t<span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff></span><span style=color:#cf222e>join</span><span style=color:#fff> </span><span style=color:#1f2328>(</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span><span style=color:#cf222e>select</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>        </span>q<span style=color:#1f2328>.</span>queue_id<span style=color:#1f2328>,</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>        </span>q<span style=color:#1f2328>.</span>queue_type<span style=color:#1f2328>,</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>        </span>q<span style=color:#1f2328>.</span>status<span style=color:#1f2328>,</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>        </span>q<span style=color:#1f2328>.</span>priority<span style=color:#1f2328>,</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>        </span><span style=color:#cf222e>count</span><span style=color:#1f2328>(</span>t<span style=color:#1f2328>.</span>message_id<span style=color:#1f2328>),</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>        </span><span style=color:#cf222e>case</span><span style=color:#fff> </span>q<span style=color:#1f2328>.</span>queue_type<span style=color:#fff> </span><span style=color:#cf222e>when</span><span style=color:#fff> </span><span style=color:#0a3069>&#39;parallel&#39;</span><span style=color:#fff> </span><span style=color:#cf222e>then</span><span style=color:#fff> </span><span style=color:#cf222e>count</span><span style=color:#1f2328>(</span>t<span style=color:#1f2328>.</span>message_id<span style=color:#1f2328>)</span><span style=color:#fff> </span><span style=color:#0550ae>=</span><span style=color:#fff> </span><span style=color:#0550ae>0</span><span style=color:#fff> </span><span style=color:#cf222e>else</span><span style=color:#fff> </span><span style=color:#cf222e>true</span><span style=color:#fff> </span><span style=color:#cf222e>end</span><span style=color:#fff> </span><span style=color:#cf222e>as</span><span style=color:#fff> </span>available<span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span><span style=color:#cf222e>from</span><span style=color:#fff> </span>queue_info<span style=color:#fff> </span>q<span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span><span style=color:#cf222e>left</span><span style=color:#fff> </span><span style=color:#cf222e>join</span><span style=color:#fff> </span>task_info<span style=color:#fff> </span>t<span style=color:#fff> </span><span style=color:#cf222e>on</span><span style=color:#fff> </span>t<span style=color:#1f2328>.</span>queue_id<span style=color:#fff> </span><span style=color:#0550ae>=</span><span style=color:#fff> </span>q<span style=color:#1f2328>.</span>queue_id<span style=color:#fff> </span><span style=color:#cf222e>and</span><span style=color:#fff> </span>t<span style=color:#1f2328>.</span>status<span style=color:#fff> </span><span style=color:#0550ae>=</span><span style=color:#fff> </span><span style=color:#0a3069>&#39;processing&#39;</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span><span style=color:#cf222e>group</span><span style=color:#fff> </span><span style=color:#cf222e>by</span><span style=color:#fff> </span>q<span style=color:#1f2328>.</span>queue_id<span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff></span><span style=color:#1f2328>)</span><span style=color:#fff> </span>q<span style=color:#fff> </span><span style=color:#cf222e>on</span><span style=color:#fff> </span>t<span style=color:#1f2328>.</span>queue_id<span style=color:#fff> </span><span style=color:#0550ae>=</span><span style=color:#fff> </span>q<span style=color:#1f2328>.</span>queue_id<span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff></span><span style=color:#cf222e>where</span><span style=color:#fff> </span>t<span style=color:#1f2328>.</span>status<span style=color:#fff> </span><span style=color:#0550ae>=</span><span style=color:#fff> </span><span style=color:#0a3069>&#39;wait&#39;</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>  </span><span style=color:#cf222e>and</span><span style=color:#fff> </span>q<span style=color:#1f2328>.</span>available<span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff></span><span style=color:#cf222e>order</span><span style=color:#fff> </span><span style=color:#cf222e>by</span><span style=color:#fff> </span>q<span style=color:#1f2328>.</span>priority<span style=color:#fff> </span><span style=color:#cf222e>desc</span><span style=color:#1f2328>,</span><span style=color:#fff> </span>t<span style=color:#1f2328>.</span>receive_time<span style=color:#1f2328>,</span><span style=color:#fff> </span>t<span style=color:#1f2328>.</span>id<span style=color:#fff> </span><span style=color:#cf222e>limit</span><span style=color:#fff> </span><span style=color:#0550ae>1</span><span style=color:#1f2328>;</span><span style=color:#fff>
+</span></span></span></code></pre></td></tr></table></div></div><h2 id=服务结构>服务结构</h2><ul><li>定义Task逻辑</li><li>客户端通过TaskManager提交任务到队列</li><li>服务端通过上述SQL选取待执行的任务</li><li>执行端通过TaskReceiver接收任务</li><li>执行端通过TaskRunner管理线程执行</li></ul><h3 id=任务定义>任务定义</h3><p>系统（客户端）通过实现Task接口，描述待执行的业务逻辑。可在回调方法中继续发起其他任务，实现逻辑编排。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#cf222e>interface</span> <span style=color:#1f2328>Task</span><span style=color:#fff> </span><span style=color:#1f2328>{</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>setParameter<span style=color:#1f2328>(</span>Map<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>taskAccepted<span style=color:#1f2328>(</span>TaskEvent<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>taskStarted<span style=color:#1f2328>(</span>TaskEvent<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>taskCompleted<span style=color:#1f2328>(</span>TaskEvent<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>taskRejected<span style=color:#1f2328>(</span>TaskEvent<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff></span><span style=color:#1f2328>}</span><span style=color:#fff>
+</span></span></span></code></pre></td></tr></table></div></div><h3 id=任务管理>任务管理</h3><p>客户端通过TaskManager实现队列和任务管理。</p><ul><li>active 是否激活</li><li>reentry 任务释放后，是否重入队列</li><li>stop 任务释放后，是否暂停队列执行</li></ul><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#cf222e>interface</span> <span style=color:#1f2328>TaskManager</span><span style=color:#fff> </span><span style=color:#1f2328>{</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>setParallelizedTaskQueueActive<span style=color:#1f2328>(</span>active<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>addParallelizedTask<span style=color:#1f2328>(</span>taskClassName<span style=color:#1f2328>,</span><span style=color:#fff> </span>parameter<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>releaseRunningParallelizedTask<span style=color:#1f2328>(</span>messageId<span style=color:#1f2328>,</span><span style=color:#fff> </span>reentry<span style=color:#1f2328>,</span><span style=color:#fff> </span>stop<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>removeParallelizedTask<span style=color:#1f2328>(</span>messageId<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>addSerializedTaskQueue<span style=color:#1f2328>(</span>queueId<span style=color:#1f2328>,</span><span style=color:#fff> </span>active<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>removeSerializedTaskQueue<span style=color:#1f2328>(</span>queueId<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>setSerializedTaskQueueActive<span style=color:#1f2328>(</span>active<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>addSerializedTask<span style=color:#1f2328>(</span>queueId<span style=color:#1f2328>,</span><span style=color:#fff> </span>taskClassName<span style=color:#1f2328>,</span><span style=color:#fff> </span>parameter<span style=color:#1f2328>,</span><span style=color:#fff> </span>stopOnError<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>releaseRunningSerializedTask<span style=color:#1f2328>(</span>messageId<span style=color:#1f2328>,</span><span style=color:#fff> </span>reentry<span style=color:#1f2328>,</span><span style=color:#fff> </span>stop<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>removeSerializedTask<span style=color:#1f2328>(</span>messageId<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff></span><span style=color:#1f2328>}</span><span style=color:#fff>
+</span></span></span></code></pre></td></tr></table></div></div><h3 id=任务接收>任务接收</h3><p>执行端通过TaskReceiver接收服务中心的调度结果，获取最优先需要执行的任务</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#cf222e>interface</span> <span style=color:#1f2328>TaskReceiver</span><span style=color:#fff> </span><span style=color:#1f2328>{</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>decideRunTask<span style=color:#1f2328>()</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>acceptProcessingParallelizedTask<span style=color:#1f2328>(</span>messageId<span style=color:#1f2328>,</span><span style=color:#fff> </span>acceptedTime<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>startProcessingParallelizedTask<span style=color:#1f2328>(</span>messageId<span style=color:#1f2328>,</span><span style=color:#fff> </span>startTime<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>reentryParallelizedTask<span style=color:#1f2328>(</span>messageId<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>finishParallelizedTask<span style=color:#1f2328>(</span>messageId<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>acceptProcessingSerializedTask<span style=color:#1f2328>(</span>messageId<span style=color:#1f2328>,</span><span style=color:#fff> </span>acceptedTime<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>startProcessingSerializedTask<span style=color:#1f2328>(</span>messageId<span style=color:#1f2328>,</span><span style=color:#fff> </span>startTime<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>reentrySerializedTask<span style=color:#1f2328>(</span>messageId<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>finishSerializedTask<span style=color:#1f2328>(</span>messageId<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>reentrySerializedTask<span style=color:#1f2328>(</span>messageId<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>attachNodeToTask<span style=color:#1f2328>(</span>messageId<span style=color:#1f2328>,</span><span style=color:#fff> </span>node<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff></span><span style=color:#1f2328>}</span><span style=color:#fff>
+</span></span></span></code></pre></td></tr></table></div></div><h3 id=任务执行>任务执行</h3><p>执行端通过TaskRunner管理执行线程</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#cf222e>interface</span> <span style=color:#1f2328>TaskRunner</span><span style=color:#fff> </span><span style=color:#cf222e>extends</span><span style=color:#fff> </span>Runnable<span style=color:#fff> </span><span style=color:#1f2328>{</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>startRunner<span style=color:#1f2328>()</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>	</span>stopRunner<span style=color:#1f2328>()</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>isRunning<span style=color:#1f2328>()</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>releaseTask<span style=color:#1f2328>(</span>messageId<span style=color:#1f2328>)</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff>	
+</span></span></span><span style=display:flex><span><span style=color:#fff>    </span>release<span style=color:#1f2328>()</span><span style=color:#fff>
+</span></span></span><span style=display:flex><span><span style=color:#fff></span><span style=color:#1f2328>}</span><span style=color:#fff>
+</span></span></span></code></pre></td></tr></table></div></div><p>执行端处理流程</p><ul><li>服务是否运行</li><li>线程是否空闲</li><li>获取节点信息</li><li>是否有待执行任务</li><li>创建任务</li><li>绑定节点</li><li>启动任务</li></ul><h2 id=参考>参考</h2><ul><li><a href=https://document.intra-mart.jp/library/iap/public/im_asynchronous/im_asynchronous_specification/texts/overview/index.html>IntraMart Accel Platform 异步规范</a></li></ul></main><footer><link rel=stylesheet href=//cdn.jsdelivr.net/npm/katex/dist/katex.min.css><script src=//cdn.jsdelivr.net/npm/@xiee/utils/js/math-code.min.js defer></script><script src=//cdn.jsdelivr.net/npm/katex/dist/katex.min.js defer></script><script src=//cdn.jsdelivr.net/npm/katex/dist/contrib/auto-render.min.js defer></script><script src=//cdn.jsdelivr.net/npm/@xiee/utils/js/render-katex.js defer></script><script src=//cdn.jsdelivr.net/npm/@xiee/utils/js/center-img.min.js defer></script><hr>© 2015 &ndash; 2025 <a href=https://github.com/firebat>firebat</a></footer></body></html>
