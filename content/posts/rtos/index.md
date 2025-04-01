@@ -407,13 +407,13 @@ SECTIONS
 
 - 将数据段从FLASH加载到RAM，将`LMA（Load Memory Address）`转变为`VMA（Virtual Memory Address）`
 - 将未初始化数据置0
-```armasm
+```asm
     .section    .text.Reset_Handler
     .weak   Reset_Handler
     .type   Reset_Handler, %function
-Reset_Handler:  
+Reset_Handler:
 
-  /* 将数据段从Flash复制到SRAM */  
+  /* 将数据段从Flash复制到SRAM */
   movs  r1, #0                    ; 将r1置0, 数据偏移量
   b LoopCopyDataInit
 
@@ -432,7 +432,7 @@ LoopCopyDataInit:
     ldr r2, =_sbss               ; r2 = _sbss
     b   LoopFillZerobss
 
-    /* 将sbss与ebss之间清零 */  
+    /* 将sbss与ebss之间清零 */
 FillZerobss:
     movs    r3, #0
     str r3, [r2], #4             ; 将r2位置的数据清零, 且r2 = r2 + 4
@@ -442,7 +442,7 @@ LoopFillZerobss:
     cmp r2, r3
     bcc FillZerobss              ; 若 r2 < ebss 继续清零
     /* 调用系统初始化，设置系统时钟，位于CMSIS的system_stm32f10x.c中*/
-    bl  SystemInit    
+    bl  SystemInit
     /* 进入用户函数*/
     bl  main
     bx  lr
