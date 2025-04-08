@@ -167,3 +167,4 @@ void SysTickHandler(void) interrupt 5
 
 # 参考
 - [Patterns for Time-Triggered Embedded Systems](https://www.safetty.net/download/pont_pttes_2001.pdf)
+- [嵌入式微系统](https://github.com/raindi-wangsw/msOS/)
