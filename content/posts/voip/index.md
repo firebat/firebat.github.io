@@ -25,15 +25,19 @@ P2P技术的发展，产生了各种网络共享下载的应用，如Napster、G
 ![NAT类型](./images/nat-type.png)
 # 类型检测
 要检测当前主机所在的NAT类型，需要在云端部署一个服务，包含两个IP和端口
+
 ![无NAT](./images/detect-no-nat.jpg)
 - 客户端向服务器发送请求，服务器将观察到的地址响应给客户端
 - 如果响应中的地址与发送地址一致，说明客户端在公网，没有NAT。
+
 ![对称性](./images/detect-cone-sym.jpg)
 - 客户端向服务端第二个IP地址再发送一个请求
 - 如果两次响应中的公网地址不一致，说明是对称型
+
 ![全锥型](./images/detect-cone-full.jpg)
 - 客户端向服务器第一个IP地址发送请求，服务端用另一个IP地址返回
 - 如果可以收到，说明是全锥型
+
 ![受限锥型](./images/detect-cone-restricted.jpg)
 - 客户端向服务器再发送一个请求，服务器用同一IP的第二个端口响应
 - 如果可以收到，说明是受限锥型；否则为端口受限锥型。
@@ -193,6 +197,7 @@ Interactive Connectivity Establishment 互动式连接建立，它不是一种�
 - 被调用方接收到连接请求后回应一个Answer请求，完成数据交换
 - 通过ICE框架，首先尝试P2P连接，一个端口或者某个网卡不通时，选其他的。如果都通，选择性能最好的。
 - 如果P2P不通则使用TURN中转，并且支持多节点选择，若上海的节点不通，就用东京的节点。
+
 ![](./images/ice.jpg)
 ICE Candidate定义一个可用地址，包括协议、IP、端口和类型，双方各取一个Candidate形成通路。类型有
 - 主机候选者 Host Candidate 本地主机的IP和端口
@@ -359,7 +364,9 @@ Content-Length: 0
 ```
 # PBX
 通过上述的P2P打洞技术，实现了客户端之间的数据包传输；通过SIP指令和SDP，实现了会话的管理。实际场景中，将这些技术统一构建为IP PBX服务（Private Branch Exchange）即网络电话交换机。IP PBX不仅可以通过网络连接企业内部电话，还可以通过PSTN（Public Switched Telephone Network）公共交换电话网连接传统电话。
+
 ![](./images/voip.webp)
+
 [FreeSwitch](https://freeswitch.org.cn/) 是一个开源、免费、跨平台、支持多协议的电话软交换平台，最初由Asterisk项目的的开发者Anthony Minessal创建。
 - 采用模块化设计，允许用户根据需要，定制化解决方案
 - 支持灵活的脚本定制，如Lua、Javascript、Python，方便与各种系统集成

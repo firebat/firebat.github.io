@@ -1,6 +1,5 @@
 ---
 title: 'About'
-date: '2015-01-01T00:00:00+08:00'
 ---
 ## Who am I
 - Software engineer for over 15 years

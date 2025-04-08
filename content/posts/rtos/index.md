@@ -78,17 +78,25 @@ Cortex-M系列不带MMU（内存管理单元），所有的寄存器、存储空
 
 - RAM 地址从`0x2000 0000`开始，用于运行时堆栈，即SP值
 - Flash 地址从`0x0800 0000`开始，用于存放程序代码，即PC值
+
 ![](./images/mem-map.jpg)
 
 ## 启动过程
 参考《The Definitive Guide To ARM Cortex M3》3.7 RESET SEQUENCE章节。STM32支持三种启动模式，可通过设置BOOT管脚进行选择。当选用Flash启动时，0x0800 0000 将映射到 0x0000 0000，即二者等效。
+
 ![](./images/reset.jpg)
+
 芯片上电后，将从`0x0000 0000`读取第1个字作为栈顶地址（SP），从`0x0000 0004`读取第2个字作为第一条指令地址（PC）。
+
 ![](./images/reset-sequence.jpg)
+
 栈增长方向由上到下（先压栈后访问），所以SP初始值应该是栈顶上的第一个地址，比如将`0x2000 7C00`到`0x2000 7FFF`的空间作为栈，SP初始值应该设为`0x2000 8000`。
+
 ![](./images/stack-init.jpg)
+
 ## GPIO结构
 STM32数据引脚一律采用通用输入输出IO接口，全称General Purpose Input Ouput，通过编程设置，使每个引脚既可以作为输入、也可以作为输出端口使用。如F103ZET6拥有A到G共7组端口，每组16个IO口，共112个引脚可用。
+
 ![](./images/gpio.jpg)
 
 通过设置相应的寄存器，选择是否启用、输入输出模式，以达到节能、端口复用的目的。参考上图，GPIO支持8种配置模式：
@@ -111,11 +119,13 @@ STM32数据引脚一律采用通用输入输出IO接口，全称General Purpose 
 
 # 开发基础
 在理解了启动过程和GPIO模式之后，这里使用STM32F103C8T6核心板（也称BluePill）为例，描述程序的执行过程。BOOT0选择跳线置0，选择从Flash启动。
+
 ![](./images/stm32f103.png)
 
 板上有两个LED，右侧为电源指示灯，左侧对应PC13端口，根据电路图定义可知
 - 上电后VCC高电平，电源灯亮起
 - 当PC13为0时，LED2导通，指示灯亮起；交替设置为1或0，就能控制LED2闪烁
+
 ![](./images/led-circuit.jpg)
 
 ## 基本原理
@@ -292,6 +302,7 @@ SECTIONS {
 - 0-3字节`2000 1000`定义了栈顶SP取值。由于代码中仅1个变量，该值可以更小
 - 4-7字节`0000 0009`定义了第一条指令PC取值，即两条`__asm__`代码后面的`main`
 ![](./images/stm32-utility.jpg)
+
 下载完成后，按下核心板的Reset按键，就可以看到PC13在不停的闪烁。
 ![](./images/blinking-small.gif)
 
@@ -335,7 +346,9 @@ while(1)
 - 运行阶段，系统启动时，首先将Flash中的.data段复制到SRAM中，初始化相应的堆栈和.bss段，之后再跳转到用户的main函数执行。
 
 最终用于下载到Flash中的文件结构如下。
+
 ![](./images/bin_view.png)
+
 这里，可以计算得出，生成文件执行的最小资源需求
 - `Flash` = `Code（代码）` + `RO-data（常量）` + `RW-data（已初始化可读写）`
 - `RAM` = `RW-data（已初始化可读写）` + `ZI-data（未初始化可读写）`
@@ -478,7 +491,6 @@ LoopFillZerobss:
   - `APSR`应用程序状态寄存器，`N`负，`Z`零，`C`进位/借位，`V`溢出，`Q`DSP指令是否溢出
   - `EPSR`执行状态寄存器，`T`Thumb指令，`ICI/IT`用于多重传输指令的中止和继续
   - `IPSR`中断号寄存器
-
 - `PRIMASK` 有1位，置1时，屏蔽除NMI和 HardFault 外所有中断，默认为0
 - `FAULTMASK` 有1位，置1时，屏蔽除NMI外所有中断，默认为0
 - `BASEPRI` 最多9位，屏蔽所有低于寄存器数值优先级的中断（值越大、优先级越低），默认为0表示关闭
@@ -499,10 +511,13 @@ CM3处理器支持两种操作模式和两种访问级别
 
 ## 中断异常
 Cortex-M3内核支持256个中断，其中包含了16个内核中断（异常）和240个外部中断，并且具有256级的可编程中断设置。
+
 ![](./images/interrupt.jpg)
 其中`SysTick`是一个24位的系统节拍定时器，具有自动重载和溢出中断功能，可以由这个定时器获得一定的时间间隔。如果在SysTick位置放置一个函数，定时检查任务状态并进行上下文切换（将寄存器状态写入当前任务的控制块中，找到下一个可执行的任务并恢复寄存器状态），针对任务进行轮番执行，就可以实现分时调度的效果。
+
 ![](./images/systick.jpg)
 `PendSV`是一个可挂起的系统服务，配置为最低优先级，它会在其他异常执行完毕后再执行，而且任何异常都可以中断它。用户代码可直接请求一个PendSV，让出CPU进行任务切换。或者某个IRQ正在活动并且被SysTick抢占，这时悬起一个 PendSV异常，等SysTick、ISR执行完毕后缓期执行上下文切换。这样可以避免中断对上下文切换的干扰。
+
 ![](./images/pendsv.jpg)
 `SysTick`和`PendSV`是所有RTOS实现的核心。发生异常中断时，处理器会
 
@@ -510,6 +525,7 @@ Cortex-M3内核支持256个中断，其中包含了16个内核中断（异常）
 取向量，从向量表`isr_vector`获取对应的中断服务程序入口
 更新堆栈指针SP（取决于中断时在用哪个SP）、更新IPSR、更新PC、更新LR为特殊的`EXC_RETURN`
 中断返回时，通过把`EXC_RETURN`送往PC实现，并间接更新CONTROL寄存器；出栈并清理中断寄存器
+
 ![](./images/exec_return.jpg)
 
 ## 任务调度
@@ -702,7 +718,9 @@ pendsv_exit:
     BX      LR
 ```
 ![](./images/pendsv_from_to.png)
+
 之后系统便进入`to_thread`执行。
+
 ### 时间片轮转
 `board.c`中定义了`SysTick_Handler`，系统运行过程中，将不断减少当前任务的`remaining_tick`，当变成0时，重制时间片并通过`rt_thread_yield`让出处理器。
 ```C
