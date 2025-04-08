@@ -18,18 +18,24 @@ P2P技术的发展，产生了各种网络共享下载的应用，如Napster、G
 &lt;img src="./images/nat-type.png" alt="NAT类型">&lt;/li>
 &lt;/ul>
 &lt;h1 id="类型检测">类型检测&lt;/h1>
-&lt;p>要检测当前主机所在的NAT类型，需要在云端部署一个服务，包含两个IP和端口
-&lt;img src="./images/detect-no-nat.jpg" alt="无NAT">&lt;/p>
+&lt;p>要检测当前主机所在的NAT类型，需要在云端部署一个服务，包含两个IP和端口&lt;/p>
+&lt;p>&lt;img src="./images/detect-no-nat.jpg" alt="无NAT">&lt;/p>
 &lt;ul>
 &lt;li>客户端向服务器发送请求，服务器将观察到的地址响应给客户端&lt;/li>
-&lt;li>如果响应中的地址与发送地址一致，说明客户端在公网，没有NAT。
-&lt;img src="./images/detect-cone-sym.jpg" alt="对称性">&lt;/li>
+&lt;li>如果响应中的地址与发送地址一致，说明客户端在公网，没有NAT。&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="./images/detect-cone-sym.jpg" alt="对称性">&lt;/p>
+&lt;ul>
 &lt;li>客户端向服务端第二个IP地址再发送一个请求&lt;/li>
-&lt;li>如果两次响应中的公网地址不一致，说明是对称型
-&lt;img src="./images/detect-cone-full.jpg" alt="全锥型">&lt;/li>
+&lt;li>如果两次响应中的公网地址不一致，说明是对称型&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="./images/detect-cone-full.jpg" alt="全锥型">&lt;/p>
+&lt;ul>
 &lt;li>客户端向服务器第一个IP地址发送请求，服务端用另一个IP地址返回&lt;/li>
-&lt;li>如果可以收到，说明是全锥型
-&lt;img src="./images/detect-cone-restricted.jpg" alt="受限锥型">&lt;/li>
+&lt;li>如果可以收到，说明是全锥型&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="./images/detect-cone-restricted.jpg" alt="受限锥型">&lt;/p>
+&lt;ul>
 &lt;li>客户端向服务器再发送一个请求，服务器用同一IP的第二个端口响应&lt;/li>
 &lt;li>如果可以收到，说明是受限锥型；否则为端口受限锥型。&lt;/li>
 &lt;/ul>
@@ -180,7 +186,51 @@ P2P技术的发展，产生了各种网络共享下载的应用，如Napster、G
 &lt;h2 id="pip">pip&lt;/h2>
 &lt;p>包管理工具，用于安装、卸载、检查依赖。可通过&lt;code>freeze&lt;/code>将依赖关系导出到文件，后通过&lt;code>install -r&lt;/code>恢复&lt;/p>
 &lt;blockquote>
-&lt;p>&lt;code>pip&lt;/code> is the package installer for Python. You can use pip to install packages from the Python Package Index and other indexes. &lt;a href="https://pypi.org/project/pip/">https://pypi.org/project/pip/&lt;/a>&lt;/p></description></item><item><title>RTOS系统移植</title><link>https://firebat.github.io/posts/rtos-port/</link><pubDate>Wed, 08 Feb 2023 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/rtos-port/</guid><description>&lt;h1 id="硬件">硬件&lt;/h1>
+&lt;p>&lt;code>pip&lt;/code> is the package installer for Python. You can use pip to install packages from the Python Package Index and other indexes. &lt;a href="https://pypi.org/project/pip/">https://pypi.org/project/pip/&lt;/a>&lt;/p></description></item><item><title>嵌入式系统设计模式</title><link>https://firebat.github.io/posts/rtos-pattern/</link><pubDate>Sun, 05 Mar 2023 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/rtos-pattern/</guid><description>&lt;p>近期读到两本书&lt;/p>
+&lt;ul>
+&lt;li>王绍伟等编著的《嵌入式微系统》讲解了msOS的设计原理&lt;/li>
+&lt;li>Michael J Pont编写的《Patterns for Time-Triggered Embedded Systems》提到的SCH51系统的实现&lt;/li>
+&lt;/ul>
+&lt;p>两者主要面向51系列，与之前了解到的面向STM32通过PendSV和SysTick中断实现RTOS思路略有不同，准确地说是一种简化实现，以适应资源有限场景下的任务调度，其中的设计模式值得借鉴。&lt;/p>
+&lt;h1 id="超级大循环">超级大循环&lt;/h1>
+&lt;p>系统初始化后，循环读取传感器数据，分析计算后执行驱动控制，一直循环直到掉电。&lt;/p>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#cf222e">void&lt;/span> &lt;span style="color:#6639ba">main&lt;/span>&lt;span style="color:#1f2328">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#6639ba">Init&lt;/span>&lt;span style="color:#1f2328">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#cf222e">while&lt;/span>&lt;span style="color:#1f2328">(&lt;/span>&lt;span style="color:#0550ae">1&lt;/span>&lt;span style="color:#1f2328">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#6639ba">Scan&lt;/span>&lt;span style="color:#1f2328">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#6639ba">Analyse&lt;/span>&lt;span style="color:#1f2328">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>	&lt;span style="color:#6639ba">Control&lt;/span>&lt;span style="color:#1f2328">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1f2328">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>结构简单，易于编写、调试、维护&lt;/li>
+&lt;li>硬件资源依赖少，不使用定时器，只需少量字空间&lt;/li>
+&lt;li>非常容易移植，安全可靠&lt;/li>
+&lt;li>系统一直“满负荷”运行，耗能高&lt;/li>
+&lt;li>无法提供精准的定时处理&lt;/li>
+&lt;/ul>
+&lt;h1 id="中断触发型">中断触发型&lt;/h1>
+&lt;p>通过触发中断驱动相关设备，大循环不做任何事情，往往处于休眠省电状态。&lt;/p></description></item><item><title>RTOS系统移植</title><link>https://firebat.github.io/posts/rtos-port/</link><pubDate>Wed, 08 Feb 2023 00:00:00 +0800</pubDate><guid>https://firebat.github.io/posts/rtos-port/</guid><description>&lt;h1 id="硬件">硬件&lt;/h1>
 &lt;p>开发板 STM32F103C8T6 核心板，也称STM32 Blue Pill
 &lt;img src="images/stm32f103.jpg" alt="">&lt;/p>
 &lt;p>下载器 STLink&lt;/p>
@@ -1206,7 +1256,7 @@ func() {
 &lt;li>Client - any number of machines using &lt;code>mfsmount&lt;/code> process to communicate with the managing server and with chunkservers.&lt;/li>
 &lt;/ul>
 &lt;p>&lt;img src="./images/mfs_write.png" alt="img">
-&lt;img src="./images/mfs_read.png" alt="img">&lt;/p></description></item><item><title>About</title><link>https://firebat.github.io/about/</link><pubDate>Thu, 01 Jan 2015 00:00:00 +0800</pubDate><guid>https://firebat.github.io/about/</guid><description>&lt;h2 id="who-am-i">Who am I&lt;/h2>
+&lt;img src="./images/mfs_read.png" alt="img">&lt;/p></description></item><item><title>About</title><link>https://firebat.github.io/about/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://firebat.github.io/about/</guid><description>&lt;h2 id="who-am-i">Who am I&lt;/h2>
 &lt;ul>
 &lt;li>Software engineer for over 15 years&lt;/li>
 &lt;li>Specialize in java, go and python, experience in c, javascript and lisp&lt;/li>

@@ -1,0 +1,240 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>嵌入式系统设计模式 | firebat</title>
+<link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/tags/>Tags</a></li><li><a href=/index.xml>Subscribe</a></li><li><a href=/about>About</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>嵌入式系统设计模式</span></h1><h2 class=date>2023/03/05</h2></div><main><p>近期读到两本书</p><ul><li>王绍伟等编著的《嵌入式微系统》讲解了msOS的设计原理</li><li>Michael J Pont编写的《Patterns for Time-Triggered Embedded Systems》提到的SCH51系统的实现</li></ul><p>两者主要面向51系列，与之前了解到的面向STM32通过PendSV和SysTick中断实现RTOS思路略有不同，准确地说是一种简化实现，以适应资源有限场景下的任务调度，其中的设计模式值得借鉴。</p><h1 id=超级大循环>超级大循环</h1><p>系统初始化后，循环读取传感器数据，分析计算后执行驱动控制，一直循环直到掉电。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#cf222e>void</span> <span style=color:#6639ba>main</span><span style=color:#1f2328>()</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#6639ba>Init</span><span style=color:#1f2328>();</span>
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>  <span style=color:#cf222e>while</span><span style=color:#1f2328>(</span><span style=color:#0550ae>1</span><span style=color:#1f2328>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>	<span style=color:#6639ba>Scan</span><span style=color:#1f2328>();</span>
+</span></span><span style=display:flex><span>	<span style=color:#6639ba>Analyse</span><span style=color:#1f2328>();</span>
+</span></span><span style=display:flex><span>	<span style=color:#6639ba>Control</span><span style=color:#1f2328>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#1f2328>}</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>}</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li>结构简单，易于编写、调试、维护</li><li>硬件资源依赖少，不使用定时器，只需少量字空间</li><li>非常容易移植，安全可靠</li><li>系统一直“满负荷”运行，耗能高</li><li>无法提供精准的定时处理</li></ul><h1 id=中断触发型>中断触发型</h1><p>通过触发中断驱动相关设备，大循环不做任何事情，往往处于休眠省电状态。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#57606a>#define INTERRUPT_Timer_1_Overflow 3
+</span></span></span><span style=display:flex><span><span style=color:#57606a></span>
+</span></span><span style=display:flex><span><span style=color:#cf222e>void</span> <span style=color:#6639ba>main</span><span style=color:#1f2328>()</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#6639ba>Timer_1_Init</span><span style=color:#1f2328>();</span>
+</span></span><span style=display:flex><span>  EA <span style=color:#0550ae>=</span> <span style=color:#0550ae>1</span><span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#cf222e>while</span><span style=color:#1f2328>(</span><span style=color:#0550ae>1</span><span style=color:#1f2328>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>    PCON <span style=color:#0550ae>|=</span> <span style=color:#0550ae>0x01</span><span style=color:#1f2328>;</span>  <span style=color:#57606a>// 空闲模式
+</span></span></span><span style=display:flex><span><span style=color:#57606a></span>  <span style=color:#1f2328>}</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#cf222e>void</span> <span style=color:#6639ba>Timer_1_Init</span><span style=color:#1f2328>()</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#57606a>// 初始化定时器
+</span></span></span><span style=display:flex><span><span style=color:#57606a></span><span style=color:#1f2328>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#cf222e>void</span> <span style=color:#6639ba>Timer_1_Update</span><span style=color:#1f2328>()</span> interrupt INTERRUPT_Timer_1_Overflow
+</span></span><span style=display:flex><span><span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#57606a>// 定时中断处理
+</span></span></span><span style=display:flex><span><span style=color:#57606a></span><span style=color:#1f2328>}</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li>系统初始化后处于休眠模式，省电</li><li>使用中断服务程序(ISR)处理事件，中断退出后继续休眠</li><li>由于硬件定时器数量有限，适用于对定时需求较少的场景</li></ul><h1 id=节拍调度型>节拍调度型</h1><p>本质是对上述两种类型的综合折衷</p><ul><li>使用定时器作为节拍触发任务分时切换</li><li>使用中断服务实时响应事件</li><li>通过消息将中断信息传递给大循环处理</li></ul><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">44
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">45
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">46
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">47
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">48
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">49
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">50
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">51
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">52
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">53
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">54
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">55
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">56
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">57
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">58
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">59
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">60
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">61
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#cf222e>typedef</span> data <span style=color:#cf222e>struct</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#cf222e>void</span> <span style=color:#1f2328>(</span>code <span style=color:#0550ae>*</span> pTask<span style=color:#1f2328>)();</span>  <span style=color:#57606a>// 任务函数指针
+</span></span></span><span style=display:flex><span><span style=color:#57606a></span>  tWord Delay<span style=color:#1f2328>;</span>            <span style=color:#57606a>// 执行延迟
+</span></span></span><span style=display:flex><span><span style=color:#57606a></span>  tWord Period<span style=color:#1f2328>;</span>           <span style=color:#57606a>// 调度间隔
+</span></span></span><span style=display:flex><span><span style=color:#57606a></span>  tByte RunMe<span style=color:#1f2328>;</span>            <span style=color:#57606a>// 需执行时加1
+</span></span></span><span style=display:flex><span><span style=color:#57606a></span><span style=color:#1f2328>}</span> sTask<span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#57606a>// 任务列表
+</span></span></span><span style=display:flex><span><span style=color:#57606a></span>sTask SCH_tasks_G<span style=color:#1f2328>[</span>SCH_MAX_TASKS<span style=color:#1f2328>];</span> 
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#cf222e>void</span> <span style=color:#6639ba>main</span><span style=color:#1f2328>()</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#6639ba>SCH_Init_T2</span><span style=color:#1f2328>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#6639ba>SCH_AddTask</span><span style=color:#1f2328>(</span>LED_Update<span style=color:#1f2328>,</span> <span style=color:#0550ae>0</span><span style=color:#1f2328>,</span> <span style=color:#0550ae>1000</span><span style=color:#1f2328>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#6639ba>SCH_Start</span><span style=color:#1f2328>();</span>
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>  <span style=color:#cf222e>while</span><span style=color:#1f2328>(</span><span style=color:#0550ae>1</span><span style=color:#1f2328>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#6639ba>SCH_Dispatch_Tasks</span><span style=color:#1f2328>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#1f2328>}</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#cf222e>void</span> <span style=color:#6639ba>SCH_Init_T2</span><span style=color:#1f2328>()</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#57606a>// 初始化、启动定时器
+</span></span></span><span style=display:flex><span><span style=color:#57606a></span><span style=color:#1f2328>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#cf222e>void</span> <span style=color:#6639ba>SCH_Add_Task</span><span style=color:#1f2328>(</span><span style=color:#cf222e>void</span> <span style=color:#1f2328>(</span>code <span style=color:#0550ae>*</span> pFunction<span style=color:#1f2328>)(),</span> <span style=color:#cf222e>const</span> tWord Delay<span style=color:#1f2328>,</span> <span style=color:#cf222e>const</span> tWord Peroid<span style=color:#1f2328>)</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#57606a>// 添加任务到列表
+</span></span></span><span style=display:flex><span><span style=color:#57606a></span><span style=color:#1f2328>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#cf222e>void</span> <span style=color:#6639ba>SCH_Start</span><span style=color:#1f2328>()</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>  EA <span style=color:#0550ae>=</span> <span style=color:#0550ae>1</span><span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#cf222e>void</span> <span style=color:#6639ba>SCH_Update</span><span style=color:#1f2328>()</span> interrupt INTERRUPT_Timer_2_Overflow
+</span></span><span style=display:flex><span><span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#cf222e>for</span> <span style=color:#1f2328>(</span>Index <span style=color:#0550ae>=</span> <span style=color:#0550ae>0</span><span style=color:#1f2328>;</span> Index <span style=color:#0550ae>&lt;</span> SCH_MAX_TASKS<span style=color:#1f2328>;</span> Index<span style=color:#0550ae>++</span><span style=color:#1f2328>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#57606a>// 如果Delay==0, 则RunMe加1, 重设Period给Delay
+</span></span></span><span style=display:flex><span><span style=color:#57606a></span>	<span style=color:#57606a>// 否则Delay减1
+</span></span></span><span style=display:flex><span><span style=color:#57606a></span>  <span style=color:#1f2328>}</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#cf222e>void</span> <span style=color:#6639ba>SCH_Dispatch_Tasks</span><span style=color:#1f2328>()</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#cf222e>for</span> <span style=color:#1f2328>(</span>Index <span style=color:#0550ae>=</span> <span style=color:#0550ae>0</span><span style=color:#1f2328>;</span> Index <span style=color:#0550ae>&lt;</span> SCH_MAX_TASKS<span style=color:#1f2328>;</span> Index<span style=color:#0550ae>++</span><span style=color:#1f2328>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#57606a>// 如果RunMe&gt;0, 执行任务, RunMe减1
+</span></span></span><span style=display:flex><span><span style=color:#57606a></span>  <span style=color:#1f2328>}</span>
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>  <span style=color:#6639ba>SCH_Go_To_Sleep</span><span style=color:#1f2328>();</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#cf222e>void</span> <span style=color:#6639ba>SCH_Go_To_Sleep</span><span style=color:#1f2328>()</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>  PCON <span style=color:#0550ae>|=</span> <span style=color:#0550ae>0x01</span><span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>}</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li>通过定时器2节拍触发，更新任务的Delay和RunMe标记</li><li>通过大循环判定，并执行任务逻辑，执行完毕后休眠</li></ul><h1 id=消息驱动型>消息驱动型</h1><p>触发中断，将传感器数据放入消息队列，交由大循环处理，是典型的前后台处理模式。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#cf222e>void</span> <span style=color:#6639ba>main</span><span style=color:#1f2328>()</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#cf222e>while</span><span style=color:#1f2328>(</span><span style=color:#0550ae>1</span><span style=color:#1f2328>)</span>
+</span></span><span style=display:flex><span>  <span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>    message <span style=color:#0550ae>=</span> <span style=color:#6639ba>PendMessageQueue</span><span style=color:#1f2328>();</span>
+</span></span><span style=display:flex><span>	type <span style=color:#0550ae>=</span> <span style=color:#6639ba>GetMessageType</span><span style=color:#1f2328>(</span>message<span style=color:#1f2328>);</span>
+</span></span><span style=display:flex><span>	value <span style=color:#0550ae>=</span> <span style=color:#6639ba>GetMessageData</span><span style=color:#1f2328>(</span>message<span style=color:#1f2328>);</span>
+</span></span><span style=display:flex><span>	<span style=color:#cf222e>switch</span><span style=color:#1f2328>(</span>type<span style=color:#1f2328>)</span>
+</span></span><span style=display:flex><span>	<span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>	  <span style=color:#cf222e>case</span> <span style=color:#900;font-weight:700>MessageKey</span><span style=color:#1f2328>:</span>
+</span></span><span style=display:flex><span>	    <span style=color:#6639ba>KeyProcess</span><span style=color:#1f2328>(</span>value<span style=color:#1f2328>);</span>
+</span></span><span style=display:flex><span>		<span style=color:#cf222e>break</span><span style=color:#1f2328>;</span>
+</span></span><span style=display:flex><span>      <span style=color:#cf222e>case</span> <span style=color:#900;font-weight:700>MessageUsart</span><span style=color:#1f2328>:</span>
+</span></span><span style=display:flex><span>	    <span style=color:#57606a>// ...
+</span></span></span><span style=display:flex><span><span style=color:#57606a></span>	  <span style=color:#cf222e>default</span><span style=color:#0550ae>:</span>
+</span></span><span style=display:flex><span>	    <span style=color:#57606a>// ...
+</span></span></span><span style=display:flex><span><span style=color:#57606a></span>	<span style=color:#1f2328>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#1f2328>}</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#cf222e>void</span> <span style=color:#6639ba>SysTickHandler</span><span style=color:#1f2328>(</span><span style=color:#cf222e>void</span><span style=color:#1f2328>)</span> interrupt <span style=color:#0550ae>5</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#6639ba>KeyRoutine</span><span style=color:#1f2328>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#6639ba>RtcRoutine</span><span style=color:#1f2328>();</span>
+</span></span><span style=display:flex><span>  <span style=color:#6639ba>TimerRoutine</span><span style=color:#1f2328>();</span>
+</span></span><span style=display:flex><span><span style=color:#1f2328>}</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li>通过消息机制连接中断、节拍、大循环三要素，解决了高速响应与低速执行的矛盾</li><li>消息可携带更多的数据，根据需要可灵活控制</li></ul><h1 id=参考>参考</h1><ul><li><a href=https://www.safetty.net/download/pont_pttes_2001.pdf>Patterns for Time-Triggered Embedded Systems</a></li></ul></main><footer><link rel=stylesheet href=//cdn.jsdelivr.net/npm/katex/dist/katex.min.css><script src=//cdn.jsdelivr.net/npm/@xiee/utils/js/math-code.min.js defer></script><script src=//cdn.jsdelivr.net/npm/katex/dist/katex.min.js defer></script><script src=//cdn.jsdelivr.net/npm/katex/dist/contrib/auto-render.min.js defer></script><script src=//cdn.jsdelivr.net/npm/@xiee/utils/js/render-katex.js defer></script><script src=//cdn.jsdelivr.net/npm/@xiee/utils/js/center-img.min.js defer></script><hr>© 2015 &ndash; 2025 <a href=https://github.com/firebat>firebat</a></footer></body></html>

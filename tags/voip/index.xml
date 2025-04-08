@@ -18,18 +18,24 @@ P2P技术的发展，产生了各种网络共享下载的应用，如Napster、G
 &lt;img src="./images/nat-type.png" alt="NAT类型">&lt;/li>
 &lt;/ul>
 &lt;h1 id="类型检测">类型检测&lt;/h1>
-&lt;p>要检测当前主机所在的NAT类型，需要在云端部署一个服务，包含两个IP和端口
-&lt;img src="./images/detect-no-nat.jpg" alt="无NAT">&lt;/p>
+&lt;p>要检测当前主机所在的NAT类型，需要在云端部署一个服务，包含两个IP和端口&lt;/p>
+&lt;p>&lt;img src="./images/detect-no-nat.jpg" alt="无NAT">&lt;/p>
 &lt;ul>
 &lt;li>客户端向服务器发送请求，服务器将观察到的地址响应给客户端&lt;/li>
-&lt;li>如果响应中的地址与发送地址一致，说明客户端在公网，没有NAT。
-&lt;img src="./images/detect-cone-sym.jpg" alt="对称性">&lt;/li>
+&lt;li>如果响应中的地址与发送地址一致，说明客户端在公网，没有NAT。&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="./images/detect-cone-sym.jpg" alt="对称性">&lt;/p>
+&lt;ul>
 &lt;li>客户端向服务端第二个IP地址再发送一个请求&lt;/li>
-&lt;li>如果两次响应中的公网地址不一致，说明是对称型
-&lt;img src="./images/detect-cone-full.jpg" alt="全锥型">&lt;/li>
+&lt;li>如果两次响应中的公网地址不一致，说明是对称型&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="./images/detect-cone-full.jpg" alt="全锥型">&lt;/p>
+&lt;ul>
 &lt;li>客户端向服务器第一个IP地址发送请求，服务端用另一个IP地址返回&lt;/li>
-&lt;li>如果可以收到，说明是全锥型
-&lt;img src="./images/detect-cone-restricted.jpg" alt="受限锥型">&lt;/li>
+&lt;li>如果可以收到，说明是全锥型&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="./images/detect-cone-restricted.jpg" alt="受限锥型">&lt;/p>
+&lt;ul>
 &lt;li>客户端向服务器再发送一个请求，服务器用同一IP的第二个端口响应&lt;/li>
 &lt;li>如果可以收到，说明是受限锥型；否则为端口受限锥型。&lt;/li>
 &lt;/ul>
